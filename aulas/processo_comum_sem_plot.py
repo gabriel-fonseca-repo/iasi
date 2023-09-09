@@ -1,25 +1,22 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-plotarGraficos = False
+plotarGraficos = True
 
 # COLETA DE DADOS:
-Data = np.loadtxt(
-    "/home/fonseca/Projetos/iasi/data/si/Solubilidade2.csv", delimiter=","
-)
+Data = np.loadtxt("/home/fonseca/Projetos/iasi/data/si/EMG.csv", delimiter=",")
 # ORGANIZAÇÃO INICIAL (X e Y):
 
-X = Data[:, 0:2]
+X = Data[:, 0:1]
 N, p = X.shape
-y = Data[:, 2].reshape(N, 1)
+y = Data[:, 1].reshape(N, 1)
 
 
 # VISUALIZAÇÃO DOS DADOS:
-# fig = plt.figure()
-# ax = fig.add_subplot(projection="3d")
-# ax.scatter(X[:, 0], y[:, 0], color="orange", edgecolors="k")
+fig = plt.figure()
+ax = fig.add_subplot(projection="3d")
+ax.scatter(X[:, 0], y[:, 0], color="orange", edgecolors="k")
 # plt.show()
-
 
 # PRÉ-PROCESSAMENTO?
 
@@ -58,38 +55,6 @@ for r in range(R):
     X_treino = np.concatenate((ones, X_treino), axis=1)
     b_OLS_C = np.linalg.pinv(X_treino.T @ X_treino) @ X_treino.T @ y_treino
 
-    if plotarGraficos:
-        fig = plt.figure()
-        ax = fig.add_subplot(projection="3d")
-        ax.scatter(
-            X_treino[:, 1],
-            y_treino[:, 0],
-            color="purple",
-            edgecolors="k",
-        )
-        x_axis = np.linspace(0, 40, 500)
-        y_axis = np.linspace(0, 750, 500)
-
-        X_map, Y_map = np.meshgrid(x_axis, y_axis)
-        X_map.shape = (500, 500, 1)
-        Y_map.shape = (500, 500, 1)
-        ones_map = np.ones((500, 500, 1))
-        X3D = np.concatenate((ones_map, X_map, Y_map), axis=2)
-        Z_media = X3D @ b_media
-        Z_ols_s = X3D @ b_OLS_S
-        Z_ols_c = X3D @ b_OLS_C
-
-        ax.plot_surface(
-            X_map[:, :, 0], Y_map[:, :, 0], Z_media[:, :, 0], cmap="gray", alpha=0.5
-        )
-        ax.plot_surface(
-            X_map[:, :, 0], Y_map[:, :, 0], Z_ols_s[:, :, 0], cmap="winter", alpha=0.5
-        )
-        ax.plot_surface(
-            X_map[:, :, 0], Y_map[:, :, 0], Z_ols_c[:, :, 0], cmap="jet", alpha=0.5
-        )
-
-        plt.show()
     # Teste dos modelos, produzindo medida de erro/acerto
     ones = np.ones((X_teste.shape[0], 1))
     X_teste = np.concatenate((ones, X_teste), axis=1)
