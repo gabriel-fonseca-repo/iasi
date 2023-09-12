@@ -5,6 +5,7 @@ from util import (
     concatenar_uns,
     estimar_modelo_ones,
     estimar_modelo_zeros,
+    estimar_modelo_tikhonov,
     eqm,
     media_b,
 )
@@ -19,6 +20,7 @@ y = dados_aerogerador[:, 1].reshape(X.shape[0], 1)
 EQM_MEDIA = []
 EQM_OLS_C = []
 EQM_OLS_S = []
+EQM_OLS_T = []
 
 lbds = [
     0.1,
@@ -43,6 +45,10 @@ for i in range(1000):
     b_media = media_b(y_treino)
     (b_hat_ols_c, _) = estimar_modelo_ones(X_treino, y_treino)
     (b_hat_ols_s, _) = estimar_modelo_zeros(X_treino, y_treino)
+    (b_hat_ols_t, _) = estimar_modelo_tikhonov(
+        X_treino,
+        y_treino,
+    )
 
     # Passo 4: Fazer previsões
     # Faça as previsões usando o modelo treinado
@@ -51,11 +57,11 @@ for i in range(1000):
     y_pred_media = X_teste @ b_media
     y_pred_ols_c = X_teste @ b_hat_ols_c
     y_pred_ols_s = X_teste @ b_hat_ols_s
+    y_pred_ols_t = X_teste @ b_hat_ols_t
     EQM_MEDIA.append(eqm(y_teste, y_pred_media))
     EQM_OLS_C.append(eqm(y_teste, y_pred_ols_c))
     EQM_OLS_S.append(eqm(y_teste, y_pred_ols_s))
-
-    print()
+    EQM_OLS_T.append(eqm(y_teste, y_pred_ols_t))
 
 
 # Passo 5: Plotar os resultados
