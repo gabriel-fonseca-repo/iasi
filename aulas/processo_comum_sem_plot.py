@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 plotarGraficos = True
 
 # COLETA DE DADOS:
-Data = np.loadtxt("/home/fonseca/Projetos/iasi/data/si/EMG.csv", delimiter=",")
+Data = np.loadtxt("data/si/EMG.csv", delimiter=",")
 # ORGANIZAÇÃO INICIAL (X e Y):
 
 X = Data[:, 0:1]

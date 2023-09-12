@@ -1,6 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from util import processar_dados, estimar_modelo
+from util import (
+    processar_dados,
+    concatenar_uns,
+    estimar_modelo_ones,
+    estimar_modelo_zeros,
+    eqm,
+    media_b,
+)
 
 # Passo 1: Carregar os dados de um arquivo CSV
 dados_aerogerador = np.genfromtxt("data/si/aerogerador.dat")
@@ -8,6 +15,21 @@ dados_aerogerador = np.genfromtxt("data/si/aerogerador.dat")
 # Dividir os dados em variáveis independentes (X) e a variável de resposta (y)
 X = dados_aerogerador[:, 0:1]
 y = dados_aerogerador[:, 1].reshape(X.shape[0], 1)
+
+EQM_MEDIA = []
+EQM_OLS_C = []
+EQM_OLS_S = []
+
+lbds = [
+    0.1,
+    0.2,
+    0.3,
+    0.4,
+    0.5,
+    0.6,
+    0.7,
+    0.8,
+]
 
 for i in range(1000):
     # Passo 2: Preparar os dados
@@ -18,14 +40,25 @@ for i in range(1000):
     # Passo 3: Implementar o modelo de regressão linear
     # Adicione um termo de viés (intercept) ao conjunto de dados
     # Calcular os coeficientes usando os Mínimos Quadrados Ordinários (MQO)
-    (b_hat, X_treino) = estimar_modelo(X_treino, y_treino)
+    b_media = media_b(y_treino)
+    (b_hat_ols_c, _) = estimar_modelo_ones(X_treino, y_treino)
+    (b_hat_ols_s, _) = estimar_modelo_zeros(X_treino, y_treino)
 
     # Passo 4: Fazer previsões
     # Faça as previsões usando o modelo treinado
-    y_pred = X_treino @ b_hat
+    X_teste = concatenar_uns(X_teste)
+
+    y_pred_media = X_teste @ b_media
+    y_pred_ols_c = X_teste @ b_hat_ols_c
+    y_pred_ols_s = X_teste @ b_hat_ols_s
+    EQM_MEDIA.append(eqm(y_teste, y_pred_media))
+    EQM_OLS_C.append(eqm(y_teste, y_pred_ols_c))
+    EQM_OLS_S.append(eqm(y_teste, y_pred_ols_s))
+
+    print()
 
 
 # Passo 5: Plotar os resultados
 plt.scatter(X_random, y_random, color="k", label="Dados Originais")
-plt.plot(X_treino[:, 1], y_pred[:, 0], color="red", label="Regressão Linear")
+plt.plot(X_treino[:, 1], y_pred_ols_c[:, 0], color="red", label="Regressão Linear")
 plt.show()

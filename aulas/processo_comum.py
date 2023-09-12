@@ -4,9 +4,7 @@ import matplotlib.pyplot as plt
 plotarGraficos = False
 
 # COLETA DE DADOS:
-Data = np.loadtxt(
-    "/home/fonseca/Projetos/iasi/data/si/Solubilidade2.csv", delimiter=","
-)
+Data = np.loadtxt("data/si/Solubilidade2.csv", delimiter=",")
 # ORGANIZAÇÃO INICIAL (X e Y):
 
 X = Data[:, 0:2]
