@@ -34,7 +34,7 @@ def testar_eqm_modelos_regressao_bidimensional(
     EQM_OLS_S = []
     EQM_OLS_T = []
     melhor_lambda = None
-    for i in range(1000):
+    for _ in range(1000):
         (X_treino, y_treino, X_teste, y_teste, _, _) = processar_dados(X, y)
 
         if not melhor_lambda:
