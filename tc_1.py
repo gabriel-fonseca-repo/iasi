@@ -1,28 +1,67 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from util import testar_eqm_modelos
+from processo import (
+    boxplot_eqm,
+    testar_eqm_modelos_classificacao,
+    testar_eqm_modelos_regressao,
+)
+from util import (
+    carregar_dados_bidimensionais,
+    carregar_dados_tridimensionais,
+)
 
-dados_aerogerador = np.genfromtxt("data/aerogerador.dat")
 
-X_aerogerador = dados_aerogerador[:, 0:1]
-y_aerogerador = dados_aerogerador[:, 1].reshape(X_aerogerador.shape[0], 1)
+(X_aer, y_aer) = carregar_dados_bidimensionais("data/aerogerador.dat")
+(X_EMG, y_EMG) = carregar_dados_bidimensionais("data/EMG.csv")
+(X_sig, y_sig) = carregar_dados_tridimensionais("data/DadosSigmoidais3d.csv")
 
 
-def resultado_regressao():
-    (EQM_MEDIA, EQM_OLS_C, EQM_OLS_S, EQM_OLS_T) = testar_eqm_modelos(
-        X_aerogerador, y_aerogerador
+def resultado_regressao_aerogerador():
+    (
+        EQM_MEDIA,
+        EQM_OLS_C,
+        EQM_OLS_S,
+        EQM_OLS_T,
+    ) = testar_eqm_modelos_regressao(X=X_aer, y=y_aer, ordem=2)
+    boxplot_eqm(
+        {
+            "Média": EQM_MEDIA,
+            "OLS com i": EQM_OLS_C,
+            "OLS sem i": EQM_OLS_S,
+            "OLS Tikhonov (Regularizado)": EQM_OLS_T,
+        }
     )
-    boxplot = [EQM_MEDIA, EQM_OLS_C, EQM_OLS_S, EQM_OLS_T]
-    plt.boxplot(
-        boxplot,
-        labels=["Média", "OLS com i", "OLS sem i", "OLS Tikhonov (Regularizado)"],
+
+
+def resultado_regressao_sigmoidais():
+    (
+        EQM_MEDIA,
+        EQM_OLS_C,
+        EQM_OLS_S,
+        EQM_OLS_T,
+    ) = testar_eqm_modelos_regressao(X=X_sig, y=y_sig, ordem=3)
+    boxplot_eqm(
+        {
+            "Média": EQM_MEDIA,
+            "OLS com i": EQM_OLS_C,
+            "OLS sem i": EQM_OLS_S,
+            "OLS Tikhonov (Regularizado)": EQM_OLS_T,
+        }
     )
-    plt.show()
 
 
-def resultado_classificacao():
-    pass
+def resultado_classificacao_emg():
+    (EQM_OLS_C, EQM_OLS_T) = testar_eqm_modelos_classificacao(X_EMG, y_EMG)
+    boxplot_eqm(
+        {
+            "OLS": EQM_OLS_C,
+            "OLS Tikhonov (Regularizado)": EQM_OLS_C,
+            "KNN": EQM_OLS_T,
+            "DMC": EQM_OLS_T,
+        }
+    )
 
 
-resultado_regressao()
-resultado_classificacao()
+# resultado_regressao_aerogerador()
+resultado_regressao_sigmoidais()
+# resultado_classificacao_emg()

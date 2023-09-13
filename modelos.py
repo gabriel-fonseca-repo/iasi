@@ -1,0 +1,56 @@
+import numpy as np
+from pyparsing import Any
+
+
+def mqo(X: np.ndarray[Any, np.dtype[Any]], y: np.ndarray[Any, np.dtype[Any]]):
+    X = concatenar_uns(X)
+    return np.linalg.inv(X.T @ X) @ X.T @ y
+
+
+def mqo_sem_intercept_bidimensional(
+    X: np.ndarray[Any, np.dtype[Any]], y: np.ndarray[Any, np.dtype[Any]]
+):
+    r = np.linalg.inv(X.T @ X) @ X.T @ y
+    zero = np.zeros((1, 1))
+    r = np.concatenate((zero, r), axis=1)
+    return r.T
+
+
+def mqo_sem_intercept_tridimensional(
+    X: np.ndarray[Any, np.dtype[Any]], y: np.ndarray[Any, np.dtype[Any]]
+):
+    r = np.linalg.inv(X.T @ X) @ X.T @ y
+    zero = np.zeros((1, 1))
+    r = np.concatenate((zero, r.T), axis=1)
+    return r.T
+
+
+def mqo_tikhonov(
+    X: np.ndarray[Any, np.dtype[Any]], y: np.ndarray[Any, np.dtype[Any]], lbd
+):
+    X = concatenar_uns(X)
+    return np.linalg.inv(X.T @ X + lbd * np.eye(X.shape[1])) @ X.T @ y
+
+
+def media_b(
+    y: np.ndarray[Any, np.dtype[Any]],
+):
+    b_media = np.mean(y)
+    b_media = np.array([[b_media], [0]])
+    return b_media
+
+
+def media_b_tridimensional(
+    y: np.ndarray[Any, np.dtype[Any]],
+):
+    b_media = np.mean(y)
+    b_media = np.array([[b_media], [0], [0]])
+    return b_media
+
+
+def eqm(y: np.ndarray[Any, np.dtype[Any]], modelo: np.ndarray[Any, np.dtype[Any]]):
+    return np.mean((y - modelo) ** 2)
+
+
+def concatenar_uns(X: np.ndarray[Any, np.dtype[Any]]):
+    return np.concatenate((np.ones((X.shape[0], 1)), X), axis=1)
