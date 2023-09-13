@@ -30,11 +30,10 @@ def definir_melhor_lambda(
     y: np.ndarray[Any, np.dtype[Any]],
     X_t: np.ndarray[Any, np.dtype[Any]],
     y_t: np.ndarray[Any, np.dtype[Any]],
-    lbd: list
+    lbd: list,
 ):
-    melhor_modelo = estimar_modelo_tikhonov(X, y, lbd[0])
-    melhor_lambda = lbd[0]
     X_t = concatenar_uns(X_t)
+    melhor_lambda = lbd[0]
     media_lambdas = []
     for x in lbd:
         media_lambdas_x = []
@@ -44,7 +43,7 @@ def definir_melhor_lambda(
             media_lambdas_x.append(eqm(y_pred, y_t))
         media_lambdas.append(np.mean(media_lambdas_x))
     melhor_lambda = np.argmin(media_lambdas)
-    return melhor_lambda
+    return lbd[melhor_lambda]
 
 
 def concatenar_uns(X: np.ndarray[Any, np.dtype[Any]]):
@@ -76,3 +75,41 @@ def media_b(
 
 def eqm(y: np.ndarray[Any, np.dtype[Any]], modelo: np.ndarray[Any, np.dtype[Any]]):
     return np.mean((y - modelo) ** 2)
+
+
+def testar_eqm_modelos(
+    X: np.ndarray[Any, np.dtype[Any]],
+    y: np.ndarray[Any, np.dtype[Any]],
+    lbds=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
+):
+    EQM_MEDIA = []
+    EQM_OLS_C = []
+    EQM_OLS_S = []
+    EQM_OLS_T = []
+    melhor_lambda = None
+    for i in range(1000):
+        (X_treino, y_treino, X_teste, y_teste, X_random, y_random) = processar_dados(
+            X, y
+        )
+
+        if not melhor_lambda:
+            melhor_lambda = definir_melhor_lambda(
+                X_treino, y_treino, X_teste, y_teste, lbds
+            )
+        b_media = media_b(y_treino)
+        b_hat_ols_c = estimar_modelo_ones(X_treino, y_treino)
+        b_hat_ols_s = estimar_modelo_zeros(X_treino, y_treino)
+        b_hat_ols_t = estimar_modelo_tikhonov(X_treino, y_treino, melhor_lambda)
+
+        X_teste = concatenar_uns(X_teste)
+
+        y_pred_media = X_teste @ b_media
+        y_pred_ols_c = X_teste @ b_hat_ols_c
+        y_pred_ols_s = X_teste @ b_hat_ols_s
+        y_pred_ols_t = X_teste @ b_hat_ols_t
+
+        EQM_MEDIA.append(eqm(y_teste, y_pred_media))
+        EQM_OLS_C.append(eqm(y_teste, y_pred_ols_c))
+        EQM_OLS_S.append(eqm(y_teste, y_pred_ols_s))
+        EQM_OLS_T.append(eqm(y_teste, y_pred_ols_t))
+    return (EQM_MEDIA, EQM_OLS_C, EQM_OLS_S, EQM_OLS_T)
