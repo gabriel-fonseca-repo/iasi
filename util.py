@@ -6,22 +6,34 @@ def estimar_modelo_ones(
     X: np.ndarray[Any, np.dtype[Any]], y: np.ndarray[Any, np.dtype[Any]]
 ):
     X = np.concatenate((np.ones((X.shape[0], 1)), X), axis=1)
-    return (np.linalg.inv(X.T @ X) @ X.T @ y, X)
+    return np.linalg.inv(X.T @ X) @ X.T @ y
 
 
 def estimar_modelo_zeros(
     X: np.ndarray[Any, np.dtype[Any]], y: np.ndarray[Any, np.dtype[Any]]
 ):
-    r = (np.linalg.inv(X.T @ X) @ X.T @ y, X)
+    r = np.linalg.inv(X.T @ X) @ X.T @ y
     zero = np.zeros((1, 1))
-    r = np.concatenate((zero, r), axis=0)
+    r = np.concatenate((zero, r), axis=1)
     return r
 
 
 def estimar_modelo_tikhonov(
     X: np.ndarray[Any, np.dtype[Any]], y: np.ndarray[Any, np.dtype[Any]], lbd
 ):
-    return (np.linalg.inv(X.T @ X + lbd * np.eye(X.shape[1])) @ X.T @ y, X)
+    return np.linalg.inv(X.T @ X + lbd * np.eye(X.shape[1])) @ X.T @ y
+
+
+def definir_melhor_lambda(
+    X: np.ndarray[Any, np.dtype[Any]], y: np.ndarray[Any, np.dtype[Any]], lbd: list
+):
+    melhor_modelo = estimar_modelo_tikhonov(X, y, lbd[0])
+    melhor_lambda = lbd[0]
+    for x in lbd:
+        modelo_da_vez = estimar_modelo_tikhonov(X, y, x)
+        if eqm(y, modelo_da_vez) < eqm(y, melhor_modelo):
+            melhor_lambda = x
+    return melhor_lambda
 
 
 def concatenar_uns(X: np.ndarray[Any, np.dtype[Any]]):

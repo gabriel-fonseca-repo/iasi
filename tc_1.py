@@ -6,6 +6,7 @@ from util import (
     estimar_modelo_ones,
     estimar_modelo_zeros,
     estimar_modelo_tikhonov,
+    definir_melhor_lambda,
     eqm,
     media_b,
 )
@@ -43,11 +44,10 @@ for i in range(1000):
     # Adicione um termo de viés (intercept) ao conjunto de dados
     # Calcular os coeficientes usando os Mínimos Quadrados Ordinários (MQO)
     b_media = media_b(y_treino)
-    (b_hat_ols_c, _) = estimar_modelo_ones(X_treino, y_treino)
-    (b_hat_ols_s, _) = estimar_modelo_zeros(X_treino, y_treino)
-    (b_hat_ols_t, _) = estimar_modelo_tikhonov(
-        X_treino,
-        y_treino,
+    b_hat_ols_c = estimar_modelo_ones(X_treino, y_treino)
+    b_hat_ols_s = estimar_modelo_zeros(X_treino, y_treino)
+    b_hat_ols_t = estimar_modelo_tikhonov(
+        X_treino, y_treino, definir_melhor_lambda(X_treino, y_treino, lbds)
     )
 
     # Passo 4: Fazer previsões
