@@ -59,8 +59,8 @@ def dmc(X: np.ndarray[Any, np.dtype[Any]], y: np.ndarray[Any, np.dtype[Any]]):
     pass
 
 
-def eqm(y: np.ndarray[Any, np.dtype[Any]], modelo: np.ndarray[Any, np.dtype[Any]]):
-    return np.mean((y - modelo) ** 2)
+def eqm(y: np.ndarray[Any, np.dtype[Any]], y_teste: np.ndarray[Any, np.dtype[Any]]):
+    return np.mean((y - y_teste) ** 2)
 
 
 def eqm_classificacao_ols(

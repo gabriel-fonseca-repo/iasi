@@ -9,30 +9,39 @@ def definir_melhor_lambda(
     y: np.ndarray[Any, np.dtype[Any]],
     X_t: np.ndarray[Any, np.dtype[Any]],
     y_t: np.ndarray[Any, np.dtype[Any]],
-    lbd: list,
+    lbds: list,
 ):
     X_t = concatenar_uns(X_t)
-    melhor_lambda = lbd[0]
+    melhor_lambda = lbds[0]
     media_lambdas = []
-    for x in lbd:
-        media_lambdas_x = []
-        for i in range(1000):
-            modelo_da_vez = mqo_tikhonov(X, y, x)
+    valores_lambdas = {x: list() for x in lbds}
+    for _ in range(1000):
+        (X_random, y_random) = embaralhar_dados(X, y)
+        for x, _ in valores_lambdas.items():
+            modelo_da_vez = mqo_tikhonov(X_random, y_random, x)
             y_pred = X_t @ modelo_da_vez
-            media_lambdas_x.append(eqm(y_pred, y_t))
-        media_lambdas.append(np.mean(media_lambdas_x))
+            valores_lambdas[x].append(eqm(y_pred, y_t))
+    for _, eqm_lbd in valores_lambdas.items():
+        media_lambdas.append(np.mean(eqm_lbd))
     melhor_lambda = np.argmin(media_lambdas)
-    return lbd[melhor_lambda]
+    return lbds[melhor_lambda]
+
+
+def embaralhar_dados(
+    X: np.ndarray[Any, np.dtype[Any]], y: np.ndarray[Any, np.dtype[Any]]
+):
+    seed = np.random.permutation(X.shape[0])
+    X_random = X[seed, :]
+    y_random = y[seed, :]
+    return (X_random, y_random)
 
 
 def processar_dados(
     X: np.ndarray[Any, np.dtype[Any]], y: np.ndarray[Any, np.dtype[Any]]
 ):
-    N, p = X.shape
+    N, _ = X.shape
 
-    seed = np.random.permutation(N)
-    X_random = X[seed, :]
-    y_random = y[seed, :]
+    (X_random, y_random) = embaralhar_dados(X, y)
     X_treino = X_random[0 : int(N * 0.8), :]
     y_treino = y_random[0 : int(N * 0.8), :]
     X_teste = X_random[int(N * 0.8) :, :]
@@ -83,7 +92,7 @@ def calcular_classes_preditoras(classes: List[str]):
     classes_preditoras = []
     qtd_classes = len(classes)
     for classe in classes:
-        preditor = [[-1 for i in range(qtd_classes)]]
+        preditor = [[-1 for _ in range(qtd_classes)]]
         preditor[0][classes.index(classe)] = 1
         classes_preditoras.append(np.tile(np.array(preditor), (1000, 1)))
     y = np.tile(np.concatenate(classes_preditoras), (10, 1))
