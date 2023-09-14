@@ -1,5 +1,5 @@
 import numpy as np
-from pyparsing import Any
+from typing import Any
 
 
 def mqo(X: np.ndarray[Any, np.dtype[Any]], y: np.ndarray[Any, np.dtype[Any]]):
@@ -49,6 +49,9 @@ def media_b_tridimensional(
 
 
 def knn(X: np.ndarray[Any, np.dtype[Any]], y: np.ndarray[Any, np.dtype[Any]]):
+    """
+    Implementação do K-NN (K nearest neighbours).
+    """
     pass
 
 

@@ -1,6 +1,5 @@
-from typing import List
+from typing import List, Any
 import numpy as np
-from pyparsing import Any
 
 from modelos import concatenar_uns, eqm, mqo_tikhonov
 
