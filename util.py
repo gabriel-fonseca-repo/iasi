@@ -1,3 +1,4 @@
+from typing import List
 import numpy as np
 from pyparsing import Any
 
@@ -40,7 +41,7 @@ def processar_dados(
     return (X_treino, y_treino, X_teste, y_teste, X_random, y_random)
 
 
-def carregar_dados_bidimensionais(arquivo: str, delimiter=","):
+def carregar_dados_aerogerador(arquivo: str, delimiter=","):
     dados = None
     if arquivo.endswith(".csv"):
         dados = np.genfromtxt(arquivo, delimiter=delimiter)
@@ -51,18 +52,23 @@ def carregar_dados_bidimensionais(arquivo: str, delimiter=","):
     return (X, y)
 
 
-def carregar_dados_bidimensionais(arquivo: str, delimiter=","):
+def carregar_dados_aerogerador(arquivo: str):
     dados = ler_arquivo_dados(arquivo)
     X = dados[:, 0:1]
     y = dados[:, 1].reshape(X.shape[0], 1)
     return (X, y)
 
 
-def carregar_dados_tridimensionais(arquivo: str, delimiter=","):
+def carregar_dados_sigmoidais(arquivo: str):
     dados = ler_arquivo_dados(arquivo)
     X = dados[:, 0:2]
     y = dados[:, 2].reshape(X.shape[0], 1)
     return (X, y)
+
+
+def carregar_dados_emg(arquivo: str):
+    dados = ler_arquivo_dados(arquivo)
+    return dados
 
 
 def ler_arquivo_dados(arquivo: str, delimiter=","):
@@ -72,3 +78,14 @@ def ler_arquivo_dados(arquivo: str, delimiter=","):
     else:
         dados = np.genfromtxt(arquivo)
     return dados
+
+
+def calcular_classes_preditoras(classes: List[str]):
+    classes_preditoras = []
+    qtd_classes = len(classes)
+    for classe in classes:
+        preditor = [[-1 for i in range(qtd_classes)]]
+        preditor[0][classes.index(classe)] = 1
+        classes_preditoras.append(np.tile(np.array(preditor), (1000, 1)))
+    y = np.tile(np.concatenate(classes_preditoras), (10, 1))
+    return y

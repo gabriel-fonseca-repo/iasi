@@ -1,19 +1,18 @@
-import numpy as np
-import matplotlib.pyplot as plt
 from processo import (
     boxplot_eqm,
     testar_eqm_modelos_classificacao,
     testar_eqm_modelos_regressao,
 )
 from util import (
-    carregar_dados_bidimensionais,
-    carregar_dados_tridimensionais,
+    carregar_dados_aerogerador,
+    carregar_dados_emg,
+    carregar_dados_sigmoidais,
 )
 
 
-(X_aer, y_aer) = carregar_dados_bidimensionais("data/aerogerador.dat")
-(X_EMG, y_EMG) = carregar_dados_bidimensionais("data/EMG.csv")
-(X_sig, y_sig) = carregar_dados_tridimensionais("data/DadosSigmoidais3d.csv")
+(X_aer, y_aer) = carregar_dados_aerogerador("data/aerogerador.dat")
+(X_sig, y_sig) = carregar_dados_sigmoidais("data/DadosSigmoidais3d.csv")
+X_EMG = carregar_dados_emg("data/EMG.csv")
 
 
 def resultado_regressao_aerogerador():
@@ -22,7 +21,7 @@ def resultado_regressao_aerogerador():
         EQM_OLS_C,
         EQM_OLS_S,
         EQM_OLS_T,
-    ) = testar_eqm_modelos_regressao(X=X_aer, y=y_aer, ordem=2)
+    ) = testar_eqm_modelos_regressao(X=X_aer, y=y_aer)
     boxplot_eqm(
         {
             "Média": EQM_MEDIA,
@@ -39,7 +38,7 @@ def resultado_regressao_sigmoidais():
         EQM_OLS_C,
         EQM_OLS_S,
         EQM_OLS_T,
-    ) = testar_eqm_modelos_regressao(X=X_sig, y=y_sig, ordem=3)
+    ) = testar_eqm_modelos_regressao(X=X_sig, y=y_sig)
     boxplot_eqm(
         {
             "Média": EQM_MEDIA,
@@ -51,17 +50,20 @@ def resultado_regressao_sigmoidais():
 
 
 def resultado_classificacao_emg():
-    (EQM_OLS_C, EQM_OLS_T) = testar_eqm_modelos_classificacao(X_EMG, y_EMG)
+    (EQM_OLS_C, EQM_OLS_T, EQM_OLS_K, EQM_OLS_D) = testar_eqm_modelos_classificacao(
+        X_EMG,
+        classes=["Neutro", "Sorrindo", "Aberto", "Surpreso", "Rabugento"],
+    )
     boxplot_eqm(
         {
             "OLS": EQM_OLS_C,
-            "OLS Tikhonov (Regularizado)": EQM_OLS_C,
-            "KNN": EQM_OLS_T,
-            "DMC": EQM_OLS_T,
+            "OLS Tikhonov (Regularizado)": EQM_OLS_T,
+            "KNN": EQM_OLS_K,
+            "DMC": EQM_OLS_D,
         }
     )
 
 
 # resultado_regressao_aerogerador()
-resultado_regressao_sigmoidais()
-# resultado_classificacao_emg()
+# resultado_regressao_sigmoidais()
+resultado_classificacao_emg()

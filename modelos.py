@@ -48,8 +48,26 @@ def media_b_tridimensional(
     return b_media
 
 
+def knn(X: np.ndarray[Any, np.dtype[Any]], y: np.ndarray[Any, np.dtype[Any]]):
+    pass
+
+
+def dmc(X: np.ndarray[Any, np.dtype[Any]], y: np.ndarray[Any, np.dtype[Any]]):
+    pass
+
+
 def eqm(y: np.ndarray[Any, np.dtype[Any]], modelo: np.ndarray[Any, np.dtype[Any]]):
     return np.mean((y - modelo) ** 2)
+
+
+def eqm_classificacao_ols(
+    y_teste: np.ndarray[Any, np.dtype[Any]], y: np.ndarray[Any, np.dtype[Any]]
+):
+    disc_teste = np.argmax(y_teste, axis=1)
+    disc_hat = np.argmax(y, axis=1)
+    teste_size = disc_hat.shape[0]
+    count_acertos_c = np.count_nonzero(disc_teste == disc_hat) / teste_size
+    return count_acertos_c
 
 
 def concatenar_uns(X: np.ndarray[Any, np.dtype[Any]]):

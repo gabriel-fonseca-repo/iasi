@@ -1,7 +1,10 @@
 from matplotlib import pyplot as plt
 import numpy as np
-from pyparsing import Any
+from typing import Any, List
 from modelos import (
+    dmc,
+    eqm_classificacao_ols,
+    knn,
     mqo,
     mqo_sem_intercept_bidimensional,
     mqo_sem_intercept_tridimensional,
@@ -10,18 +13,26 @@ from modelos import (
     media_b_tridimensional,
     eqm,
 )
-from util import concatenar_uns, definir_melhor_lambda, processar_dados
+from util import (
+    calcular_classes_preditoras,
+    concatenar_uns,
+    definir_melhor_lambda,
+    processar_dados,
+)
 
 
 def testar_eqm_modelos_regressao(
-    X: np.ndarray[Any, np.dtype[Any]], y: np.ndarray[Any, np.dtype[Any]], ordem: int
+    X: np.ndarray[Any, np.dtype[Any]], y: np.ndarray[Any, np.dtype[Any]]
 ):
-    if ordem == 2:
+    p = X.shape[1]
+    if p == 1:
         return testar_eqm_modelos_regressao_bidimensional(X, y)
-    elif ordem == 3:
+    elif p == 2:
         return testar_eqm_modelos_regressao_tridimensional(X, y)
     else:
-        return None
+        raise Exception(
+            f"Impossível discernir um cálculo para a ordem da matriz X: {X.shape}."
+        )
 
 
 def testar_eqm_modelos_regressao_bidimensional(
@@ -98,12 +109,17 @@ def testar_eqm_modelos_regressao_tridimensional(
 
 def testar_eqm_modelos_classificacao(
     X: np.ndarray[Any, np.dtype[Any]],
-    y: np.ndarray[Any, np.dtype[Any]],
+    classes: List[str],
     lbds=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
 ):
     EQM_OLS_C = []
     EQM_OLS_T = []
+    EQM_OLS_K = []
+    EQM_OLS_D = []
     melhor_lambda = None
+
+    y = calcular_classes_preditoras(classes)
+
     for _ in range(1000):
         (X_treino, y_treino, X_teste, y_teste, _, _) = processar_dados(X, y)
 
@@ -113,15 +129,17 @@ def testar_eqm_modelos_classificacao(
             )
         b_hat_ols_c = mqo(X_treino, y_treino)
         b_hat_ols_t = mqo_tikhonov(X_treino, y_treino, melhor_lambda)
+        b_hat_ols_k = knn(X_treino, y_treino)
+        b_hat_ols_d = dmc(X_treino, y_treino)
 
         X_teste = concatenar_uns(X_teste)
 
         y_pred_ols_c = X_teste @ b_hat_ols_c
         y_pred_ols_t = X_teste @ b_hat_ols_t
 
-        EQM_OLS_C.append(eqm(y_teste, y_pred_ols_c))
-        EQM_OLS_T.append(eqm(y_teste, y_pred_ols_t))
-    return (EQM_OLS_C, EQM_OLS_T)
+        EQM_OLS_C.append(eqm_classificacao_ols(y_teste, y_pred_ols_c))
+        EQM_OLS_T.append(eqm_classificacao_ols(y_teste, y_pred_ols_t))
+    return (EQM_OLS_C, EQM_OLS_T, EQM_OLS_K, EQM_OLS_D)
 
 
 def boxplot_eqm(input: dict):
