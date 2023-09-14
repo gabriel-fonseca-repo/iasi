@@ -13,10 +13,10 @@ y = Data[:, 2].reshape(N, 1)
 
 
 # VISUALIZAÇÃO DOS DADOS:
-# fig = plt.figure()
-# ax = fig.add_subplot(projection="3d")
-# ax.scatter(X[:, 0], y[:, 0], color="orange", edgecolors="k")
-# plt.show()
+fig = plt.figure()
+ax = fig.add_subplot(projection="3d")
+ax.scatter(X[:, 0], y[:, 0], color="orange", edgecolors="k")
+plt.show()
 
 
 # PRÉ-PROCESSAMENTO?

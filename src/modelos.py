@@ -48,11 +48,15 @@ def media_b_tridimensional(
     return b_media
 
 
-def knn(X: np.ndarray[Any, np.dtype[Any]], y: np.ndarray[Any, np.dtype[Any]]):
-    """
-    Implementação do K-NN (K nearest neighbours).
-    """
-    pass
+def knn(X: np.ndarray[Any, np.dtype[Any]], X_t: np.ndarray[Any, np.dtype[Any]], k=7):
+    DISTANCIAS = []
+    for i in range(X_t.shape[0]):
+        X_i = X_t[i, :]
+        for j in range(X.shape[0]):
+            X_j = X[j, :]
+            DISTANCIAS.append(np.linalg.norm(X_i - X_j))
+        k_menores_indices = np.argsort(DISTANCIAS)[:k]
+        print()
 
 
 def dmc(X: np.ndarray[Any, np.dtype[Any]], y: np.ndarray[Any, np.dtype[Any]]):

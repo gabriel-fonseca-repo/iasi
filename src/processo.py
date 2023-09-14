@@ -124,11 +124,11 @@ def testar_eqm_modelos_classificacao(
         (X_treino, y_treino, X_teste, y_teste, _, _) = processar_dados(X, y)
 
         if not melhor_lambda:
-            melhor_lambda = definir_melhor_lambda(
+            melhor_lambda = 1 or definir_melhor_lambda(
                 X_treino, y_treino, X_teste, y_teste, lbds
             )
-        b_hat_ols_c = mqo(X_treino, y_treino)
-        b_hat_ols_t = mqo_tikhonov(X_treino, y_treino, melhor_lambda)
+        b_hat_ols_c = 1 or mqo(X_treino, y_treino)
+        b_hat_ols_t = 1 or mqo_tikhonov(X_treino, y_treino, melhor_lambda)
         b_hat_ols_k = knn(X_treino, y_treino)
         b_hat_ols_d = dmc(X_treino, y_treino)
 
@@ -136,6 +136,8 @@ def testar_eqm_modelos_classificacao(
 
         y_pred_ols_c = X_teste @ b_hat_ols_c
         y_pred_ols_t = X_teste @ b_hat_ols_t
+
+        # TODO: Implementar cálculo da taxa de acerto do KNN e do DMC
 
         EQM_OLS_C.append(eqm_classificacao_ols(y_teste, y_pred_ols_c))
         EQM_OLS_T.append(eqm_classificacao_ols(y_teste, y_pred_ols_t))
@@ -147,4 +149,35 @@ def boxplot_eqm(input: dict):
         input.values(),
         labels=input.keys(),
     )
+    plt.show()
+
+
+def visualizar_dados_aerogerador(
+    X: np.ndarray[Any, np.dtype[Any]], y: np.ndarray[Any, np.dtype[Any]]
+):
+    plt.scatter(X, y, color="blue", edgecolors="black")
+    plt.show()
+
+
+def visualizar_dados_emg(X: np.ndarray[Any, np.dtype[Any]]):
+    colors = ["red", "green", "purple", "blue", "gray"]
+    k = 0
+    for _ in range(10):
+        for color in colors:
+            plt.scatter(
+                X[k : k + 1000, 0],
+                X[k : k + 1000, 1],
+                color=color,
+                edgecolors="k",
+            )
+            k += 1000
+    plt.show()
+
+
+def visualizar_dados_sigmoidais(
+    X: np.ndarray[Any, np.dtype[Any]], y: np.ndarray[Any, np.dtype[Any]]
+):
+    fig = plt.figure()
+    ax = fig.add_subplot(projection="3d")
+    ax.scatter(X[:, 0], y[:, 0], color="orange", edgecolors="k")
     plt.show()
