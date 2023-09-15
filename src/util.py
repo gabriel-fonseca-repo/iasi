@@ -1,7 +1,7 @@
 from typing import List, Any
 import numpy as np
 
-from modelos import concatenar_uns, eqm, mqo_tikhonov
+from modelos import computar_vetores_classificacao, concatenar_uns, eqm, mqo_tikhonov
 
 
 def definir_melhor_lambda(
@@ -90,10 +90,8 @@ def ler_arquivo_dados(arquivo: str, delimiter=","):
 
 def calcular_classes_preditoras(classes: List[str]):
     classes_preditoras = []
-    qtd_classes = len(classes)
-    for classe in classes:
-        preditor = [[-1 for _ in range(qtd_classes)]]
-        preditor[0][classes.index(classe)] = 1
-        classes_preditoras.append(np.tile(np.array(preditor), (1000, 1)))
+    vetores_classificacao = computar_vetores_classificacao(classes)
+    for vetor in vetores_classificacao:
+        classes_preditoras.append(np.tile(vetor, (1000, 1)))
     y = np.tile(np.concatenate(classes_preditoras), (10, 1))
     return y

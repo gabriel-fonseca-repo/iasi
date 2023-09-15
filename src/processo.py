@@ -124,12 +124,12 @@ def testar_eqm_modelos_classificacao(
         (X_treino, y_treino, X_teste, y_teste, _, _) = processar_dados(X, y)
 
         if not melhor_lambda:
-            melhor_lambda = 1 or definir_melhor_lambda(
+            melhor_lambda = definir_melhor_lambda(
                 X_treino, y_treino, X_teste, y_teste, lbds
             )
-        b_hat_ols_c = 1 or mqo(X_treino, y_treino)
-        b_hat_ols_t = 1 or mqo_tikhonov(X_treino, y_treino, melhor_lambda)
-        # b_hat_ols_k = knn(X_treino, y_treino, X_teste, y_teste, classes)
+        b_hat_ols_c = mqo(X_treino, y_treino)
+        b_hat_ols_t = mqo_tikhonov(X_treino, y_treino, melhor_lambda)
+        b_hat_ols_k = knn(X_treino, y_treino, X_teste, y_teste, classes)
         b_hat_ols_d = dmc(X_treino, y_treino, X_teste, y_teste, classes)
 
         X_teste = concatenar_uns(X_teste)

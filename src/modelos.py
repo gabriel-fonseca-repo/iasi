@@ -83,14 +83,7 @@ def dmc(
     y_teste: np.ndarray[Any, np.dtype[Any]],
     classes: List[str],
 ):
-    mNeutro = np.mean(
-        X_treino[
-            np.count_nonzero(y_treino[:, :] == np.array([1, -1, -1, -1, -1]), axis=1)
-            == 5,
-            :,
-        ],
-        axis=0,
-    )
+    mcs = computar_pontos_medios(X_treino, y_treino, classes)
 
     for j in range(X_teste.shape[0]):
         X_i = X_teste[j, :]  # iésima amostra de teste
@@ -112,3 +105,35 @@ def eqm_classificacao_ols(
 
 def concatenar_uns(X: np.ndarray[Any, np.dtype[Any]]):
     return np.concatenate((np.ones((X.shape[0], 1)), X), axis=1)
+
+
+def computar_pontos_medios(
+    X_treino: np.ndarray[Any, np.dtype[Any]],
+    y_treino: np.ndarray[Any, np.dtype[Any]],
+    classes: List[str],
+):
+    qtd_classes = len(classes)
+    classes_preditoras = computar_vetores_classificacao(classes)
+    pontos_medios = []
+    for classe_preditora in classes_preditoras:
+        pontos_medios.append(
+            np.mean(
+                X_treino[
+                    np.count_nonzero(y_treino[:, :] == classe_preditora, axis=1)
+                    == qtd_classes,
+                    :,
+                ],
+                axis=0,
+            )
+        )
+    return pontos_medios
+
+
+def computar_vetores_classificacao(classes: List[str]):
+    vetores_classificacao = []
+    qtd_classes = len(classes)
+    for classe in classes:
+        vetor_preditor = [[-1 for _ in range(qtd_classes)]]
+        vetor_preditor[0][classes.index(classe)] = 1
+        vetores_classificacao.append(vetor_preditor)
+    return vetores_classificacao
