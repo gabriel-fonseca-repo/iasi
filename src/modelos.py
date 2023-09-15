@@ -1,5 +1,5 @@
 import numpy as np
-from typing import Any
+from typing import Any, List
 
 
 def mqo(X: np.ndarray[Any, np.dtype[Any]], y: np.ndarray[Any, np.dtype[Any]]):
@@ -48,19 +48,52 @@ def media_b_tridimensional(
     return b_media
 
 
-def knn(X: np.ndarray[Any, np.dtype[Any]], X_t: np.ndarray[Any, np.dtype[Any]], k=7):
-    DISTANCIAS = []
-    for i in range(X_t.shape[0]):
-        X_i = X_t[i, :]
-        for j in range(X.shape[0]):
-            X_j = X[j, :]
-            DISTANCIAS.append(np.linalg.norm(X_i - X_j))
-        k_menores_indices = np.argsort(DISTANCIAS)[:k]
-        print()
+def knn(
+    X_treino: np.ndarray[Any, np.dtype[Any]],
+    y_treino: np.ndarray[Any, np.dtype[Any]],
+    X_teste: np.ndarray[Any, np.dtype[Any]],
+    y_teste: np.ndarray[Any, np.dtype[Any]],
+    classes: List[str],
+    k=7,
+):
+    contador_acertos = 0
+    for i in range(X_teste.shape[0]):
+        X_i = X_teste[i, :]
+        dists = []
+        for j in range(X_treino.shape[0]):
+            X_j = X_treino[j, :]
+            dists.append(np.linalg.norm(X_i - X_j))
+        k_menores_indices = np.argsort(dists)[0:k]
+        k_menores_vizinhos = y_treino[k_menores_indices, :]
+        rotulo_da_vez = np.argmax(k_menores_vizinhos, axis=1)
+        contador_rotulos = np.argmax(
+            [np.sum(rotulo_da_vez[:] == z) / k for z in range(len(classes))]
+        )
+        rotulo_real = np.argmax(y_teste[i, :])
+        if contador_rotulos == rotulo_real:
+            contador_acertos += 1
+    acuracia = contador_acertos / X_teste.shape[0]
+    bp = 1
 
 
-def dmc(X: np.ndarray[Any, np.dtype[Any]], y: np.ndarray[Any, np.dtype[Any]]):
-    pass
+def dmc(
+    X_treino: np.ndarray[Any, np.dtype[Any]],
+    y_treino: np.ndarray[Any, np.dtype[Any]],
+    X_teste: np.ndarray[Any, np.dtype[Any]],
+    y_teste: np.ndarray[Any, np.dtype[Any]],
+    classes: List[str],
+):
+    mNeutro = np.mean(
+        X_treino[
+            np.count_nonzero(y_treino[:, :] == np.array([1, -1, -1, -1, -1]), axis=1)
+            == 5,
+            :,
+        ],
+        axis=0,
+    )
+
+    for j in range(X_teste.shape[0]):
+        X_i = X_teste[j, :]  # iésima amostra de teste
 
 
 def eqm(y: np.ndarray[Any, np.dtype[Any]], y_teste: np.ndarray[Any, np.dtype[Any]]):

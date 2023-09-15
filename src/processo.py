@@ -129,8 +129,8 @@ def testar_eqm_modelos_classificacao(
             )
         b_hat_ols_c = 1 or mqo(X_treino, y_treino)
         b_hat_ols_t = 1 or mqo_tikhonov(X_treino, y_treino, melhor_lambda)
-        b_hat_ols_k = knn(X_treino, y_treino)
-        b_hat_ols_d = dmc(X_treino, y_treino)
+        # b_hat_ols_k = knn(X_treino, y_treino, X_teste, y_teste, classes)
+        b_hat_ols_d = dmc(X_treino, y_treino, X_teste, y_teste, classes)
 
         X_teste = concatenar_uns(X_teste)
 

@@ -30,9 +30,9 @@ from util import (
 (X_sig, y_sig) = carregar_dados_sigmoidais("data/DadosSigmoidais3d.csv")
 X_EMG = carregar_dados_emg("data/EMG.csv")
 
-visualizar_dados_aerogerador(X_aer, y_aer)
-visualizar_dados_sigmoidais(X_sig, y_sig)
-visualizar_dados_emg(X_EMG)
+# visualizar_dados_aerogerador(X_aer, y_aer)
+# visualizar_dados_sigmoidais(X_sig, y_sig)
+# visualizar_dados_emg(X_EMG)
 
 
 def resultado_regressao_aerogerador():
@@ -84,6 +84,6 @@ def resultado_classificacao_emg():
     )
 
 
-resultado_regressao_aerogerador()
-resultado_regressao_sigmoidais()
+# resultado_regressao_aerogerador()
+# resultado_regressao_sigmoidais()
 resultado_classificacao_emg()
