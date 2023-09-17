@@ -68,6 +68,7 @@ def testar_eqm_modelos_regressao_bidimensional(
         EQM_MEDIA.append(eqm(y_teste, y_pred_media))
         EQM_OLS_C.append(eqm(y_teste, y_pred_ols_c))
         EQM_OLS_T.append(eqm(y_teste, y_pred_ols_t))
+
     return (EQM_MEDIA, EQM_OLS_C, EQM_OLS_T)
 
 
@@ -174,15 +175,6 @@ def visualizar_dados_emg(X: np.ndarray[Any, np.dtype[Any]]):
     plt.show()
 
 
-def visualizar_dados_sigmoidais(
-    X: np.ndarray[Any, np.dtype[Any]], y: np.ndarray[Any, np.dtype[Any]]
-):
-    fig = plt.figure()
-    ax = fig.add_subplot(projection="3d")
-    ax.scatter(X[:, 0], y[:, 0], color="orange", edgecolors="k")
-    plt.show()
-
-
 def estatisticas_modelos_reg(EQM_MEDIA, EQM_OLS_C, EQM_OLS_T):
     stats = {
         "Modelo": ["Médias Observáveis", "OLS Tradicional", "Tikhonov"],
@@ -216,6 +208,39 @@ def estatisticas_modelos_reg(EQM_MEDIA, EQM_OLS_C, EQM_OLS_T):
     plt.ylabel("Média de EQM")
     plt.title("Estatísticas de performance por Modelo")
     plt.savefig("out/Estatisticas_ols.png")
+
+
+def visualizar_dados_sigmoidais(
+    X: np.ndarray[Any, np.dtype[Any]], y: np.ndarray[Any, np.dtype[Any]]
+):
+    fig = plt.figure()
+    ax = fig.add_subplot(projection="3d")
+    ax.scatter(X[:, 0], y[:, 0], color="orange", edgecolors="k")
+    plt.show()
+
+
+def plotar_grafico_tridimensional(
+    X_treino, y_treino, y_pred_ols_c, b_hat_ols_c, X_teste, y_teste
+):
+    fig = plt.figure()
+    ax = fig.add_subplot(projection="3d")
+
+    ax.scatter(X_treino[:, 0], y_treino[:, 0], color="orange", edgecolors="k")
+
+    x_axis = np.linspace(0, 40, 500)
+    y_axis = np.linspace(0, 750, 500)
+
+    X_map, Y_map = np.meshgrid(x_axis, y_axis)
+    X_map.shape = (500, 500, 1)
+    Y_map.shape = (500, 500, 1)
+    ones_map = np.ones((500, 500, 1))
+    X3D = np.concatenate((ones_map, X_map, Y_map), axis=2)
+    Z_ols_c = X3D @ b_hat_ols_c
+
+    ax.plot_surface(
+        X_map[:, :, 0], Y_map[:, :, 0], Z_ols_c[:, :, 0], cmap="jet", alpha=0.5
+    )
+    plt.show()
 
 
 def estatisticas_modelos_classificacao(
