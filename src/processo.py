@@ -101,6 +101,7 @@ def testar_eqm_modelos_regressao_tridimensional(
         EQM_MEDIA.append(eqm(y_teste, y_pred_media))
         EQM_OLS_C.append(eqm(y_teste, y_pred_ols_c))
         EQM_OLS_T.append(eqm(y_teste, y_pred_ols_t))
+    # plotar_grafico_tridimensional(X_treino, y_treino, b_hat_ols_c)
     return (EQM_MEDIA, EQM_OLS_C, EQM_OLS_T)
 
 
@@ -219,14 +220,15 @@ def visualizar_dados_sigmoidais(
     plt.show()
 
 
-def plotar_grafico_tridimensional(
-    X_treino, y_treino, y_pred_ols_c, b_hat_ols_c, X_teste, y_teste
-):
+def plotar_grafico_tridimensional(X_treino, y_treino, b_hat_ols_c):
     fig = plt.figure()
     ax = fig.add_subplot(projection="3d")
-
-    ax.scatter(X_treino[:, 0], y_treino[:, 0], color="orange", edgecolors="k")
-
+    ax.scatter(
+        X_treino[:, 1],
+        y_treino[:, 0],
+        color="purple",
+        edgecolors="k",
+    )
     x_axis = np.linspace(0, 40, 500)
     y_axis = np.linspace(0, 750, 500)
 
@@ -235,10 +237,10 @@ def plotar_grafico_tridimensional(
     Y_map.shape = (500, 500, 1)
     ones_map = np.ones((500, 500, 1))
     X3D = np.concatenate((ones_map, X_map, Y_map), axis=2)
-    Z_ols_c = X3D @ b_hat_ols_c
+    Z_media = X3D @ b_hat_ols_c
 
     ax.plot_surface(
-        X_map[:, :, 0], Y_map[:, :, 0], Z_ols_c[:, :, 0], cmap="jet", alpha=0.5
+        X_map[:, :, 0], Y_map[:, :, 0], Z_media[:, :, 0], cmap="gray", alpha=0.5
     )
     plt.show()
 

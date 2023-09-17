@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-plotarGraficos = False
+plotarGraficos = True
 
 # COLETA DE DADOS:
 Data = np.loadtxt("data/Solubilidade2.csv", delimiter=",")
