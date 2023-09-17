@@ -1,6 +1,10 @@
 import sys
 import numpy as np
 from typing import Any, List
+from datetime import datetime
+
+# convert time string to datetime
+inicio = datetime.now()
 
 
 def mqo(X: np.ndarray[Any, np.dtype[Any]], y: np.ndarray[Any, np.dtype[Any]]):
@@ -106,7 +110,12 @@ def dmc(
 
 
 def printar_progresso(valor):
-    print(f"\rProgresso de classificação com o KNN: {valor:.2%}", end="")
+    agora = datetime.now()
+    delta = agora - inicio
+    print(
+        f"\rProgresso de classificação: {valor:.2%}. Tempo decorrido: {int(delta.total_seconds())} segundos.",
+        end="",
+    )
 
 
 def ta_dmc(
@@ -126,9 +135,7 @@ def eqm(y: np.ndarray[Any, np.dtype[Any]], y_teste: np.ndarray[Any, np.dtype[Any
     return np.mean((y_teste - y) ** 2)
 
 
-def eqm_classificacao_ols(
-    y_teste: np.ndarray[Any, np.dtype[Any]], y: np.ndarray[Any, np.dtype[Any]]
-):
+def ta_ols(y_teste: np.ndarray[Any, np.dtype[Any]], y: np.ndarray[Any, np.dtype[Any]]):
     disc_teste = np.argmax(y_teste, axis=1)
     disc_hat = np.argmax(y, axis=1)
     teste_size = disc_hat.shape[0]
