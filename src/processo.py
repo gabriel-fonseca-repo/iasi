@@ -1,5 +1,6 @@
 from matplotlib import pyplot as plt
 import numpy as np
+import pandas as pd
 from typing import Any, List
 from modelos import (
     dmc,
@@ -12,12 +13,16 @@ from modelos import (
     media_b,
     media_b_tridimensional,
     eqm,
+    printar_progresso,
+    ta_dmc,
+    ta_knn,
 )
 from util import (
     calcular_classes_preditoras,
     concatenar_uns,
     definir_melhor_lambda,
     processar_dados,
+    separar_classes,
 )
 
 
@@ -48,7 +53,7 @@ def testar_eqm_modelos_regressao_bidimensional(
     for _ in range(1000):
         (X_treino, y_treino, X_teste, y_teste, _, _) = processar_dados(X, y)
 
-        if not melhor_lambda:
+        if melhor_lambda is None:
             melhor_lambda = definir_melhor_lambda(
                 X_treino, y_treino, X_teste, y_teste, lbds
             )
@@ -114,34 +119,37 @@ def testar_eqm_modelos_classificacao(
 ):
     EQM_OLS_C = []
     EQM_OLS_T = []
-    EQM_OLS_K = []
-    EQM_OLS_D = []
+    TAXA_ACERTO_KNN = []
+    TAXA_ACERTO_DMC = []
     melhor_lambda = None
 
     y = calcular_classes_preditoras(classes)
 
-    for _ in range(1000):
+    qtd_rodadas = 100
+
+    for rodada in range(qtd_rodadas):
         (X_treino, y_treino, X_teste, y_teste, _, _) = processar_dados(X, y)
+        (X_treino_sc, X_teste_sc) = separar_classes(X_treino, X_teste)
 
-        if not melhor_lambda:
-            melhor_lambda = definir_melhor_lambda(
-                X_treino, y_treino, X_teste, y_teste, lbds
-            )
-        b_hat_ols_c = mqo(X_treino, y_treino)
-        b_hat_ols_t = mqo_tikhonov(X_treino, y_treino, melhor_lambda)
-        b_hat_ols_k = knn(X_treino, y_treino, X_teste, y_teste, classes)
-        b_hat_ols_d = dmc(X_treino, y_treino, X_teste, y_teste, classes)
+        melhor_lambda = melhor_lambda or definir_melhor_lambda(
+            X_treino_sc, y_treino, X_teste_sc, y_teste, lbds
+        )
+        b_hat_ols_c = mqo(X_treino_sc, y_treino)
+        b_hat_ols_t = mqo_tikhonov(X_treino_sc, y_treino, melhor_lambda)
 
+        predicoes_knn = knn(X_treino_sc, y_treino, X_teste_sc, y_teste, classes)
+        predicoes_dmc = dmc(X_treino, y_treino, classes)
         X_teste = concatenar_uns(X_teste)
 
         y_pred_ols_c = X_teste @ b_hat_ols_c
         y_pred_ols_t = X_teste @ b_hat_ols_t
 
-        # TODO: Implementar cálculo da taxa de acerto do KNN e do DMC
-
-        EQM_OLS_C.append(eqm_classificacao_ols(y_teste, y_pred_ols_c))
-        EQM_OLS_T.append(eqm_classificacao_ols(y_teste, y_pred_ols_t))
-    return (EQM_OLS_C, EQM_OLS_T, EQM_OLS_K, EQM_OLS_D)
+        EQM_OLS_C.append(eqm_classificacao_ols(y_teste, y_pred_ols_c) * 100)
+        EQM_OLS_T.append(eqm_classificacao_ols(y_teste, y_pred_ols_t) * 100)
+        TAXA_ACERTO_KNN.append(ta_knn(predicoes_knn, X_teste.shape[0]) * 100)
+        TAXA_ACERTO_DMC.append(ta_dmc(X_treino, predicoes_dmc) * 100)
+        printar_progresso(rodada / qtd_rodadas)
+    return (EQM_OLS_C, EQM_OLS_T, TAXA_ACERTO_KNN, TAXA_ACERTO_DMC)
 
 
 def boxplot_eqm(input: dict):
@@ -180,4 +188,81 @@ def visualizar_dados_sigmoidais(
     fig = plt.figure()
     ax = fig.add_subplot(projection="3d")
     ax.scatter(X[:, 0], y[:, 0], color="orange", edgecolors="k")
+    plt.show()
+
+
+def estatisticas_modelos_reg(EQM_MEDIA, EQM_OLS_C, EQM_OLS_T):
+    stats = {
+        "Modelo": ["Médias Observáveis", "OLS Tradicional", "Tikhonov"],
+        "Média": [
+            np.mean(EQM_MEDIA),
+            np.mean(EQM_OLS_C),
+            np.mean(EQM_OLS_T),
+        ],
+        "Desvio Padrão": [
+            np.std(EQM_MEDIA),
+            np.std(EQM_OLS_C),
+            np.std(EQM_OLS_T),
+        ],
+        "Máximo": [
+            np.max(EQM_MEDIA),
+            np.max(EQM_OLS_C),
+            np.max(EQM_OLS_T),
+        ],
+        "Mínimo": [
+            np.min(EQM_MEDIA),
+            np.min(EQM_OLS_C),
+            np.min(EQM_OLS_T),
+        ],
+    }
+
+    df = pd.DataFrame(stats)
+    plt.figure(figsize=(10, 6))
+    plt.bar(df["Modelo"], df["Média"], yerr=df["Desvio Padrão"])
+    plt.xlabel("Modelo")
+    plt.ylabel("Média de EQM")
+    plt.title("Estatísticas de performance por Modelo")
+    plt.show()
+
+
+def estatisticas_modelos_classificacao(
+    EQM_OLS_C,
+    EQM_OLS_T,
+    TAXA_ACERTO_KNN,
+    TAXA_ACERTO_DMC,
+):
+    stats = {
+        "Modelo": ["OLS Tradicional", "OLS Tikhonov (Regularizado)", "K-NN", "DMC"],
+        "Média": [
+            np.mean(EQM_OLS_C),
+            np.mean(EQM_OLS_T),
+            np.mean(TAXA_ACERTO_KNN),
+            np.mean(TAXA_ACERTO_DMC),
+        ],
+        "Desvio Padrão": [
+            np.std(EQM_OLS_C),
+            np.std(EQM_OLS_T),
+            np.std(TAXA_ACERTO_KNN),
+            np.std(TAXA_ACERTO_DMC),
+        ],
+        "Máximo": [
+            np.max(EQM_OLS_C),
+            np.max(EQM_OLS_T),
+            np.max(TAXA_ACERTO_KNN),
+            np.max(TAXA_ACERTO_DMC),
+        ],
+        "Mínimo": [
+            np.min(EQM_OLS_C),
+            np.min(EQM_OLS_T),
+            np.min(TAXA_ACERTO_KNN),
+            np.min(TAXA_ACERTO_DMC),
+        ],
+    }
+
+    df = pd.DataFrame(stats)
+    plt.figure(figsize=(10, 6))
+    plt.bar(df["Modelo"], df["Média"], yerr=df["Desvio Padrão"])
+    plt.xlabel("Modelo")
+    plt.ylabel("Média de EQM/TA")
+    plt.title("Estatísticas de performance por Modelo")
     plt.show()

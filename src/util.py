@@ -1,3 +1,5 @@
+import random as rd
+
 from typing import List, Any
 import numpy as np
 
@@ -49,6 +51,16 @@ def processar_dados(
     return (X_treino, y_treino, X_teste, y_teste, X_random, y_random)
 
 
+def separar_classes(
+    X: np.ndarray[Any, np.dtype[Any]],
+    X_t: np.ndarray[Any, np.dtype[Any]],
+):
+    N, _ = X.shape
+    X_treino_s = X[:, : N - 1]
+    X_teste_s = X_t[:, : N - 1]
+    return (X_treino_s, X_teste_s)
+
+
 def carregar_dados_aerogerador(arquivo: str, delimiter=","):
     dados = None
     if arquivo.endswith(".csv"):
@@ -95,3 +107,10 @@ def calcular_classes_preditoras(classes: List[str]):
         classes_preditoras.append(np.tile(vetor, (1000, 1)))
     y = np.tile(np.concatenate(classes_preditoras), (10, 1))
     return y
+
+
+def gerar_cor():
+    color = rd.randrange(0, 2**24)
+    hex_color = hex(color)
+    std_color = "#" + hex_color[2:]
+    return std_color

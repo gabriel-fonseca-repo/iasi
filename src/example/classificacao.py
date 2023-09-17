@@ -1,20 +1,20 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+import os
+
+os.system("clear")
 
 Data = np.loadtxt("data/EMG.csv", delimiter=",")
 N, p = Data.shape
-colors = ["red", "green", "purple", "blue", "gray"]
-k = 0
-for i in range(10):
-    for j in range(5):
-        plt.scatter(
-            Data[k : k + 1000, 0],
-            Data[k : k + 1000, 1],
-            color=colors[j],
-            edgecolors="k",
-        )
-        k += 1000
+
+classes = ["Neutro", "Sorrindo", "Aberto", "Surpreso", "Rabugento"]
+with open("data/EMG.csv", "w") as arquivo:
+    for i in range(10):
+        for classe in classes:
+            for linha in range(1000):
+                arquivo.write("," + classe + "\n")
+
 
 neutro = np.tile(np.array([[1, -1, -1, -1, -1]]), (1000, 1))
 sorrindo = np.tile(np.array([[-1, 1, -1, -1, -1]]), (1000, 1))
