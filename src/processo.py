@@ -1,20 +1,22 @@
-from matplotlib import pyplot as plt
+from typing import Any, List
+
 import numpy as np
 import pandas as pd
-from typing import Any, List
 import scipy.stats as st
+from matplotlib import pyplot as plt
+
 from modelos import (
     dmc,
-    ta_ols,
+    eqm,
     knn,
-    mqo,
-    mqo_tikhonov,
     media_b,
     media_b_tridimensional,
-    eqm,
+    mqo,
+    mqo_tikhonov,
     printar_progresso,
     ta_dmc,
     ta_knn,
+    ta_ols,
 )
 from util import (
     calcular_classes_preditoras,
