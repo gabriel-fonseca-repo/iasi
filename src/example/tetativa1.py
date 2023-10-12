@@ -25,8 +25,6 @@ x_axis.shape = (len(x_axis), 1)
 # criar matriz X_new
 ones = np.ones((len(x_axis), 1))
 X_new = np.concatenate((ones, x_axis), axis=1)
-
-# criar matriz Y_pred
 Y_pred = X_new @ B
 
 # limitar os eixos
