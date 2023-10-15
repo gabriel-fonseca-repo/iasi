@@ -5,7 +5,7 @@
     - Implementar o modelo `perceptron`.
     - Implementar o modelo `ADALINE`.
     - Visualização inicial dos dados:
-        - Gráfico de espalhamento para os dois modelos.
+        - Gráfico de espalhamento para o conjunto de dados gerado.
         - Discutir quais resultados poderão ser obtidos ao utilizar os dois modelos.
     - Organizar o conjunto de dados de forma a obter $X\in\mathbb{R}^{(p+1)\times N}$.
     - Definir $\eta$, que se trata do passo de aprendizagem para o modelo `ADALINE`.
