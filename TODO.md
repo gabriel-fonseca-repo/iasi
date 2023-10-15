@@ -53,3 +53,4 @@
         - Identifique o acontecimento de overfitting.
         - Faça uma parada antecipada ao identificar overfitting.
     - Realizar discussões se essa arquitetura obteve resultados melhores ou piores com relação às topologias anteriores e a rede `RBF`.
+    - Teste
