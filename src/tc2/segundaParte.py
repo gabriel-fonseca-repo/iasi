@@ -38,9 +38,74 @@ Xtreino = X
 Ytreino = Y
 
 # Adicionar o vetor linha de −1 na primeira linha da matriz de dados Xtreino, resultando em Xtreino tendo ordem (p + 1) × N
-Xtreino = np.append(-np.ones((1, Xtreino.shape[1])), Xtreino, axis=0)
+# Xtreino = np.append(-np.ones((1, Xtreino.shape[1])), Xtreino, axis=0)
 
 # TREINAMENTO
+
+
+# forward
+def forward(xamostra):
+  # 2: j ←− 0
+  j = 0
+  # 3: for cada matriz de peso W em cada uma das L + 1 camadas. do
+  for i in range(L + 1):
+    # 4: if j == 0 then
+    if j == 0:
+      # 5: i[j] ←− W[j] · xamostra
+      i[j] = W[j] @ xamostra
+      # 6: y[j] ←− g(i[j])
+      y[j] = g(i[j])
+    # 7: else
+    else:
+      # 8: ybias ←− y[j − 1] com adição de −1 na primeira posição do vetor.
+      ybias = np.append(-np.ones((1, y[j - 1].shape[1])), y[j - 1], axis=0)
+      # 9: i[j] ←− W[j] · ybias
+      i[j] = W[j] @ ybias
+      # 10: y[j] ←− g(i[j])
+      y[j] = g(i[j])
+    # 11: end if
+    # 12: j ←− j + 1
+    j = j + 1
+  # 13: end for
+
+# backward
+def backward(xamostra):
+  # 2: j ←− Quantidade de matrizes W − 1.
+  j = len(W) - 1
+  # 3: while j ≥ 0 do
+  while j >= 0:
+    # 4: if j + 1 ==Quantidade de matrizes W, then
+    if j + 1 == len(W):
+      # 5: δ[j] ←− g
+      # ′
+      # (i[j]) ◦ (d − y[j]).
+      delta[j] = g_(i[j]) * (d - y[j])
+      # 6: ybias ←− y[j − 1] com adição de −1 na primeira posição do vetor.
+      ybias = np.append(-np.ones((1, y[j - 1].shape[1])), y[j - 1], axis=0)
+      # 7: W[j] ←− W[j] + η(δ[j] ⊗ ybias)
+      W[j] = W[j] + n * (delta[j] @ ybias.T)
+      # 8: else if j == 0 then
+    elif j == 0:
+      # 9: Wb[j + 1] Recebe a matriz W[j + 1] transposta sem a coluna que multiplica pelos limiares de ativação.
+      Wb = W[j + 1].T[1:].T
+      # 10: δ[j] ←− g
+      # ′
+      # (i[j]) ◦ (Wb[j + 1] · δ[j + 1]).
+      delta[j] = g_(i[j]) * (Wb @ delta[j + 1])
+      # 11: W[j] ←− W[j] + η(δ[j] ⊗ xamostra)
+      W[j] = W[j] + n * (delta[j] @ xamostra.T)
+      # 12: else
+    else:
+      # 13: Wb[j + 1] Recebe a matriz W[j + 1] transposta sem a coluna que multiplica pelos limiares de ativação.
+      Wb = W[j + 1].T[1:].T
+      # 14: δ[j] ←− g′ (i[j]) ◦ (Wb[j + 1] · δ[j + 1]).
+      delta[j] = g_(i[j]) * (Wb @ delta[j + 1])
+      # 15: ybias ←− y[j − 1] com adição de −1 na primeira posição do vetor.
+      ybias = np.append(-np.ones((1, y[j - 1].shape[1])), y[j - 1], axis=0)
+      # 16: W[j] ←− W[j] + η(δ[j] ⊗ ybias)
+      W[j] = W[j] + n * (delta[j] @ ybias.T)
+    # 18: j ←− j − 1
+    j = j - 1
 
 # 1: EQM ←− 1.
 eqm = 1
@@ -65,70 +130,6 @@ while(eqm>maxError and epoch<maxEpoch):
     # 11: Epoch ←−Epoch +1.
     epoch = epoch + 1
 # 12: end while
-
-# forward
-def forward(xamostra):
-  # 2: j ←− 0
-  j = 0
-  # 3: for cada matriz de peso W em cada uma das L + 1 camadas. do
-  for Wl in W:
-    # 4: if j == 0 then
-    if j == 0:
-      # 5: i[j] ←− W[j] · xamostra
-      i.append(Wl @ xamostra)
-      # 6: y[j] ←− g(i[j])
-      y.append(g(i[j]))
-    # 7: else
-    else:
-      # 8: ybias ←− y[j − 1] com adição de −1 na primeira posição do vetor.
-      ybias = np.append(-np.ones((1, y[j - 1].shape[1])), y[j - 1], axis=0)
-      # 9: i[j] ←− W[j] · ybias
-      i.append(Wl @ ybias)
-      # 10: y[j] ←− g(i[j])
-      y.append(g(i[j]))
-    # 11: end if
-    # 12: j ←− j + 1
-    j = j + 1
-  # 13: end for
-
-# backward
-def backward(xamostra):
-  # 2: j ←− Quantidade de matrizes W − 1.
-  j = len(W) - 1
-  # 3: while j ≥ 0 do
-  while j >= 0:
-    # 4: if j + 1 ==Quantidade de matrizes W, then
-    if j + 1 == len(W):
-      # 5: δ[j] ←− g
-      # ′
-      # (i[j]) ◦ (d − y[j]).
-      delta.append(g_(i[j]) * (d - y[j]))
-      # 6: ybias ←− y[j − 1] com adição de −1 na primeira posição do vetor.
-      ybias = np.append(-np.ones((1, y[j - 1].shape[1])), y[j - 1], axis=0)
-      # 7: W[j] ←− W[j] + η(δ[j] ⊗ ybias)
-      W[j] = W[j] + n * (delta[j] @ ybias.T)
-      # 8: else if j == 0 then
-    elif j == 0:
-      # 9: Wb[j + 1] Recebe a matriz W[j + 1] transposta sem a coluna que multiplica pelos limiares de ativação.
-      Wb = W[j + 1].T[1:].T
-      # 10: δ[j] ←− g
-      # ′
-      # (i[j]) ◦ (Wb[j + 1] · δ[j + 1]).
-      delta.append(g_(i[j]) * (Wb @ delta[j + 1]))
-      # 11: W[j] ←− W[j] + η(δ[j] ⊗ xamostra)
-      W[j] = W[j] + n * (delta[j] @ xamostra.T)
-      # 12: else
-    else:
-      # 13: Wb[j + 1] Recebe a matriz W[j + 1] transposta sem a coluna que multiplica pelos limiares de ativação.
-      Wb = W[j + 1].T[1:].T
-      # 14: δ[j] ←− g′ (i[j]) ◦ (Wb[j + 1] · δ[j + 1]).
-      delta.append(g_(i[j]) * (Wb @ delta[j + 1]))
-      # 15: ybias ←− y[j − 1] com adição de −1 na primeira posição do vetor.
-      ybias = np.append(-np.ones((1, y[j - 1].shape[1])), y[j - 1], axis=0)
-      # 16: W[j] ←− W[j] + η(δ[j] ⊗ ybias)
-      W[j] = W[j] + n * (delta[j] @ ybias.T)
-    # 18: j ←− j − 1
-    j = j - 1
 
 # EQM
 def calcularEQM():
@@ -161,7 +162,9 @@ def calcularEQM():
 # TESTE
 
 # 1: for Cada amostra em Xteste do
-for i in range(Xteste.shape[1]):
-  xamostra = Xteste[:, i]
+for i in range(Xtreino.shape[1]):
+  xamostra = Xtreino[:, i]
   forward(xamostra)
 
+
+print("EQM: ", eqm)
