@@ -12,10 +12,10 @@
     - Definir o valor de precisão do `ADALINE`.
     - ~~$100$ rodadas de treinamento (escolha do professor)~~.
     - Divisão do conjunto de dados em $80/20$.
-    - Computar as seguintes métricas para os resultados de cada modelo ao final das $100$ rodadas:
-        - Acurácia -> média, desvio padrão, maior e menor.
-        - Sensibilidade -> média, desvio padrão, maior e menor.
-        - Especificidade -> média, desvio padrão, maior e menor.
+    - ~~Computar as seguintes métricas para os resultados de cada modelo ao final das $100$ rodadas~~:
+        - ~~Acurácia -> média, desvio padrão, maior e menor~~.
+        - ~~Sensibilidade -> média, desvio padrão, maior e menor~~.
+        - ~~Especificidade -> média, desvio padrão, maior e menor~~.
     - Construir uma matriz de confusão para a pior e melhor rodada.
     - Exibir o hiperplano de separação dos dois modelos para a pior e melhor rodada.
 

@@ -31,6 +31,6 @@ r1n = -np.ones((int(n_samples * 0.55), 1))
 X = np.concatenate((d1, d2n, d2, d1n))
 Y = np.concatenate((r1, r2n, r2, r1n))
 Data = np.array(np.concatenate((X, Y), axis=1))
-np.savetxt("data/DataAV2.csv", Data, delimiter=",")
+np.savetxt("data/DataAV2_new.csv", Data, delimiter=",")
 
 plt.show()
