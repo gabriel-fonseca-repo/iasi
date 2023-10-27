@@ -28,8 +28,8 @@ d1n = np.random.multivariate_normal(mean3, cov3, int(n_samples * 0.55)) - 2.9
 r1n = -np.ones((int(n_samples * 0.55), 1))
 
 
-X = np.concatenate((d1, d2n, d2, d1n))
-Y = np.concatenate((r1, r2n, r2, r1n))
+X = np.concatenate((d1, d2, d2n, d1n))
+Y = np.concatenate((r1, r2, r2n, r1n))
 Data = np.array(np.concatenate((X, Y), axis=1))
 np.savetxt("data/DataAV2_new.csv", Data, delimiter=",")
 

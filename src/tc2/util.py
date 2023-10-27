@@ -45,6 +45,20 @@ def processar_dados(
     return (X_treino, y_treino, X_teste, y_teste, X_random, y_random)
 
 
+def processar_dados_especial(
+    X: np.ndarray[Any, np.dtype[Any]], y: np.ndarray[Any, np.dtype[Any]]
+):
+    X = X.T
+    X_treino = X[0:2400, :]
+    y_treino = y[0:2400, :]
+    X_teste = X[2400:, :]
+    y_teste = y[2400:, :]
+
+    (X_treino, y_treino) = embaralhar_dados(X_treino, y_treino)
+    (X_teste, y_teste) = embaralhar_dados(X_teste, y_teste)
+    return (X_treino, y_treino, X_teste, y_teste)
+
+
 def computar_indice_mc(y: int):
     if y == -1:
         return 0
