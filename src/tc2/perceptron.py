@@ -18,10 +18,6 @@ plotar_dados(X, has_bias=False)
 X = X.T
 X = np.concatenate((-np.ones((1, N)), X), axis=0)
 y.shape = (len(y), 1)
-W = np.random.rand(p + 1, 1)  # np.array([[0], [0], [0]])
-x1 = np.linspace(-12, 12, N)
-x2 = np.zeros((N,))
-LR = 0.1
 
 RODADAS = 0
 MAX_RODADAS = 100
@@ -40,6 +36,11 @@ while RODADAS < MAX_RODADAS:
 
     X_treino = X_treino.T
     X_teste = X_teste.T
+
+    W = np.random.rand(p, 1)
+    x1 = np.linspace(-12, 12, N)
+    x2 = np.zeros((N,))
+    LR = 0.1
 
     ERRO = True
     EPOCH = 0

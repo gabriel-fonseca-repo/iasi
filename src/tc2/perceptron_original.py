@@ -72,9 +72,6 @@ while ERRO and EPOCH < MAX_EPOCH:
             qtd_erros += 1
             x2 = -x1 * (W[1, 0] / W[2, 0]) + W[0, 0] / W[2, 0]
 
-    plt.plot(x1, x2, color=rdc(), alpha=0.4)
-    plt.pause(0.01)
-
     VP: int = matriz_confusao[0, 0]
     VN: int = matriz_confusao[1, 1]
     FP: int = matriz_confusao[0, 1]
@@ -90,6 +87,8 @@ while ERRO and EPOCH < MAX_EPOCH:
 
     print(f"Época {EPOCH + 1} - QTD Erros {qtd_erros} - Amostras {N}")
     EPOCH += 1
+
+plt.plot(x1, x2, color=rdc())
 
 estatisticas_perceptron(ACURACIAS, SENSIBILIDADES, ESPECIFICIDADES)
 

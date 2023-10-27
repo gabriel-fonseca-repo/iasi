@@ -102,7 +102,7 @@ def estatisticas_perceptron(
     plt.xlabel("Modelo")
     plt.ylabel("Média de EQM")
     plt.title("Estatísticas de performance por Modelo")
-    plt.savefig("out/Estatisticas_ols.png")
+    plt.savefig("out/Estatisticas_perceptron.png")
 
 
 def plotar_dados(X: np.ndarray[Any, np.dtype[Any]], has_bias: bool = True):

@@ -1,16 +1,15 @@
 import numpy as np
-import matplotlib.pyplot as plt
 
 from util import carregar_dados
 
 
-def EQM(X, y, w):
+def EQM(X, y, W):
     seq = 0
     us = []
     p, N = X.shape
     for t in range(X.shape[1]):
         x_t = X[:, t].reshape(X.shape[0], 1)
-        u_t = w.T @ x_t
+        u_t = W.T @ x_t
         us.append(u_t)
         d_t = y[t, 0]
         seq += (d_t - u_t) ** 2
@@ -27,26 +26,28 @@ X = X.T
 X = np.concatenate((-np.ones((1, N)), X))
 
 
-lr = 1e-2
-pr = 0.0000001
+LR = 1e-2
+PR = 0.0000001
 
-maxEpoch = 1000
+MAX_EPOCH = 1000
 
-epoch = 0
+EPOCH = 0
 EQM1 = 1
 EQM2 = 0
 
-while epoch < maxEpoch and abs(EQM1 - EQM2) > pr:
-    EQM1 = EQM(X, y, w)
+while EPOCH < MAX_EPOCH and abs(EQM1 - EQM2) > PR:
+    EQM1 = EQM(X, y, W)
+
     for t in range(N):
         x_t = X[:, t].reshape(3, 1)
-        u_t = w.T @ x_t
+        u_t = W.T @ x_t
         d_t = y[t, 0]
         e_t = d_t - u_t
-        w = w + lr * e_t * x_t
+        W = W + LR * e_t * x_t
 
-    epoch += 1
-    EQM2 = EQM(X, y, w)
+    EQM2 = EQM(X, y, W)
+
+    EPOCH += 1
 
 
-print(f"Durou {epoch} epócas")
+print(f"Durou {EPOCH} epócas")
