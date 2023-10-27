@@ -48,14 +48,16 @@ def processar_dados(
 def processar_dados_especial(
     X: np.ndarray[Any, np.dtype[Any]], y: np.ndarray[Any, np.dtype[Any]]
 ):
-    X = X.T
-    X_treino = X[0:2400, :]
-    y_treino = y[0:2400, :]
-    X_teste = X[2400:, :]
-    y_teste = y[2400:, :]
+    if X.shape[0] == 3:
+        X = X.T
+    X_treino = np.concatenate((X[0:1200, :], X[1500:2700, :]))
+    y_treino = np.concatenate((y[0:1200, :], y[1500:2700, :]))
+    X_teste = np.concatenate((X[1200:1500, :], X[2700:3360, :]))
+    y_teste = np.concatenate((y[1200:1500, :], y[2700:3360, :]))
 
-    (X_treino, y_treino) = embaralhar_dados(X_treino, y_treino)
-    (X_teste, y_teste) = embaralhar_dados(X_teste, y_teste)
+    # (X_treino, y_treino) = embaralhar_dados(X_treino, y_treino)
+    # (X_teste, y_teste) = embaralhar_dados(X_teste, y_teste)
+
     return (X_treino, y_treino, X_teste, y_teste)
 
 
@@ -101,3 +103,28 @@ def estatisticas_perceptron(
     plt.ylabel("Média de EQM")
     plt.title("Estatísticas de performance por Modelo")
     plt.savefig("out/Estatisticas_ols.png")
+
+
+def plotar_dados(X: np.ndarray[Any, np.dtype[Any]], has_bias: bool = True):
+    IDX_0 = 0
+    IDX_1 = 1200
+    IDX_2 = IDX_1 + 300
+    IDX_3 = IDX_2 + 1200
+    IDX_4 = IDX_3 + 660
+
+    COL_1 = 1 if has_bias else 0
+    COL_2 = 2 if has_bias else 1
+    LINES = 3 if has_bias else 2
+
+    if X.shape[0] == LINES:
+        X = X.T
+    # fmt: off
+    plt.scatter(X[IDX_0:IDX_1, COL_1], X[IDX_0:IDX_1, COL_2], color="brown", alpha=0.5, edgecolors="k")
+    plt.scatter(X[IDX_1:IDX_2, COL_1], X[IDX_1:IDX_2, COL_2], color="brown", alpha=0.5, edgecolors="k")
+    plt.scatter(X[IDX_2:IDX_3, COL_1], X[IDX_2:IDX_3, COL_2], color="orange", alpha=0.5, edgecolors="k")
+    plt.scatter(X[IDX_3:IDX_4, COL_1], X[IDX_3:IDX_4, COL_2], color="orange", alpha=0.5, edgecolors="k")
+    # fmt: off
+    plt.xlim(-12, 12)
+    plt.ylim(-12, 12)
+    if X.shape[1] == 2:
+        X = X.T

@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 
+
 def getDadosImagens(red):
     folderRoot = "data/tc2/faces/"  # MODIFIQUE para o caminho do conjunto de dados no seu computador.
     individual = [
@@ -66,7 +67,14 @@ def getDadosImagens(red):
 
     for i in range(QtdIndividuos):
         for j in range(QtdExpressoes):
-            path = folderRoot + individual[i] + "/" + individual[i] + expressoes[j] + ".pgm"
+            path = (
+                folderRoot
+                + individual[i]
+                + "/"
+                + individual[i]
+                + expressoes[j]
+                + ".pgm"
+            )
             PgmImg = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
 
             if PgmImg is None:
@@ -96,4 +104,3 @@ def getDadosImagens(red):
     print(f"Y tem ordem {Y.shape[0]}x{Y.shape[1]}")
     print()
     return X, Y
-
