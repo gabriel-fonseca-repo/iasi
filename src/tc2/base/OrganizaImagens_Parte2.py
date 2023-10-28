@@ -67,18 +67,10 @@ def getDadosImagens(red):
 
     for i in range(QtdIndividuos):
         for j in range(QtdExpressoes):
-            path = (
-                folderRoot
-                + individual[i]
-                + "/"
-                + individual[i]
-                + expressoes[j]
-                + ".pgm"
-            )
-            PgmImg = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
-
+            path = folderRoot + individual[i] + "/" + individual[i] + expressoes[j]
+            PgmImg = cv2.imread(path + ".pgm", cv2.IMREAD_GRAYSCALE)
             if PgmImg is None:
-                continue
+                PgmImg = cv2.imread(path + ".bad", cv2.IMREAD_GRAYSCALE)
 
             ResizedImg = cv2.resize(PgmImg, (red, red))
 

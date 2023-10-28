@@ -35,6 +35,8 @@ def embaralhar_dados(
 def processar_dados(
     X: np.ndarray[Any, np.dtype[Any]], y: np.ndarray[Any, np.dtype[Any]]
 ):
+    if X.shape[0] == 3:
+        X = X.T
     N, _ = X.shape
 
     (X_random, y_random) = embaralhar_dados(X, y)
@@ -42,7 +44,7 @@ def processar_dados(
     y_treino = y_random[0 : int(N * 0.8), :]
     X_teste = X_random[int(N * 0.8) :, :]
     y_teste = y_random[int(N * 0.8) :, :]
-    return (X_treino, y_treino, X_teste, y_teste, X_random, y_random)
+    return (X_treino, y_treino, X_teste, y_teste)
 
 
 def processar_dados_especial(
@@ -68,8 +70,8 @@ def computar_indice_mc(y: int):
         return 1
 
 
-def estatisticas_perceptron(
-    ACURACIAS: list, SENSIBILIDADES: list, ESPECIFICIDADE: list
+def estatisticas(
+    ACURACIAS: list, SENSIBILIDADES: list, ESPECIFICIDADE: list, modelo: str = ""
 ):
     stats = {
         "Estatísticas": ["Acurácia", "Sensibilidade", "Especificidade"],
@@ -96,13 +98,13 @@ def estatisticas_perceptron(
     }
 
     df = pd.DataFrame(stats)
-    df.to_csv("out/rst_perceptron.csv", sep=";")
+    df.to_csv(f"out/rst_{modelo}.csv", sep=";")
     plt.figure(figsize=(10, 6))
     plt.bar(df["Estatísticas"], df["Média"], yerr=df["Desvio Padrão"])
     plt.xlabel("Modelo")
-    plt.ylabel("Média de EQM")
+    plt.ylabel("Estatística")
     plt.title("Estatísticas de performance por Modelo")
-    plt.savefig("out/Estatisticas_perceptron.png")
+    plt.savefig(f"out/Estatisticas_{modelo}.png")
 
 
 def plotar_dados(X: np.ndarray[Any, np.dtype[Any]], has_bias: bool = True):
