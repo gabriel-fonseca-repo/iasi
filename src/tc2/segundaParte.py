@@ -75,7 +75,7 @@ class MLP:
                 # 8: ybias ←− y[j − 1] com adição de −1 na primeira posição do vetor.
                 ybias = np.insert(self.y[j - 1], 0, -1)
                 # 9: i[j] ←− W[j] · ybias
-                self.i[j] = self.W[j] @ ybias
+                self.i[j] = W[j] @ ybias
                 # 10: y[j] ←− g(i[j])
                 self.y[j] = self.g(self.i[j])
             # 11: end if
