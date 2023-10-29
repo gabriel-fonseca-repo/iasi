@@ -92,7 +92,7 @@ class MLP:
             # 4: if j + 1 ==Quantidade de matrizes W, then
             if j + 1 == len(self.W):
                 # 5: δ[j] ←− g′(i[j]) ◦ (d − y[j]).
-                self.delta[j] = g_linha(self.i[j]) * (d - self.y[j])
+                self.delta[j] = self.g_linha(self.i[j]) * (d - self.y[j])
                 # 6: ybias ←− y[j − 1] com adição de −1 na primeira posição do vetor.
                 ybias = np.append(-np.ones((1, y[j - 1].shape[1])), y[j - 1], axis=0)
                 # 7: W[j] ←− W[j] + η(δ[j] ⊗ ybias)
@@ -102,7 +102,7 @@ class MLP:
                 # 9: Wb[j + 1] Recebe a matriz W[j + 1] transposta sem a coluna que multiplica pelos limiares de ativação.
                 Wb = np.delete(self.W[j + 1].T, 0, 0)
                 # 10: δ[j] ←− g'(i[j]) ◦ (Wb[j + 1] · δ[j + 1]).
-                self.delta[j] = g_linha(self.i[j]) * (Wb @ self.delta[j + 1])
+                self.delta[j] = self.g_linha(self.i[j]) * (Wb @ self.delta[j + 1])
                 # 11: W[j] ←− W[j] + η(δ[j] ⊗ xamostra)
                 self.W[j] = self.W[j] + self.eta * (self.delta[j] @ xamostra.T)
             # 12: else
@@ -110,7 +110,7 @@ class MLP:
                 # 13: Wb[j + 1] Recebe a matriz W[j + 1] transposta sem a coluna que multiplica pelos limiares de ativação.
                 Wb = np.delete(self.W[j + 1].T, 0, 0)
                 # 14: δ[j] ←− g′(i[j]) ◦ (Wb[j + 1] · δ[j + 1]).
-                self.delta[j] = g_linha(self.i[j]) * (Wb @ self.delta[j + 1])
+                self.delta[j] = self.g_linha(self.i[j]) * (Wb @ self.delta[j + 1])
                 # 15: ybias ←− y[j − 1] com adição de −1 na primeira posição do vetor.
                 ybias = np.append(-np.ones((1, y[j - 1].shape[1])), y[j - 1], axis=0)
                 # 16: W[j] ←− W[j] + η(δ[j] ⊗ ybias)
