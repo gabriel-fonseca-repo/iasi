@@ -1,8 +1,11 @@
+import datetime as dt
 from typing import Any
 
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+
+inicio = dt.datetime.now()
 
 
 def carregar_dados(arquivo: str):
@@ -99,12 +102,12 @@ def estatisticas(
 
     df = pd.DataFrame(stats)
     df.to_csv(f"out/rst_{modelo}.csv", sep=";")
-    plt.figure(figsize=(10, 6))
-    plt.bar(df["Estatísticas"], df["Média"], yerr=df["Desvio Padrão"])
-    plt.xlabel("Modelo")
-    plt.ylabel("Estatística")
-    plt.title("Estatísticas de performance por Modelo")
-    plt.savefig(f"out/Estatisticas_{modelo}.png")
+    # plt.figure(figsize=(10, 6))
+    # plt.bar(df["Estatísticas"], df["Média"], yerr=df["Desvio Padrão"])
+    # plt.xlabel("Modelo")
+    # plt.ylabel("Estatística")
+    # plt.title("Estatísticas de performance por Modelo")
+    # plt.savefig(f"out/Estatisticas_{modelo}.png")
 
 
 def plotar_dados(X: np.ndarray[Any, np.dtype[Any]], has_bias: bool = True):
@@ -130,3 +133,12 @@ def plotar_dados(X: np.ndarray[Any, np.dtype[Any]], has_bias: bool = True):
     plt.ylim(-12, 12)
     if X.shape[1] == 2:
         X = X.T
+
+
+def printar_progresso(valor):
+    agora = dt.datetime.now()
+    delta = agora - inicio
+    print(
+        f"\rProgresso de classificação: {valor:.2%}. Tempo decorrido: {int(delta.total_seconds())} segundos.",
+        end="",
+    )
