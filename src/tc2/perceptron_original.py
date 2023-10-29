@@ -3,7 +3,7 @@ import numpy as np
 from util import (
     carregar_dados,
     computar_indice_mc,
-    estatisticas_perceptron,
+    estatisticas,
     rdc,
     sinal,
 )
@@ -90,6 +90,6 @@ while ERRO and EPOCH < MAX_EPOCH:
 
 plt.plot(x1, x2, color=rdc())
 
-estatisticas_perceptron(ACURACIAS, SENSIBILIDADES, ESPECIFICIDADES)
+estatisticas(ACURACIAS, SENSIBILIDADES, ESPECIFICIDADES)
 
 pass

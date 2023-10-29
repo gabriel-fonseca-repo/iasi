@@ -1,14 +1,18 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
+import os
 from util import (
     carregar_dados,
     computar_indice_mc,
-    estatisticas_perceptron,
+    estatisticas,
     plotar_dados,
-    processar_dados_especial,
-    rdc,
+    printar_progresso,
+    processar_dados,
     sinal,
 )
+
+os.system("clear")
 
 (X, y) = carregar_dados("data/DataAV2_new_2.csv")
 
@@ -19,17 +23,13 @@ X = X.T
 X = np.concatenate((-np.ones((1, N)), X), axis=0)
 y.shape = (len(y), 1)
 
-RODADAS = 0
+RODADA = 0
 MAX_RODADAS = 100
 
-ACURACIAS = []
-SENSIBILIDADES = []
-ESPECIFICIDADES = []
+RODADA_DATA = []
 
-linha = None
-
-while RODADAS < MAX_RODADAS:
-    (X_treino, y_treino, X_teste, y_teste) = processar_dados_especial(X, y)
+while RODADA < MAX_RODADAS:
+    (X_treino, y_treino, X_teste, y_teste) = processar_dados(X, y)
 
     N, p = X_treino.shape
     N_teste, p_teste = X_teste.shape
@@ -46,46 +46,55 @@ while RODADAS < MAX_RODADAS:
     EPOCH = 0
     MAX_EPOCH = 100
 
+    ACURACIAS = []
+    SENSIBILIDADES = []
+    ESPECIFICIDADES = []
+    EPOCH_DATA = []
+
+    matriz_confusao_rodada = np.zeros((2, 2), dtype=int)
+
+    plt.clf()
+    plotar_dados(X, has_bias=True)
+
+    printar_progresso(RODADA / MAX_RODADAS)
+
     while ERRO and EPOCH < MAX_EPOCH:
         ERRO = False
         QTD_ERROS = 0
-        matriz_confusao = np.zeros((2, 2))
+        matriz_confusao = np.zeros((2, 2), dtype=int)
 
         # Fase de treino
         for t in range(N):
             x_t = X_treino[:, t].reshape(3, 1)
             u_t = W.T @ x_t
-
             y_t = sinal(u_t[0, 0])
             d_t = y_treino[t, 0]
             e_t = d_t - y_t
             W = W + (e_t * x_t * LR) / 2
-
-        # Fase de testes
-        for t in range(N_teste):
-            x_t = X_teste[:, t].reshape(3, 1)
-            u_t = W.T @ x_t
-            y_t = sinal(u_t[0, 0])
-
-            d_t = y_teste[t, 0]
-            e_t = int(d_t - y_t)
-
-            indice_y_mc = computar_indice_mc(int(y_teste[t][0]))
-            indice_y_t_mc = computar_indice_mc(y_t)
-            matriz_confusao[indice_y_mc, indice_y_t_mc] += 1
 
             if y_t != d_t:
                 ERRO = True
                 QTD_ERROS += 1
                 x2 = -x1 * (W[1, 0] / W[2, 0]) + W[0, 0] / W[2, 0]
 
-        plt.plot(x1, x2, color=rdc(), alpha=0.4)
-        plt.pause(0.01)
+        # plt.plot(x1, x2, color=rdc(), alpha=0.4)
+        # plt.pause(0.01)
 
-        VP: int = matriz_confusao[0, 0]
-        VN: int = matriz_confusao[1, 1]
-        FP: int = matriz_confusao[0, 1]
-        FN: int = matriz_confusao[1, 0]
+        # Fase de testes
+        for t in range(N_teste):
+            x_t = X_teste[:, t].reshape(3, 1)
+            u_t = W.T @ x_t
+            y_t = sinal(u_t[0, 0])
+            d_t = y_teste[t, 0]
+
+            y_real = computar_indice_mc(int(y_teste[t][0]))
+            y_predito = computar_indice_mc(y_t)
+            matriz_confusao[y_predito, y_real] += 1
+
+        VN: int = matriz_confusao[0, 0]
+        VP: int = matriz_confusao[1, 1]
+        FN: int = matriz_confusao[0, 1]
+        FP: int = matriz_confusao[1, 0]
 
         ACURACIA = (VP + VN) / (VP + VN + FP + FN)
         SENSIBILIDADE = VP / (VP + FN)
@@ -95,11 +104,66 @@ while RODADAS < MAX_RODADAS:
         SENSIBILIDADES.append(SENSIBILIDADE)
         ESPECIFICIDADES.append(ESPECIFICIDADE)
 
-        EPOCH += 1
-    plt.cla()
-    plotar_dados(X, has_bias=True)
-    RODADAS += 1
+        matriz_confusao_rodada += matriz_confusao
 
-estatisticas_perceptron(ACURACIAS, SENSIBILIDADES, ESPECIFICIDADES)
+        EPOCH_DATA.append(
+            {
+                "acuracia": ACURACIA,
+                "sensibilidade": SENSIBILIDADE,
+                "especificidade": ESPECIFICIDADE,
+                "epoch": EPOCH,
+                "rodada": RODADA,
+                "matriz_confusao": matriz_confusao,
+                "x1": x1,
+                "x2": x2,
+            }
+        )
+
+        EPOCH += 1
+
+    RODADA_DATA.append(
+        {
+            "acuracia": np.mean(ACURACIAS),
+            "sensibilidade": np.mean(SENSIBILIDADES),
+            "especificidade": np.mean(ESPECIFICIDADES),
+            "rodada": RODADA,
+            "matriz_confusao": matriz_confusao_rodada,
+            "epoch_data": EPOCH_DATA,
+        }
+    )
+
+    RODADA += 1
+
+# 7. Ao final das rodadas, compute os seguintes resultados para o PS e ADALINE
+# A. Acurácia média
+# B. Sensibilidade média
+# C. Especificidade média
+ACURACIAS = [d["acuracia"] for d in RODADA_DATA]
+SENSIBILIDADES = [d["sensibilidade"] for d in RODADA_DATA]
+ESPECIFICIDADES = [d["especificidade"] for d in RODADA_DATA]
+estatisticas(ACURACIAS, SENSIBILIDADES, ESPECIFICIDADES, modelo="Perceptron")
+
+MELHOR_RODADA = max(RODADA_DATA, key=lambda x: x["acuracia"])
+PIOR_RODADA = min(RODADA_DATA, key=lambda x: x["acuracia"])
+
+plt.show()
+
+# D. Matriz de confusão da melhor rodada
+plt.clf()
+sns.heatmap(MELHOR_RODADA["matriz_confusao"], annot=True, fmt="d")
+
+# E. Matriz de confusão da pior rodada
+plt.clf()
+sns.heatmap(PIOR_RODADA["matriz_confusao"], annot=True, fmt="d")
+
+# F. Traçar o hiperplano de separação das duas classes para a melhor e pior rodada
+MELHOR_EPOCH = max(MELHOR_RODADA["epoch_data"], key=lambda x: x["acuracia"])
+PIOR_EPOCH = min(PIOR_RODADA["epoch_data"], key=lambda x: x["acuracia"])
+plt.clf()
+plotar_dados(X, has_bias=True)
+plt.plot(MELHOR_EPOCH["x1"], MELHOR_EPOCH["x2"], color="black", alpha=0.4)
+plt.clf()
+plotar_dados(X, has_bias=True)
+plt.plot(PIOR_EPOCH["x1"], PIOR_EPOCH["x2"], color="black", alpha=0.4)
 
 pass

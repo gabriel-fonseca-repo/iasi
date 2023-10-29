@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 
-def getDadosImagens(red):
+def get_dados_imagens(red):
     folderRoot = "data/tc2/faces/"  # MODIFIQUE para o caminho do conjunto de dados no seu computador.
     individual = [
         "an2i",
@@ -67,18 +67,10 @@ def getDadosImagens(red):
 
     for i in range(QtdIndividuos):
         for j in range(QtdExpressoes):
-            path = (
-                folderRoot
-                + individual[i]
-                + "/"
-                + individual[i]
-                + expressoes[j]
-                + ".pgm"
-            )
-            PgmImg = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
-
+            path = folderRoot + individual[i] + "/" + individual[i] + expressoes[j]
+            PgmImg = cv2.imread(path + ".pgm", cv2.IMREAD_GRAYSCALE)
             if PgmImg is None:
-                continue
+                PgmImg = cv2.imread(path + ".bad", cv2.IMREAD_GRAYSCALE)
 
             ResizedImg = cv2.resize(PgmImg, (red, red))
 
@@ -92,15 +84,4 @@ def getDadosImagens(red):
             VectorNormalized.shape = (len(VectorNormalized), 1)
             X = np.append(X, VectorNormalized, axis=1)
             Y = np.append(Y, ROT, axis=1)
-
-    print("-------------------------------------------------------------")
-    print()
-    print(f"Quantidade de amostras do conjunto de dados: {X.shape[1]}")
-    print("A quantidade de preditores esta relacionada ao redimensionamento!")
-    print(f"Para esta rodada escolheu-se um redimensionamento de {red}")
-    print(f"Portanto, a quantidade de preditores desse conjunto de dados: {X.shape[0]}")
-    print(f"Este conjunto de dados possui {Y.shape[0]} classes")
-    print(f"X tem ordem {X.shape[0]}x{X.shape[1]}")
-    print(f"Y tem ordem {Y.shape[0]}x{Y.shape[1]}")
-    print()
     return X, Y
