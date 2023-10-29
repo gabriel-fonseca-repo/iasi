@@ -1,62 +1,60 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from base.OrganizaImagens_Parte2 import getDadosImagens
-
-X, Y = getDadosImagens(60)
+from util import get_dados_imagens
 
 
 # class mlp
-class MLP:
+class MLP(object):
     def __init__(
         self,
-        qCamadas,
-        qNeuronios,
-        qNeuroniosSaida,
-        maxEpoch,
-        maxError,
-        qNeuroniosEntrada,
+        q_camadas,
+        q_neuronios,
+        q_neuronios_saida,
+        max_epoch,
+        max_error,
+        q_neuronios_entrada,
     ):
         # número de camadas ocultas
-        self.qCamadas = qCamadas
+        self.q_camadas = q_camadas
         # Array de L posições, cada posição é o número de neurônios na camada
-        self.qNeuronios = qNeuronios
+        self.q_neuronios = q_neuronios
         # quantidade de neuronios qNeuroniosEntrada na camada de saida (possui 20 classes)
-        self.qNeuroniosSaida = qNeuroniosSaida
-        self.qNeuroniosEntrada = qNeuroniosEntrada
+        self.q_neuronios_saida = q_neuronios_saida
+        self.q_neuronios_entrada = q_neuronios_entrada
         # quantidade maxima de epocas
-        self.maxEpoch = maxEpoch
+        self.max_epoch = max_epoch
         # definir o erro maximo
-        self.maxError = maxError
+        self.max_error = max_error
         # quantidade de neuronios na camada de entrada
-        self.qNeuroniosEntrada = qNeuroniosEntrada
+        self.q_neuronios_entrada = q_neuronios_entrada
         self.W = []
-        self.i = np.empty((qCamadas + 1, 0))
-        self.y = np.empty((qCamadas + 1, 0))
-        self.delta = np.empty((qCamadas + 1, 0))
+        self.i = np.empty((q_camadas + 1, 0))
+        self.y = np.empty((q_camadas + 1, 0))
+        self.delta = np.empty((q_camadas + 1, 0))
 
-        self.wAleatorio()
+        self.random_w()
 
-    def wAleatorio(self):
+    def random_w(self):
         #  Inicializar as L + 1 matrizes W com valores aleatórios pequenos (−0.5, 0.5).
-        for i in range(self.qCamadas + 1):
-            destino = self.qNeuroniosSaida
-            origem = self.qNeuroniosEntrada
+        for i in range(self.q_camadas + 1):
+            destino = self.q_neuronios_saida
+            origem = self.q_neuronios_entrada
 
-            curMatrix = []
+            cur_matrix = []
 
             if i == 0:
-                origem = self.qNeuroniosEntrada
+                origem = self.q_neuronios_entrada
             else:
-                origem = self.qNeuronios[i - 1]
+                origem = self.q_neuronios[i - 1]
 
-            if i < self.qCamadas:
-                destino = self.qNeuronios[i]
+            if i < self.q_camadas:
+                destino = self.q_neuronios[i]
 
             for j in range(destino):
-                curMatrix.append(np.random.uniform(-0.5, 0.5, origem))
+                cur_matrix.append(np.random.uniform(-0.5, 0.5, origem))
 
-            self.W.append(np.array(curMatrix))
+            self.W.append(np.array(cur_matrix))
 
     def forward(self, xamostra):
         # 1: Receber a amostra xamostra ∈ R^((p+1)×1).
@@ -92,9 +90,11 @@ class MLP:
             # 4: if j + 1 ==Quantidade de matrizes W, then
             if j + 1 == len(self.W):
                 # 5: δ[j] ←− g′(i[j]) ◦ (d − y[j]).
-                self.delta[j] = g_linha(self.i[j]) * (d - self.y[j])
+                self.delta[j] = self.g_linha(self.i[j]) * (d - self.y[j])
                 # 6: ybias ←− y[j − 1] com adição de −1 na primeira posição do vetor.
-                ybias = np.append(-np.ones((1, y[j - 1].shape[1])), y[j - 1], axis=0)
+                ybias = np.append(
+                    -np.ones((1, self.y[j - 1].shape[1])), self.y[j - 1], axis=0
+                )
                 # 7: W[j] ←− W[j] + η(δ[j] ⊗ ybias)
                 self.W[j] = self.W[j] + self.eta * (self.delta[j] @ ybias.T)
             # 8: else if j == 0 then
@@ -102,7 +102,7 @@ class MLP:
                 # 9: Wb[j + 1] Recebe a matriz W[j + 1] transposta sem a coluna que multiplica pelos limiares de ativação.
                 Wb = np.delete(self.W[j + 1].T, 0, 0)
                 # 10: δ[j] ←− g'(i[j]) ◦ (Wb[j + 1] · δ[j + 1]).
-                self.delta[j] = g_linha(self.i[j]) * (Wb @ self.delta[j + 1])
+                self.delta[j] = self.g_linha(self.i[j]) * (Wb @ self.delta[j + 1])
                 # 11: W[j] ←− W[j] + η(δ[j] ⊗ xamostra)
                 self.W[j] = self.W[j] + self.eta * (self.delta[j] @ xamostra.T)
             # 12: else
@@ -110,9 +110,11 @@ class MLP:
                 # 13: Wb[j + 1] Recebe a matriz W[j + 1] transposta sem a coluna que multiplica pelos limiares de ativação.
                 Wb = np.delete(self.W[j + 1].T, 0, 0)
                 # 14: δ[j] ←− g′(i[j]) ◦ (Wb[j + 1] · δ[j + 1]).
-                self.delta[j] = g_linha(self.i[j]) * (Wb @ self.delta[j + 1])
+                self.delta[j] = self.g_linha(self.i[j]) * (Wb @ self.delta[j + 1])
                 # 15: ybias ←− y[j − 1] com adição de −1 na primeira posição do vetor.
-                ybias = np.append(-np.ones((1, y[j - 1].shape[1])), y[j - 1], axis=0)
+                ybias = np.append(
+                    -np.ones((1, self.y[j - 1].shape[1])), self.y[j - 1], axis=0
+                )
                 # 16: W[j] ←− W[j] + η(δ[j] ⊗ ybias)
                 self.W[j] = self.W[j] + self.eta * (self.delta[j] @ ybias.T)
             # 17: end if
@@ -120,17 +122,17 @@ class MLP:
             j = j - 1
         # 19: end while
 
-    def calcularEQM(Xtreino, Ytreino):
+    def calcular_eqm(self, X_treino, y_treino):
         # 1: EQM ←− 0
         eqm = 0
         # 2: for Cada amostra em Xtreino do
-        for i in range(Xtreino.shape[1]):
+        for i in range(X_treino.shape[1]):
             # 3: xamostra ←− N−ésima amostra de Xtreino.
-            xamostra = Xtreino[:, i]
+            x_amostra = X_treino[:, i]
             # 4: Forward(xamostra)
-            self.forward(xamostra)
+            self.forward(x_amostra)
             # 5: d ←− N−ésimo rótulo de Xtreino.
-            d = Ytreino[:, i]
+            d = y_treino[:, i]
             # 6: EQI ←− 0
             eqi = 0
             # 7: j ←− 0
@@ -146,7 +148,7 @@ class MLP:
             eqm = eqm + eqi
         # 13: end for
         # 14: EQM ←− EQM/(2 ∗ QtdAmostrasTreino)
-        eqm = eqm / (2 * Xtreino.shape[1])
+        eqm = eqm / (2 * X_treino.shape[1])
 
     def g(self, x):
         return 1 / (1 + np.exp(-x))
@@ -154,27 +156,29 @@ class MLP:
     def g_linha(self, x):
         return self.g(x)
 
-    def treinar(self, Xtreino, Ytreino):
+    def treinar(self, X_treino, y_treino):
         eqm = 1
         epoch = 0
-        while eqm > self.maxError and epoch < self.maxEpoch:
+        while eqm > self.max_error and epoch < self.max_epoch:
             ### Cada Loop desse while é uma epoca
-            for i in range(Xtreino.shape[1]):
-                xamostra = Xtreino[:, i]
+            for i in range(X_treino.shape[1]):
+                xamostra = X_treino[:, i]
                 self.forward(xamostra)
-                d = Ytreino[:, i]
+                d = y_treino[:, i]
                 self.backward(xamostra, d)
-            eqm = self.calcularEQM()
+            eqm = self.calcular_eqm()
             print(f"EQM: {eqm} Epoch: {epoch}")
             epoch = epoch + 1
 
 
+X, Y = get_dados_imagens(60)
+
 # dividir em treino e teste 80% e 20%
-Xtreino = X[:, : int(X.shape[1] * 0.8)]
-Ytreino = Y[:, : int(Y.shape[1] * 0.8)]
-Xteste = X[:, int(X.shape[1] * 0.8) :]
-Yteste = Y[:, int(Y.shape[1] * 0.8) :]
+X_treino = X[:, : int(X.shape[1] * 0.8)]
+y_treino = Y[:, : int(Y.shape[1] * 0.8)]
+X_teste = X[:, int(X.shape[1] * 0.8) :]
+y_teste = Y[:, int(Y.shape[1] * 0.8) :]
 
 mainMlp = MLP(5, [30, 30, 30, 30, 30], 20, 1000, 0.01, 3600)
 
-mainMlp.treinar(Xtreino, Ytreino)
+mainMlp.treinar(X_treino, y_treino)

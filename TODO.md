@@ -19,7 +19,7 @@
             - Acurácia -> média, desvio padrão, maior e menor.
             - Sensibilidade -> média, desvio padrão, maior e menor.
             - Especificidade -> média, desvio padrão, maior e menor.
-        - Construir uma matriz de confusão para a pior e melhor rodada.
+        - ~~Construir uma matriz de confusão para a pior e melhor rodada~~.
         - Exibir o hiperplano de separação dos dois modelos para a pior e melhor rodada.
     - Referências (5%).
     - ~~Implementações (5%)~~.

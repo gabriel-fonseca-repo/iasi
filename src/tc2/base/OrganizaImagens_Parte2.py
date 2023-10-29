@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 
-def getDadosImagens(red):
+def get_dados_imagens(red):
     folderRoot = "data/tc2/faces/"  # MODIFIQUE para o caminho do conjunto de dados no seu computador.
     individual = [
         "an2i",
