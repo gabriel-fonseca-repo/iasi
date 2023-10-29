@@ -84,15 +84,4 @@ def getDadosImagens(red):
             VectorNormalized.shape = (len(VectorNormalized), 1)
             X = np.append(X, VectorNormalized, axis=1)
             Y = np.append(Y, ROT, axis=1)
-
-    print("-------------------------------------------------------------")
-    print()
-    print(f"Quantidade de amostras do conjunto de dados: {X.shape[1]}")
-    print("A quantidade de preditores esta relacionada ao redimensionamento!")
-    print(f"Para esta rodada escolheu-se um redimensionamento de {red}")
-    print(f"Portanto, a quantidade de preditores desse conjunto de dados: {X.shape[0]}")
-    print(f"Este conjunto de dados possui {Y.shape[0]} classes")
-    print(f"X tem ordem {X.shape[0]}x{X.shape[1]}")
-    print(f"Y tem ordem {Y.shape[0]}x{Y.shape[1]}")
-    print()
     return X, Y
