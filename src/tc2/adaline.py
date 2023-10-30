@@ -29,8 +29,9 @@ def EQM(X, y, W):
     return seq / (2 * X.shape[1])
 
 
-(X, y) = carregar_dados("data/DataAV2_O.csv")
+(X, y) = carregar_dados("data/DataAV2_new_2.csv")
 plotar_dados(X, has_bias=False)
+plt.show()
 
 N, p = X.shape
 X = X.T
@@ -75,10 +76,10 @@ while RODADA < MAX_RODADAS:
     plt.clf()
     plotar_dados(X, has_bias=True)
 
-    printar_progresso(RODADA / MAX_RODADAS)
-
     while EPOCH < MAX_EPOCH and abs(EQM1 - EQM2) > PRECISION:
         matriz_confusao = np.zeros((2, 2), dtype=int)
+
+        printar_progresso(RODADA / MAX_RODADAS)
 
         # Fase de treinamento
         EQM1 = EQM(X, y, W)
