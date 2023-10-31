@@ -1,6 +1,7 @@
 import cv2
+import seaborn as sns
 import datetime as dt
-from typing import Any
+from typing import Any, Dict, List
 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -102,13 +103,63 @@ def estatisticas(
     }
 
     df = pd.DataFrame(stats)
-    df.to_csv(f"out/rst_{modelo}.csv", sep=";")
+    df.to_csv(f"out/tc2/rst_{modelo}.csv", sep=";")
     # plt.figure(figsize=(10, 6))
     # plt.bar(df["Estatísticas"], df["Média"], yerr=df["Desvio Padrão"])
     # plt.xlabel("Modelo")
     # plt.ylabel("Estatística")
     # plt.title("Estatísticas de performance por Modelo")
     # plt.savefig(f"out/Estatisticas_{modelo}.png")
+
+
+def exportar_graficos(
+    X: np.ndarray[Any, np.dtype[Any]], RODADA_DATA: List[Dict], modelo: str
+):
+    # 7. Ao final das rodadas, compute os seguintes resultados para o PS e ADALINE
+    # A. Acurácia média
+    # B. Sensibilidade média
+    # C. Especificidade média
+    ACURACIAS = [d["acuracia"] for d in RODADA_DATA]
+    SENSIBILIDADES = [d["sensibilidade"] for d in RODADA_DATA]
+    ESPECIFICIDADES = [d["especificidade"] for d in RODADA_DATA]
+    estatisticas(ACURACIAS, SENSIBILIDADES, ESPECIFICIDADES, modelo=modelo)
+
+    MELHOR_RODADA = max(RODADA_DATA, key=lambda x: x["acuracia"])
+    PIOR_RODADA = min(RODADA_DATA, key=lambda x: x["acuracia"])
+
+    # D. Matriz de confusão da melhor rodada
+    plt.clf()
+    sns.heatmap(
+        MELHOR_RODADA["matriz_confusao"],
+        annot=True,
+        fmt="d",
+        cbar=False,
+        xticklabels=["-1", "1"],
+        yticklabels=["-1", "1"],
+    )
+    plt.savefig(f"out/tc2/MatrizConfusao_{modelo}_MelhorRodada.png")
+
+    # E. Matriz de confusão da pior rodada
+    plt.clf()
+    sns.heatmap(
+        PIOR_RODADA["matriz_confusao"],
+        annot=True,
+        fmt="d",
+        cbar=False,
+        xticklabels=["-1", "1"],
+        yticklabels=["-1", "1"],
+    )
+    plt.savefig(f"out/tc2/MatrizConfusao_{modelo}_PiorRodada.png")
+
+    # F. Traçar o hiperplano de separação das duas classes para a melhor e pior rodada
+    plt.clf()
+    plotar_dados(X, has_bias=True)
+    plt.plot(MELHOR_RODADA["x1"], MELHOR_RODADA["x2"], color="black", alpha=0.4)
+    plt.savefig(f"out/tc2/Hiperplano_{modelo}_MelhorRodada.png")
+    plt.clf()
+    plotar_dados(X, has_bias=True)
+    plt.plot(PIOR_RODADA["x1"], PIOR_RODADA["x2"], color="black", alpha=0.4)
+    plt.savefig(f"out/tc2/Hiperplano_{modelo}_PiorRodada.png")
 
 
 def plotar_dados(X: np.ndarray[Any, np.dtype[Any]], has_bias: bool = True):
