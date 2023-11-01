@@ -3,7 +3,7 @@ import numpy as np
 
 from util import get_dados_imagens
 
-X, Y = get_dados_imagens(30)
+X, y = get_dados_imagens(30)
 
 
 # class mlp
@@ -191,9 +191,9 @@ X = 2 * (X / 255) - 1
 
 # dividir em treino e teste 80% e 20%
 X_treino = X[:, : int(X.shape[1] * 0.8)]
-y_treino = Y[:, : int(Y.shape[1] * 0.8)]
+y_treino = y[:, : int(y.shape[1] * 0.8)]
 X_teste = X[:, int(X.shape[1] * 0.8) :]
-y_teste = Y[:, int(Y.shape[1] * 0.8) :]
+y_teste = y[:, int(y.shape[1] * 0.8) :]
 
 main_mlp = MLP([30, 30, 30], 20, 1000, 0.01, 30 * 30)
 
