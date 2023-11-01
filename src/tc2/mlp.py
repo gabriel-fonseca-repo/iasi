@@ -185,9 +185,27 @@ class MLP:
             print(f"EQM: {eqm} Epoch: {epoch}")
             epoch = epoch + 1
 
+    def testar(self, X_teste, y_teste):
+        acertos = 0
+        for i in range(X_teste.shape[1]):
+            x_amostra = X_teste[:, i]
+            self.forward(x_amostra)
+            resultado = self.y[-1]
+            esperado = y_teste[:, i]
+            esperado.shape = (len(esperado), 1)
+            if np.argmax(resultado) == np.argmax(esperado):
+                acertos += 1
+
+        print(f"Acertos: {acertos} de {X_teste.shape[1]}")
+        print(f"Porcentagem: {(acertos / X_teste.shape[1]) * 100}%")
+
 
 # normalizar dados:
 X = 2 * (X / 255) - 1
+
+seed = np.random.randint(0, 100)
+X = np.random.RandomState(seed).permutation(X.T).T
+y = np.random.RandomState(seed).permutation(y.T).T
 
 # dividir em treino e teste 80% e 20%
 X_treino = X[:, : int(X.shape[1] * 0.8)]
@@ -195,6 +213,12 @@ y_treino = y[:, : int(y.shape[1] * 0.8)]
 X_teste = X[:, int(X.shape[1] * 0.8) :]
 y_teste = y[:, int(y.shape[1] * 0.8) :]
 
-main_mlp = MLP([30, 30, 30], 20, 1000, 0.01, 30 * 30)
+# main_mlp = MLP([40, 25], 20, 1000, 10, 30 * 30)
+main_mlp = MLP([100, 50, 25], 20, 1000, 0.001, 30 * 30)
 
 main_mlp.treinar(X_treino, y_treino)
+
+print("Teste com dados de treinamento:")
+main_mlp.testar(X_treino, y_treino)
+print("Teste com dados de teste:")
+main_mlp.testar(X_teste, y_teste)
