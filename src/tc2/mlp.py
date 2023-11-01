@@ -3,12 +3,13 @@ import numpy as np
 
 from util import get_dados_imagens
 
+X, Y = get_dados_imagens(30)
+
 
 # class mlp
-class MLP(object):
+class MLP:
     def __init__(
         self,
-        q_camadas,
         q_neuronios,
         q_neuronios_saida,
         max_epoch,
@@ -16,7 +17,7 @@ class MLP(object):
         q_neuronios_entrada,
     ):
         # número de camadas ocultas
-        self.q_camadas = q_camadas
+        self.q_camadas = len(q_neuronios)
         # Array de L posições, cada posição é o número de neurônios na camada
         self.q_neuronios = q_neuronios
         # quantidade de neuronios qNeuroniosEntrada na camada de saida (possui 20 classes)
@@ -29,9 +30,10 @@ class MLP(object):
         # quantidade de neuronios na camada de entrada
         self.q_neuronios_entrada = q_neuronios_entrada
         self.W = []
-        self.i = np.empty((q_camadas + 1, 0))
-        self.y = np.empty((q_camadas + 1, 0))
-        self.delta = np.empty((q_camadas + 1, 0))
+        self.i = [None] * (self.q_camadas + 1)
+        self.y = [None] * (self.q_camadas + 1)
+        self.delta = [None] * (self.q_camadas + 1)
+        self.taxa_aprendizado = 0.05
 
         self.random_w()
 
@@ -40,145 +42,159 @@ class MLP(object):
         for i in range(self.q_camadas + 1):
             destino = self.q_neuronios_saida
             origem = self.q_neuronios_entrada
-
             cur_matrix = []
-
             if i == 0:
                 origem = self.q_neuronios_entrada
             else:
                 origem = self.q_neuronios[i - 1]
-
             if i < self.q_camadas:
                 destino = self.q_neuronios[i]
-
+            W_atual = np.random.random_sample((destino, origem + 1)) - 0.5
             for j in range(destino):
-                cur_matrix.append(np.random.uniform(-0.5, 0.5, origem))
-
+                cur_matrix.append(np.random.uniform(-0.5, 0.5, origem + 1))
             self.W.append(np.array(cur_matrix))
 
-    def forward(self, xamostra):
+    def forward(self, x_amostra):
         # 1: Receber a amostra xamostra ∈ R^((p+1)×1).
-        # 2: j <- 0
+        # 2: j <− 0
         j = 0
         # 3: for cada matriz de peso W em cada uma das L + 1 camadas. do
-        for W in self.W:
+        for j in range(len(self.W)):
             # 4: if j == 0 then
             if j == 0:
-                # 5: i[j] <- W[j] * xamostra
-                self.i[j] = W[j] @ xamostra
-                # 6: y[j] <- g(i[j])
+                # 5: i[j] <− W[j] · xamostra
+                x_amostra.shape = (len(x_amostra), 1)
+                x_amostra = np.concatenate((-np.ones((1, 1)), x_amostra), axis=0)
+                self.i[j] = self.W[j] @ x_amostra
+                # 6: y[j] <− g(i[j])
                 self.y[j] = self.g(self.i[j])
+
             # 7: else
             else:
-                # 8: ybias <- y[j − 1] com adição de −1 na primeira posição do vetor.
-                ybias = np.insert(self.y[j - 1], 0, -1)
-                # 9: i[j] <- W[j] * ybias
-                self.i[j] = W[j] @ ybias
-                # 10: y[j] <- g(i[j])
+                # 8: ybias <− y[j − 1] com adição de −1 na primeira posição do vetor.
+                y_bias = self.y[j - 1]
+                y_bias.shape = (len(y_bias), 1)
+                y_bias = np.concatenate((-np.ones((1, 1)), y_bias), axis=0)
+
+                # 9: i[j] <− W[j] · ybias
+                self.i[j] = self.W[j] @ y_bias
+                # 10: y[j] <− g(i[j])
                 self.y[j] = self.g(self.i[j])
             # 11: end if
-            # 12: j <- j + 1
-            j = j + 1
+            # 12: j <− j + 1
+
             # 13: end for
 
     def backward(self, xamostra, d):
         # 1: Receber a amostra xamostra e seu rótulo d
-        # 2: j <- Quantidade de matrizes W − 1.
+        # 2: j <− Quantidade de matrizes W − 1.
         j = len(self.W) - 1
         # 3: while j ≥ 0 do
+        d.shape = (len(d), 1)
+        xamostra.shape = (len(xamostra), 1)
+        xamostra = np.concatenate((-np.ones((1, 1)), xamostra), axis=0)
+        Wb = [None] * (len(self.W) + 1)
+
         while j >= 0:
             # 4: if j + 1 ==Quantidade de matrizes W, then
             if j + 1 == len(self.W):
-                # 5: δ[j] <- g′(i[j]) ◦ (d − y[j]).
+                # 5: δ[j] <− g′(i[j]) ◦ (d − y[j]).
                 self.delta[j] = self.g_linha(self.i[j]) * (d - self.y[j])
-                # 6: ybias <- y[j − 1] com adição de −1 na primeira posição do vetor.
-                ybias = np.append(
-                    -np.ones((1, self.y[j - 1].shape[1])), self.y[j - 1], axis=0
+                # 6: ybias <− y[j − 1] com adição de −1 na primeira posição do vetor.
+                y_bias = np.concatenate((-np.ones((1, 1)), self.y[j - 1]), axis=0)
+                # 7: W[j] <− W[j] + η(δ[j] ⊗ ybias)
+                self.W[j] = self.W[j] + self.taxa_aprendizado * (
+                    self.delta[j] @ y_bias.T
                 )
-                # 7: W[j] <- W[j] + η(δ[j] ⊗ ybias)
-                self.W[j] = self.W[j] + self.eta * (self.delta[j] @ ybias.T)
             # 8: else if j == 0 then
             elif j == 0:
                 # 9: Wb[j + 1] Recebe a matriz W[j + 1] transposta sem a coluna que multiplica pelos limiares de ativação.
-                Wb = np.delete(self.W[j + 1].T, 0, 0)
-                # 10: δ[j] <- g'(i[j]) ◦ (Wb[j + 1] * δ[j + 1]).
-                self.delta[j] = self.g_linha(self.i[j]) * (Wb @ self.delta[j + 1])
-                # 11: W[j] <- W[j] + η(δ[j] ⊗ xamostra)
-                self.W[j] = self.W[j] + self.eta * (self.delta[j] @ xamostra.T)
+                Wb[j + 1] = np.delete(self.W[j + 1].T, 0, 0)
+                # 10: δ[j] <− g'(i[j]) ◦ (Wb[j + 1] · δ[j + 1]).
+                self.delta[j] = self.g_linha(self.i[j]) * (
+                    Wb[j + 1] @ self.delta[j + 1]
+                )
+                # 11: W[j] <− W[j] + η(δ[j] ⊗ xamostra)
+                self.W[j] = self.W[j] + self.taxa_aprendizado * (
+                    self.delta[j] @ xamostra.T
+                )
             # 12: else
             else:
                 # 13: Wb[j + 1] Recebe a matriz W[j + 1] transposta sem a coluna que multiplica pelos limiares de ativação.
-                Wb = np.delete(self.W[j + 1].T, 0, 0)
-                # 14: δ[j] <- g′(i[j]) ◦ (Wb[j + 1] * δ[j + 1]).
-                self.delta[j] = self.g_linha(self.i[j]) * (Wb @ self.delta[j + 1])
-                # 15: ybias <- y[j − 1] com adição de −1 na primeira posição do vetor.
-                ybias = np.append(
-                    -np.ones((1, self.y[j - 1].shape[1])), self.y[j - 1], axis=0
+                Wb[j + 1] = np.delete(self.W[j + 1].T, 0, 0)
+                # 14: δ[j] <− g′(i[j]) ◦ (Wb[j + 1] · δ[j + 1]).
+                self.delta[j] = self.g_linha(self.i[j]) * (
+                    Wb[j + 1] @ self.delta[j + 1]
                 )
-                # 16: W[j] <- W[j] + η(δ[j] ⊗ ybias)
-                self.W[j] = self.W[j] + self.eta * (self.delta[j] @ ybias.T)
+                # 15: ybias <− y[j − 1] com adição de −1 na primeira posição do vetor.
+                y_bias = np.concatenate((-np.ones((1, 1)), self.y[j - 1]), axis=0)
+                # 16: W[j] <− W[j] + η(δ[j] ⊗ ybias)
+                self.W[j] = self.W[j] + self.taxa_aprendizado * (
+                    self.delta[j] @ y_bias.T
+                )
             # 17: end if
-            # 18: j <- j − 1
+            # 18: j <− j − 1
             j = j - 1
         # 19: end while
 
-    def calcular_eqm(self, X_treino, y_treino):
-        # 1: EQM <- 0
+    def calc_eqm(self, Xtreino, Ytreino):
+        # 1: EQM <− 0
         eqm = 0
         # 2: for Cada amostra em Xtreino do
-        for i in range(X_treino.shape[1]):
-            # 3: xamostra <- N−ésima amostra de Xtreino.
-            x_amostra = X_treino[:, i]
+        for i in range(Xtreino.shape[1]):
+            # 3: xamostra <− N−ésima amostra de Xtreino.
+            xamostra = Xtreino[:, i]
             # 4: Forward(xamostra)
-            self.forward(x_amostra)
-            # 5: d <- N−ésimo rótulo de Xtreino.
-            d = y_treino[:, i]
-            # 6: EQI <- 0
+            self.forward(xamostra)
+            # 5: d <− N−ésimo rótulo de Xtreino.
+            d = Ytreino[:, i]
+            # 6: EQI <− 0
             eqi = 0
-            # 7: j <- 0
             j = 0
             # 8: for Cada neurônio na camada de saída do
             for y in self.y[-1]:
-                # 9: EQI <- EQI + (d[j] − y[QTD_L − 1][j])2
-                eqi = eqi + (d[j] - y) ** 2
-                # 10: j <- j + 1
-                j = j + 1
+                # 9: EQI <− EQI + (d[j] − y[QTD_L − 1][j])2
+                eqi = eqi + (d[j] - self.y[-1][j][0]) ** 2
+                j += 1
             # 11: end for
-            # 12: EQM <- EQM + EQI
+            # 12: EQM <− EQM + EQI
             eqm = eqm + eqi
         # 13: end for
-        # 14: EQM <- EQM/(2 ∗ QtdAmostrasTreino)
-        eqm = eqm / (2 * X_treino.shape[1])
+        # 14: EQM <− EQM/(2 ∗ QtdAmostrasTreino)
+        eqm = eqm / (2 * Xtreino.shape[1])
+        return eqm
 
     def g(self, x):
-        return 1 / (1 + np.exp(-x))
+        return (1 - np.exp(-x)) / (1 + np.exp(-x))
 
     def g_linha(self, x):
-        return self.g(x)
+        return 0.5 * (1 - self.g(x) ** 2)
 
-    def treinar(self, X_treino, y_treino):
+    def treinar(self, x_treino, y_treino):
         eqm = 1
         epoch = 0
         while eqm > self.max_error and epoch < self.max_epoch:
             ### Cada Loop desse while é uma epoca
-            for i in range(X_treino.shape[1]):
-                xamostra = X_treino[:, i]
+            for i in range(x_treino.shape[1]):
+                xamostra = x_treino[:, i]
                 self.forward(xamostra)
                 d = y_treino[:, i]
                 self.backward(xamostra, d)
-            eqm = self.calcular_eqm()
+            eqm = self.calc_eqm(x_treino, y_treino)
+            bp = 0
             print(f"EQM: {eqm} Epoch: {epoch}")
             epoch = epoch + 1
 
 
-X, Y = get_dados_imagens(60)
+# normalizar dados:
+X = 2 * (X / 255) - 1
 
 # dividir em treino e teste 80% e 20%
-X_treino = X[:, : int(X.shape[1] * 0.8)]
+x_treino = X[:, : int(X.shape[1] * 0.8)]
 y_treino = Y[:, : int(Y.shape[1] * 0.8)]
-X_teste = X[:, int(X.shape[1] * 0.8) :]
+y_teste = X[:, int(X.shape[1] * 0.8) :]
 y_teste = Y[:, int(Y.shape[1] * 0.8) :]
 
-main_mlp = MLP(5, [30, 30, 30, 30, 30], 20, 1000, 0.01, 3600)
+mainMlp = MLP([30, 30, 30], 20, 1000, 0.01, 30 * 30)
 
-main_mlp.treinar(X_treino, y_treino)
+mainMlp.treinar(x_treino, y_treino)
