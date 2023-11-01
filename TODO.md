@@ -34,9 +34,9 @@
     - ~~Resumo (15%)~~.
     - ~~Introdução (20%)~~.
     - Desenvolvimento (27%).
-        - Realizar a normalização dos dados com base no método min-max (?).
-        - Organizar o conjunto de dados de forma a obter $X\in\mathbb{R}^{(p+1)\times N}$.
-        - Definir $\eta$, que se trata do passo de aprendizagem para o MLP.
+        - ~~Realizar a normalização dos dados com base no método min-max (?)~~.
+        - ~~Organizar o conjunto de dados de forma a obter $X\in\mathbb{R}^{(p+1)\times N}$~~.
+        - ~~Definir $\eta$, que se trata do passo de aprendizagem para o MLP~~.
         - Para o modelo `MLP`:
             - Fazer uma discussão inicial sobre underfitting e overfitting.
             - Realizar um projeto de uma rede com poucos neurônios na camada oculta:
@@ -48,7 +48,7 @@
             - Validar o modelo utilizando uma topologia da sua escolha:
                 - Não deve produzir nem overfitting bem como underfitting.
                 - Escolher com base nas instruções do professor (?).
-        - $20$ rodadas de treinamento (escolha arbitrária).
+        - ~~$20$ rodadas de treinamento (escolha arbitrária)~~.
         - Projetar uma rede `MLP` que:
             - Seja superdimensionada.
             - Identifique o acontecimento de overfitting.
@@ -61,6 +61,6 @@
             - Acurácia -> média, desvio padrão, maior e menor.
             - Sensibilidade -> média, desvio padrão, maior e menor.
             - Especificidade -> média, desvio padrão, maior e menor.
-    - Referências (5%).
-    - Implementações (5%).
-        - Implementar o modelo `MLP`.
+    - ~~Referências (5%)~~.
+    - ~~Implementações (5%)~~.
+        - ~~Implementar o modelo `MLP`~~.
