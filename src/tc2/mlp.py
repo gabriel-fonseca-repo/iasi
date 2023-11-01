@@ -192,7 +192,7 @@ X = 2 * (X / 255) - 1
 # dividir em treino e teste 80% e 20%
 x_treino = X[:, : int(X.shape[1] * 0.8)]
 y_treino = Y[:, : int(Y.shape[1] * 0.8)]
-y_teste = X[:, int(X.shape[1] * 0.8) :]
+x_teste = X[:, int(X.shape[1] * 0.8) :]
 y_teste = Y[:, int(Y.shape[1] * 0.8) :]
 
 mainMlp = MLP([30, 30, 30], 20, 1000, 0.01, 30 * 30)
