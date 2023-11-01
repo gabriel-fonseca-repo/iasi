@@ -143,9 +143,9 @@ class MLP:
         # 2: for Cada amostra em Xtreino do
         for i in range(X_treino.shape[1]):
             # 3: xamostra <− N−ésima amostra de Xtreino.
-            xamostra = X_treino[:, i]
+            x_amostra = X_treino[:, i]
             # 4: Forward(xamostra)
-            self.forward(xamostra)
+            self.forward(x_amostra)
             # 5: d <− N−ésimo rótulo de Xtreino.
             d = y_treino[:, i]
             # 6: EQI <− 0
@@ -176,10 +176,10 @@ class MLP:
         while eqm > self.max_error and epoch < self.max_epoch:
             ### Cada Loop desse while é uma epoca
             for i in range(X_treino.shape[1]):
-                xamostra = X_treino[:, i]
-                self.forward(xamostra)
+                x_amostra = X_treino[:, i]
+                self.forward(x_amostra)
                 d = y_treino[:, i]
-                self.backward(xamostra, d)
+                self.backward(x_amostra, d)
             eqm = self.calc_eqm(X_treino, y_treino)
             bp = 0
             print(f"EQM: {eqm} Epoch: {epoch}")
