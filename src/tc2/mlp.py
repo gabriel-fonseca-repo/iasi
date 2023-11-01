@@ -85,14 +85,14 @@ class MLP:
 
             # 13: end for
 
-    def backward(self, xamostra, d):
+    def backward(self, x_amostra, d):
         # 1: Receber a amostra xamostra e seu rótulo d
         # 2: j <− Quantidade de matrizes W − 1.
         j = len(self.W) - 1
         # 3: while j ≥ 0 do
         d.shape = (len(d), 1)
-        xamostra.shape = (len(xamostra), 1)
-        xamostra = np.concatenate((-np.ones((1, 1)), xamostra), axis=0)
+        x_amostra.shape = (len(x_amostra), 1)
+        x_amostra = np.concatenate((-np.ones((1, 1)), x_amostra), axis=0)
         Wb = [None] * (len(self.W) + 1)
 
         while j >= 0:
@@ -116,7 +116,7 @@ class MLP:
                 )
                 # 11: W[j] <− W[j] + η(δ[j] ⊗ xamostra)
                 self.W[j] = self.W[j] + self.taxa_aprendizado * (
-                    self.delta[j] @ xamostra.T
+                    self.delta[j] @ x_amostra.T
                 )
             # 12: else
             else:
@@ -137,17 +137,17 @@ class MLP:
             j = j - 1
         # 19: end while
 
-    def calc_eqm(self, Xtreino, Ytreino):
+    def calc_eqm(self, X_treino, y_treino):
         # 1: EQM <− 0
         eqm = 0
         # 2: for Cada amostra em Xtreino do
-        for i in range(Xtreino.shape[1]):
+        for i in range(X_treino.shape[1]):
             # 3: xamostra <− N−ésima amostra de Xtreino.
-            xamostra = Xtreino[:, i]
+            xamostra = X_treino[:, i]
             # 4: Forward(xamostra)
             self.forward(xamostra)
             # 5: d <− N−ésimo rótulo de Xtreino.
-            d = Ytreino[:, i]
+            d = y_treino[:, i]
             # 6: EQI <− 0
             eqi = 0
             j = 0
@@ -161,7 +161,7 @@ class MLP:
             eqm = eqm + eqi
         # 13: end for
         # 14: EQM <− EQM/(2 ∗ QtdAmostrasTreino)
-        eqm = eqm / (2 * Xtreino.shape[1])
+        eqm = eqm / (2 * X_treino.shape[1])
         return eqm
 
     def g(self, x):
@@ -170,17 +170,17 @@ class MLP:
     def g_linha(self, x):
         return 0.5 * (1 - self.g(x) ** 2)
 
-    def treinar(self, x_treino, y_treino):
+    def treinar(self, X_treino, y_treino):
         eqm = 1
         epoch = 0
         while eqm > self.max_error and epoch < self.max_epoch:
             ### Cada Loop desse while é uma epoca
-            for i in range(x_treino.shape[1]):
-                xamostra = x_treino[:, i]
+            for i in range(X_treino.shape[1]):
+                xamostra = X_treino[:, i]
                 self.forward(xamostra)
                 d = y_treino[:, i]
                 self.backward(xamostra, d)
-            eqm = self.calc_eqm(x_treino, y_treino)
+            eqm = self.calc_eqm(X_treino, y_treino)
             bp = 0
             print(f"EQM: {eqm} Epoch: {epoch}")
             epoch = epoch + 1
@@ -190,11 +190,11 @@ class MLP:
 X = 2 * (X / 255) - 1
 
 # dividir em treino e teste 80% e 20%
-x_treino = X[:, : int(X.shape[1] * 0.8)]
+X_treino = X[:, : int(X.shape[1] * 0.8)]
 y_treino = Y[:, : int(Y.shape[1] * 0.8)]
-x_teste = X[:, int(X.shape[1] * 0.8) :]
+X_teste = X[:, int(X.shape[1] * 0.8) :]
 y_teste = Y[:, int(Y.shape[1] * 0.8) :]
 
-mainMlp = MLP([30, 30, 30], 20, 1000, 0.01, 30 * 30)
+main_mlp = MLP([30, 30, 30], 20, 1000, 0.01, 30 * 30)
 
-mainMlp.treinar(x_treino, y_treino)
+main_mlp.treinar(X_treino, y_treino)
