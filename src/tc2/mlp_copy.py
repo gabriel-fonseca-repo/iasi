@@ -4,8 +4,6 @@ import numpy as np
 
 from util import get_dados_imagens
 
-X, y = get_dados_imagens(30)
-
 
 class MLP:
     def __init__(
@@ -139,6 +137,8 @@ class MLP:
         plt.show()
 
 
+X, y = get_dados_imagens(30)
+
 # Normalização dos dados
 X = 2 * (X / 255) - 1
 
@@ -151,7 +151,7 @@ main_mlp = MLP(
     q_neuronios=[30, 30, 30],
     q_neuronios_saida=20,
     max_epoch=1000,
-    max_error=0.001,
+    max_error=0.01,
     q_neuronios_entrada=30 * 30,
 )
 
