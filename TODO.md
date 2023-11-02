@@ -53,14 +53,9 @@
             - Seja superdimensionada.
             - Identifique o acontecimento de overfitting.
             - Faça uma parada antecipada ao identificar overfitting.
-        - Realizar discussões se essa arquitetura obteve resultados melhores ou piores com relação às topologias anteriores e a rede `RBF`.
     - Resultados (27%).
         - Construir uma matriz de confusão para a pior e melhor rodada.
-        - Computar as seguintes métricas para os resultados de cada modelo ao final das $20$ rodadas:
-            - Quantidade média de épocas para que os modelos atinjam convergência (?).
-            - Acurácia -> média, desvio padrão, maior e menor.
-            - Sensibilidade -> média, desvio padrão, maior e menor.
-            - Especificidade -> média, desvio padrão, maior e menor.
+        - Medir as taxas de acerto (Somar os acertos e dividir pela quantidade total de dados de teste).
     - ~~Referências (5%)~~.
     - ~~Implementações (5%)~~.
         - ~~Implementar o modelo `MLP`~~.

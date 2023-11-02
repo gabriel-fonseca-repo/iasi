@@ -142,16 +142,23 @@ X, y = get_dados_imagens(30)
 # Normalização dos dados
 X = 2 * (X / 255) - 1
 
+# embaralhar os dados
+
+seed = np.random.permutation(X.shape[1])
+X = X[:, seed]
+y = y[:, seed]
+
+# dividir em treino e teste 80% e 20%
 X_treino = X[:, : int(X.shape[1] * 0.8)]
 y_treino = y[:, : int(y.shape[1] * 0.8)]
 X_teste = X[:, int(X.shape[1] * 0.8) :]
 y_teste = y[:, int(y.shape[1] * 0.8) :]
 
 main_mlp = MLP(
-    q_neuronios=[30, 30, 30],
+    q_neuronios=[100, 50, 20],
     q_neuronios_saida=20,
     max_epoch=1000,
-    max_error=0.01,
+    max_error=0.003,
     q_neuronios_entrada=30 * 30,
 )
 

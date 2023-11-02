@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
 
 from util import get_dados_imagens
 
@@ -186,18 +187,24 @@ class MLP:
             epoch = epoch + 1
 
     def testar(self, X_teste, y_teste):
-        acertos = 0
+        matriz_confusao = np.zeros((20, 20), dtype=int)
         for i in range(X_teste.shape[1]):
             x_amostra = X_teste[:, i]
             self.forward(x_amostra)
             resultado = self.y[-1]
             esperado = y_teste[:, i]
             esperado.shape = (len(esperado), 1)
-            if np.argmax(resultado) == np.argmax(esperado):
-                acertos += 1
-
-        print(f"Acertos: {acertos} de {X_teste.shape[1]}")
-        print(f"Porcentagem: {(acertos / X_teste.shape[1]) * 100}%")
+            classe_predita = np.argmax(resultado)
+            classe_real = np.argmax(esperado)
+            matriz_confusao[classe_real][classe_predita] += 1
+        plt.clf()
+        sns.heatmap(
+            matriz_confusao,
+            annot=True,
+            fmt="d",
+            cbar=False,
+        )
+        plt.show()
 
 
 # normalizar dados:
@@ -218,7 +225,5 @@ main_mlp = MLP([100, 50, 25], 20, 1000, 0.001, 30 * 30)
 
 main_mlp.treinar(X_treino, y_treino)
 
-print("Teste com dados de treinamento:")
 main_mlp.testar(X_treino, y_treino)
-print("Teste com dados de teste:")
 main_mlp.testar(X_teste, y_teste)
