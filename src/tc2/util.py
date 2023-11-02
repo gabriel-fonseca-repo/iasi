@@ -2,6 +2,7 @@ import cv2
 import seaborn as sns
 import datetime as dt
 from typing import Any, Dict, List
+import os
 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -278,4 +279,5 @@ def get_dados_imagens(red):
             VectorNormalized.shape = (len(VectorNormalized), 1)
             X = np.append(X, VectorNormalized, axis=1)
             Y = np.append(Y, ROT, axis=1)
+    os.system("clear")
     return X, Y

@@ -38,7 +38,7 @@
         - ~~Organizar o conjunto de dados de forma a obter $X\in\mathbb{R}^{(p+1)\times N}$~~.
         - ~~Definir $\eta$, que se trata do passo de aprendizagem para o MLP~~.
         - Para o modelo `MLP`:
-            - Fazer uma discussão inicial sobre underfitting e overfitting.
+            - ~~Fazer uma discussão inicial sobre underfitting e overfitting~~.
             - Realizar um projeto de uma rede com poucos neurônios na camada oculta:
                 - Computar valores de acurácia.
                 - Computar matrizes de confusão.
