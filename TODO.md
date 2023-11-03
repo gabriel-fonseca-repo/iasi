@@ -49,15 +49,15 @@
                 - ~~Não deve produzir nem overfitting bem como underfitting~~.
                 - ~~Escolher com base nas instruções do professor (?)~~.
         - ~~$20$ rodadas de treinamento (escolha arbitrária)~~.
-        - Projetar uma rede `MLP` que:
-            - Seja superdimensionada.
-            - Identifique o acontecimento de overfitting.
-            - Faça uma parada antecipada ao identificar overfitting.
-    - Resultados (27%).
-        - ~~Computar a quantidade média de épocas que se leva para atingir a convergência (EQM baixo o suficiente)~~
-        - Computar as seguintes métricas para os resultados do MLP ao final das $20$ rodadas:
+        - ~~Projetar uma rede `MLP` que~~:
+            - ~~Seja superdimensionada~~.
+            - ~~Identifique o acontecimento de overfitting~~.
+            - ~~Faça uma parada antecipada ao identificar overfitting~~.
+    - ~~Resultados (27%)~~.
+        - ~~Computar a quantidade média de épocas que se leva para atingir a convergência (EQM baixo o suficiente)~~.
+        - ~~Computar as seguintes métricas para os resultados do MLP ao final das $20$ rodadas~~:
             - ~~Acurácia -> média, desvio padrão, maior e menor~~.
-            - Matriz de confusão.
+            - ~~Matriz de confusão~~.
     - ~~Referências (5%)~~.
     - ~~Implementações (5%)~~.
         - ~~Implementar o modelo `MLP`~~.

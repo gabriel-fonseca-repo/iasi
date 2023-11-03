@@ -237,11 +237,10 @@ class MLP:
 
         df = pd.DataFrame(stats)
         df.to_csv(f"out/tc2/rst_{modelo}_{fase}_{self.q_neuronios[-1]}N.csv", sep=";")
-        plt.figure(figsize=(6, 6))
-        plt.bar(df["Estatísticas"], df["Média"], yerr=df["Desvio Padrão"])
-        plt.xlabel("Modelo")
-        plt.ylabel("Valor (0-1)")
-        plt.title("Estatísticas de performance do MLP")
+        plt.clf()
+        plt.boxplot(ACURACIAS)
+        plt.title(f"Boxplot das Acurácias - {fase}")
+        plt.ylabel("Acurácia")
         plt.savefig(f"out/tc2/BoxPlot_{modelo}_{fase}_{self.q_neuronios[-1]}N.png")
         plt.clf()
 
@@ -262,7 +261,7 @@ QTD_EPOCAS = []
 
 for _ in range(20):
     main_mlp = MLP(
-        q_neuronios=[100, 50, 20],
+        q_neuronios=[1500, 1300, 1100, 900, 700, 500, 300, 100],
         q_neuronios_saida=20,
         max_epoch=1000,
         max_error=0.003,
@@ -291,11 +290,15 @@ for _ in range(20):
 
     QTD_EPOCAS.extend(main_mlp.epocas)
 
-main_mlp.plotar_mc(MATRIZ_CONFUSAO_TREINO_TOTAL, "Treino")
-main_mlp.plotar_mc(MATRIZ_CONFUSAO_TESTE_TOTAL, "Teste")
 
-main_mlp.estatisticas(ACURACIAS_TREINO, "Treino")
-main_mlp.estatisticas(ACURACIAS_TESTE, "Teste")
+nome_arquivo_treino = "Treino_Ideal_BP"
+nome_arquivo_teste = "Teste_Ideal_BP"
+
+main_mlp.plotar_mc(MATRIZ_CONFUSAO_TREINO_TOTAL, nome_arquivo_treino)
+main_mlp.plotar_mc(MATRIZ_CONFUSAO_TESTE_TOTAL, nome_arquivo_teste)
+
+main_mlp.estatisticas(ACURACIAS_TREINO, nome_arquivo_treino)
+main_mlp.estatisticas(ACURACIAS_TESTE, nome_arquivo_teste)
 
 mean_epoch = np.mean(QTD_EPOCAS)
 print(f"Quantidade média de épocas para atingir convergência: {mean_epoch}")
