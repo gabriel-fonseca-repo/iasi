@@ -7,7 +7,8 @@ for f_dict in LISTA_FUNCOES:
     f = f_dict["funcao"]
     x_lb = f_dict["x_lb"]
     x_ub = f_dict["x_ub"]
-    max = f_dict["max"]
+
+    hillclimbing_config = f_dict["hillclimbing_config"]
 
     if f is None:
         continue
@@ -16,5 +17,5 @@ for f_dict in LISTA_FUNCOES:
     xx, yy = np.meshgrid(x_axis, x_axis)
 
     ax = plotar_funcao(xx, yy, f)
-    list_prog_x_opt = hillclimbing(f, x_lb, x_ub, max=max)
+    list_prog_x_opt = hillclimbing(f, x_lb, x_ub, **hillclimbing_config)
     plotar_trilha(ax, list_prog_x_opt)

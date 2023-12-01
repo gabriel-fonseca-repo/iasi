@@ -30,9 +30,9 @@ def hillclimbing(
     max_it=100,  # Número máximo de iterações
     e=0.1,  # Tamanho da vizinhança
     max_viz=10,  # Para cada vez que há um ótimo verifica max_viz vizinhos
-    melhoria=True,  # Em quanto tem melhoria repete, caso contrário para
 ) -> List[np.ndarray]:
     i = 0
+    melhoria = (True,)  # Em quanto tem melhoria repete, caso contrário para
 
     perturb = lambda x, e: np.random.uniform(low=x + e, high=x - e)
 

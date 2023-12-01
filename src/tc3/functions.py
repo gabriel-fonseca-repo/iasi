@@ -58,14 +58,16 @@ def f_8(x, y):
 
 
 LISTA_FUNCOES = [
+    # Função 3 do TC3
     {
         "funcao": f_3,
         "x_lb": -8.0,
         "x_ub": 8.0,
-        "max": False,
         "hillclimbing_config": {
-            "max_viz": 100,
-            "e": 0.1,
+            "max": False,
+            "max_viz": 300,
+            "max_it": 100,
+            "e": 2.0,
         },
     }
 ]
@@ -76,48 +78,88 @@ LISTA_FUNCOES_D = [
         "funcao": f_1,
         "x_lb": -100.0,
         "x_ub": 100.0,
-        "max": False,
+        "hillclimbing_config": {
+            "max": False,
+            "max_viz": 100,
+            "max_it": 100,
+            "e": 0.1,
+        },
     },
     {
         "funcao": f_2,
         "x_lb": -2.0,
         "x_ub": 5.0,
-        "max": True,
+        "hillclimbing_config": {
+            "max": True,
+            "max_viz": 300,
+            "max_it": 100,
+            "e": 0.1,
+        },
     },
     {
         "funcao": f_3,
         "x_lb": -8.0,
         "x_ub": 8.0,
-        "max": False,
+        "hillclimbing_config": {
+            "max": False,
+            "max_viz": 300,
+            "max_it": 100,
+            "e": 2.0,
+        },
     },
     {
         "funcao": f_4,
         "x_lb": -5.12,
         "x_ub": 5.12,
-        "max": False,
+        "hillclimbing_config": {
+            "max": False,
+            "max_viz": 300,
+            "max_it": 100,
+            "e": 2.0,
+        },
     },
     {
         "funcao": f_5,
         "x_lb": -2,
         "x_ub": 3,
-        "max": False,
+        "hillclimbing_config": {
+            "max": False,
+            "max_viz": 300,
+            "max_it": 100,
+            "e": 0.1,
+        },
     },
     {
         "funcao": f_6,
         "x_lb": -1,
         "x_ub": 3,
-        "max": True,
+        "hillclimbing_config": {
+            "max": False,
+            "max_viz": 300,
+            "max_it": 100,
+            "e": 0.1,
+        },
     },
     {
         "funcao": f_7,
         "x_lb": 0,
         "x_ub": np.pi,
-        "max": False,
+        "hillclimbing_config": {
+            "max": False,
+            "max_viz": 300,
+            "max_it": 100,
+            "e": 0.1,
+        },
     },
     {
         "funcao": f_8,
         "x_lb": -200,
         "x_ub": 20,
-        "max": False,
+        "hillclimbing_config": {
+            "max": False,
+            "max_viz": 300,
+            "max_it": 100,
+            "e": 0.1,
+        },
     },
 ]
