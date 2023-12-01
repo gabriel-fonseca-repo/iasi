@@ -28,6 +28,7 @@ for i in range(it_max):
         x_candidato = x_lb
 
     f_candidato = f(x_candidato)
+
     if f_candidato > f_opt:
         x_opt = x_candidato
         f_opt = f_candidato
