@@ -9,8 +9,28 @@ def plotar_funcao(
     f: callable,
 ) -> plt.Axes:
     fig = plt.figure()
-    ax = fig.add_subplot(projection="3d")
-    ax.plot_surface(xx, yy, f(xx, yy), alpha=0.5, cmap="jet", rstride=20, cstride=20)
+    ax: plt.Axes = fig.add_subplot(projection="3d")
+    ax.plot_surface(
+        xx,
+        yy,
+        f(xx, yy),
+        rstride=20,
+        cstride=20,
+        alpha=0.6,
+        cmap="jet",
+    )
+    return ax
+
+
+def plotar_e_salvar_funcao(
+    xx: np.ndarray,
+    yy: np.ndarray,
+    f: callable,
+    i: int,
+) -> plt.Axes:
+    f_out_name = f"out/tc3/f_{i}/VISUALIZACAO.png"
+    ax = plotar_funcao(xx, yy, f)
+    plt.savefig(f_out_name, dpi=300)
     return ax
 
 
@@ -33,14 +53,13 @@ def extrair_resultados(
     xx: np.ndarray,
     yy: np.ndarray,
     f: callable,
+    ax: plt.Axes,
     list_prog_x_opt: List[Tuple[np.ndarray, np.int32]],
     algorithm: str,
     i: int,
-):
-    f_out_name = f"out/tc3/f_{i}/VISUALIZACAO.png"
+) -> None:
     algo_out_name = f"out/tc3/f_{i}/CAMINHO_PERCORRIDO_{algorithm}.png"
     ax = plotar_funcao(xx, yy, f)
-    plt.savefig(f_out_name, dpi=300)
     plotar_trilha(ax, list_prog_x_opt)
     plt.savefig(algo_out_name, dpi=300)
     plt.close()
@@ -50,8 +69,8 @@ def extrair_resultados(
 def hillclimbing(
     f: callable,  # Função a ser otimizada
     max: bool,  # Se é máximo ou mínimo
-    x_bound: float,  # X lower body
-    y_bound: float,  # X upper body
+    x_bound: dict,  # X lower body
+    y_bound: dict,  # Y upper body
     max_it=100,  # Número máximo de iterações
     e=0.1,  # Tamanho da vizinhança
     max_viz=10,  # Para cada vez que há um ótimo verifica max_viz vizinhos
@@ -91,8 +110,8 @@ def hillclimbing(
 def tempera(
     f: callable,  # Função a ser otimizada
     max: bool,  # Se é máximo ou mínimo
-    x_bound: float,  # X lower body
-    y_bound: float,  # X upper body
+    x_bound: dict,  # X lower body
+    y_bound: dict,  # Y upper body
     max_it=100,  # Número máximo de iterações
     sigma=0.01,  # Valor da variância
     t=1000,  # Temperatura inicial
@@ -138,8 +157,8 @@ def tempera(
 def lrs(
     f: callable,  # Função a ser otimizada
     max: bool,  # Se é máximo ou mínimo
-    x_bound: float,  # X lower body
-    y_bound: float,  # X upper body
+    x_bound: dict,  # X lower body
+    y_bound: dict,  # Y upper body
     max_it=100,  # Número máximo de iterações
     sigma=0.01,  # Valor da variância
 ) -> List[np.ndarray]:
@@ -162,6 +181,37 @@ def lrs(
         if x_candidato[1, 0] > y_bound["ub"]:
             x_candidato[1, 0] = y_bound["ub"]
 
+        f_candidato = f(x_candidato[0, 0], x_candidato[1, 0])
+
+        max_or_min = f_candidato > f_opt if max else f_candidato < f_opt
+
+        if max_or_min:
+            x_opt = x_candidato
+            f_opt = f_candidato
+            list_prog_x_opt.append((x_opt, f_opt))
+
+    if len(list_prog_x_opt) == 0:
+        list_prog_x_opt.append((x_opt, f_opt))
+
+    return list_prog_x_opt
+
+
+def grs(
+    f: callable,  # Função a ser otimizada
+    max: bool,  # Se é máximo ou mínimo
+    x_bound: dict,  # X lower body
+    y_bound: dict,  # Y upper body
+    max_it=100,  # Número máximo de iterações
+) -> List[np.ndarray]:
+    perturb = lambda bound: np.random.uniform(low=bound["lb"], high=bound["ub"])
+
+    x_opt = np.array([[perturb(x_bound)], [perturb(y_bound)]])
+    f_opt = f(x_opt[0, 0], x_opt[1, 0])
+
+    list_prog_x_opt: List[Tuple[np.ndarray, np.int32]] = []
+
+    for _ in range(max_it):
+        x_candidato = np.array([[perturb(x_bound)], [perturb(y_bound)]])
         f_candidato = f(x_candidato[0, 0], x_candidato[1, 0])
 
         max_or_min = f_candidato > f_opt if max else f_candidato < f_opt

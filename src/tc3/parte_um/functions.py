@@ -11,55 +11,44 @@ def f_2(x, y):
 
 def f_3(x, y):
     return (
-        -20 * np.exp(-0.2 * np.sqrt(0.5 * (x**2 + y**2)))
-        - np.exp(0.5 * (np.cos(2 * np.pi * x) + np.cos(2 * np.pi * y)))
+        -20 * np.exp(-0.2 * np.sqrt((x**2 + y**2) / 2))
+        - np.exp((np.cos(2 * np.pi * x) + np.cos(2 * np.pi * y)) / 2)
         + 20
         + np.exp(1)
     )
 
 
 def f_4(x, y):
-    return x**2 + y**2 - 10 * (np.cos(2 * np.pi * x) + np.cos(2 * np.pi * y)) + 20
+    return (x**2 - 10 * np.cos(2 * np.pi * x) + 10) + (
+        y**2 - 10 * np.cos(2 * np.pi * y) + 10
+    )
 
 
 def f_5(x, y):
-    return 0.5 + (
-        (np.sin(np.sqrt(x**2 + y**2)) ** 2 - 0.5)
-        / (1 + 0.001 * (x**2 + y**2)) ** 2
-    )
+    return (x - 1) ** 2 + 100 * (y - x**2) ** 2
 
 
 def f_6(x, y):
-    return (
-        0.5
-        + (
-            (np.sin(np.sqrt(x**2 + y**2)) ** 2 - 0.5)
-            / (1 + 0.001 * (x**2 + y**2)) ** 2
-        )
-        - 0.5
-        * (
-            1
-            + 0.001 * (x**2 + y**2)
-            - 0.5 * (np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y))
-        )
-    )
+    return (x * np.sin(4 * np.pi * x)) - (y * np.sin(4 * np.pi * y + np.pi)) + 1
 
 
 def f_7(x, y):
-    return np.sin(x) * np.cos(y)
+    return (
+        -np.sin(x) * np.sin(x**2 / np.pi) ** 20
+        - np.sin(y) * np.sin(2 * y**2 / np.pi) ** 20
+    )
 
 
 def f_8(x, y):
-    return (
-        np.sin(x)
-        * np.cos(y)
-        * (1 - np.exp(np.abs(100 - np.sqrt(x**2 + y**2)) / 100))
+    return -(y + 47) * np.sin(np.sqrt(np.abs(x / 2 + y + 47))) - x * np.sin(
+        np.sqrt(np.abs(x - y - 47))
     )
 
 
 LISTA_FUNCOES = [
     # Função 1 do TC3
     {
+        "current": True,
         "funcao": f_1,
         "max": False,
         "x_bound": {
@@ -79,6 +68,9 @@ LISTA_FUNCOES = [
             "max_it": 100,
             "sigma": 5.0,
         },
+        "hiper_p_grs": {
+            "max_it": 100,
+        },
         "hiper_p_tempera": {
             "max_it": 1000,
             "sigma": 7.0,
@@ -87,7 +79,6 @@ LISTA_FUNCOES = [
     },
     # Função 2 do TC3
     {
-        "current": True,
         "funcao": f_2,
         "max": True,
         "x_bound": {
@@ -107,10 +98,13 @@ LISTA_FUNCOES = [
             "max_it": 100,
             "sigma": 0.8,
         },
+        "hiper_p_grs": {
+            "max_it": 100,
+        },
         "hiper_p_tempera": {
-            "max_it": 1000,
-            "sigma": 0.4,
-            "t": 100,
+            "max_it": 100,
+            "sigma": 0.8,
+            "t": 1000,
         },
     },
     # Função 3 do TC3
@@ -133,6 +127,9 @@ LISTA_FUNCOES = [
         "hiper_p_lrs": {
             "max_it": 100,
             "sigma": 0.01,
+        },
+        "hiper_p_grs": {
+            "max_it": 100,
         },
         "hiper_p_tempera": {
             "max_it": 100,
@@ -161,6 +158,9 @@ LISTA_FUNCOES = [
             "max_it": 100,
             "sigma": 0.01,
         },
+        "hiper_p_grs": {
+            "max_it": 100,
+        },
         "hiper_p_tempera": {
             "max_it": 100,
             "sigma": 0.01,
@@ -187,6 +187,9 @@ LISTA_FUNCOES = [
         "hiper_p_lrs": {
             "max_it": 100,
             "sigma": 0.01,
+        },
+        "hiper_p_grs": {
+            "max_it": 100,
         },
         "hiper_p_tempera": {
             "max_it": 100,
@@ -215,6 +218,9 @@ LISTA_FUNCOES = [
             "max_it": 100,
             "sigma": 0.01,
         },
+        "hiper_p_grs": {
+            "max_it": 100,
+        },
         "hiper_p_tempera": {
             "max_it": 100,
             "sigma": 0.01,
@@ -242,6 +248,9 @@ LISTA_FUNCOES = [
             "max_it": 100,
             "sigma": 0.01,
         },
+        "hiper_p_grs": {
+            "max_it": 100,
+        },
         "hiper_p_tempera": {
             "max_it": 100,
             "sigma": 0.01,
@@ -268,6 +277,9 @@ LISTA_FUNCOES = [
         "hiper_p_lrs": {
             "max_it": 100,
             "sigma": 0.01,
+        },
+        "hiper_p_grs": {
+            "max_it": 100,
         },
         "hiper_p_tempera": {
             "max_it": 100,
