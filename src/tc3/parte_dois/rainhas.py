@@ -182,9 +182,6 @@ while geracao_atual < max_geracoes:
     recombinou = recombinacao_dois_pontos(pais[0], pais[1])
 
     if recombinou:
-        # 4. Na prole gerada, deve-se aplicar a mutação com probabilidade de 1% (neste caso, é interessante avaliar os diferentes procedimentos exibidos).
-        recombinou[0].tentar_mutacao()
-        recombinou[1].tentar_mutacao()
 
         for i in range(N):
             if individuos[i] == pais[0]:
@@ -192,6 +189,11 @@ while geracao_atual < max_geracoes:
             elif individuos[i] == pais[1]:
                 individuos[i] = recombinou[1]
 
+    # 4. Na prole gerada, deve-se aplicar a mutação com probabilidade de 1% (neste caso, é interessante avaliar os diferentes procedimentos exibidos).
+    for i in range(N):
+        individuos[i].tentar_mutacao()
+    
+    
     geracao_atual += 1
     if geracao_atual % 100000 == 0:
         print("---------------------------------------------------")
