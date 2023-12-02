@@ -58,108 +58,305 @@ def f_8(x, y):
 
 
 LISTA_FUNCOES = [
+    # Função 1 do TC3
+    {
+        "funcao": f_1,
+        "max": False,
+        "x_bound": {
+            "lb": -100.0,
+            "ub": 100.0,
+        },
+        "y_bound": {
+            "lb": -100.0,
+            "ub": 100.0,
+        },
+        "hiper_p_hillclimbing": {
+            "max_viz": 200,
+            "max_it": 100,
+            "e": 5,
+        },
+        "hiper_p_lrs": {
+            "max_it": 100,
+            "sigma": 5.0,
+        },
+        "hiper_p_tempera": {
+            "max_it": 1000,
+            "sigma": 7.0,
+            "t": 10,
+        },
+    },
+    # Função 2 do TC3
+    {
+        "funcao": f_2,
+        "max": True,
+        "x_bound": {
+            "lb": -2.0,
+            "ub": 4.0,
+        },
+        "y_bound": {
+            "lb": -2.0,
+            "ub": 5.0,
+        },
+        "hiper_p_hillclimbing": {
+            "max_viz": 500,
+            "max_it": 100,
+            "e": 1.2,
+        },
+        "hiper_p_lrs": {
+            "max_it": 100,
+            "sigma": 0.01,
+        },
+        "hiper_p_tempera": {
+            "max_it": 100,
+            "sigma": 0.01,
+            "t": 1000,
+        },
+    },
     # Função 3 do TC3
     {
         "funcao": f_3,
-        "x_lb": -8.0,
-        "x_ub": 8.0,
-        "hillclimbing_config": {
-            "max": False,
+        "max": False,
+        "x_bound": {
+            "lb": -8.0,
+            "ub": 8.0,
+        },
+        "y_bound": {
+            "lb": -8.0,
+            "ub": 8.0,
+        },
+        "hiper_p_hillclimbing": {
             "max_viz": 300,
             "max_it": 100,
             "e": 2.0,
         },
-    }
+        "hiper_p_lrs": {
+            "max_it": 100,
+            "sigma": 0.01,
+        },
+        "hiper_p_tempera": {
+            "max_it": 100,
+            "sigma": 0.01,
+            "t": 1000,
+        },
+    },
 ]
 
 
 LISTA_FUNCOES_D = [
+    # Função 1 do TC3
     {
         "funcao": f_1,
-        "x_lb": -100.0,
-        "x_ub": 100.0,
-        "hillclimbing_config": {
-            "max": False,
-            "max_viz": 100,
+        "max": False,
+        "x_bound": {
+            "lb": -100.0,
+            "ub": 100.0,
+        },
+        "y_bound": {
+            "lb": -100.0,
+            "ub": 100.0,
+        },
+        "hiper_p_hillclimbing": {
+            "max_viz": 200,
             "max_it": 100,
-            "e": 0.1,
+            "e": 5,
+        },
+        "hiper_p_lrs": {
+            "max_it": 100,
+            "sigma": 0.01,
+        },
+        "hiper_p_tempera": {
+            "max_it": 100,
+            "sigma": 0.01,
+            "t": 1000,
         },
     },
+    # Função 2 do TC3
     {
         "funcao": f_2,
-        "x_lb": -2.0,
-        "x_ub": 5.0,
-        "hillclimbing_config": {
-            "max": True,
-            "max_viz": 300,
+        "max": True,
+        "x_bound": {
+            "lb": -2.0,
+            "ub": 4.0,
+        },
+        "y_bound": {
+            "lb": -2.0,
+            "ub": 5.0,
+        },
+        "hiper_p_hillclimbing": {
+            "max_viz": 500,
             "max_it": 100,
-            "e": 0.1,
+            "e": 1.2,
+        },
+        "hiper_p_lrs": {
+            "max_it": 100,
+            "sigma": 0.01,
+        },
+        "hiper_p_tempera": {
+            "max_it": 100,
+            "sigma": 0.01,
+            "t": 1000,
         },
     },
+    # Função 3 do TC3
     {
         "funcao": f_3,
-        "x_lb": -8.0,
-        "x_ub": 8.0,
-        "hillclimbing_config": {
-            "max": False,
+        "max": False,
+        "x_bound": {
+            "lb": -8.0,
+            "ub": 8.0,
+        },
+        "y_bound": {
+            "lb": -8.0,
+            "ub": 8.0,
+        },
+        "hiper_p_hillclimbing": {
             "max_viz": 300,
             "max_it": 100,
             "e": 2.0,
         },
+        "hiper_p_lrs": {
+            "max_it": 100,
+            "sigma": 0.01,
+        },
+        "hiper_p_tempera": {
+            "max_it": 100,
+            "sigma": 0.01,
+            "t": 1000,
+        },
     },
+    # Função 4 do TC3
     {
         "funcao": f_4,
-        "x_lb": -5.12,
-        "x_ub": 5.12,
-        "hillclimbing_config": {
-            "max": False,
+        "max": False,
+        "x_bound": {
+            "lb": -5.12,
+            "ub": 5.12,
+        },
+        "y_bound": {
+            "lb": -5.12,
+            "ub": 5.12,
+        },
+        "hiper_p_hillclimbing": {
             "max_viz": 300,
             "max_it": 100,
             "e": 2.0,
         },
+        "hiper_p_lrs": {
+            "max_it": 100,
+            "sigma": 0.01,
+        },
+        "hiper_p_tempera": {
+            "max_it": 100,
+            "sigma": 0.01,
+            "t": 1000,
+        },
     },
+    # Função 5 do TC3
     {
         "funcao": f_5,
-        "x_lb": -2,
-        "x_ub": 3,
-        "hillclimbing_config": {
-            "max": False,
+        "max": False,
+        "x_bound": {
+            "lb": -2.0,
+            "ub": 2.0,
+        },
+        "y_bound": {
+            "lb": -1.0,
+            "ub": 3.0,
+        },
+        "hiper_p_hillclimbing": {
             "max_viz": 300,
             "max_it": 100,
             "e": 0.1,
         },
+        "hiper_p_lrs": {
+            "max_it": 100,
+            "sigma": 0.01,
+        },
+        "hiper_p_tempera": {
+            "max_it": 100,
+            "sigma": 0.01,
+            "t": 1000,
+        },
     },
+    # Função 6 do TC3
     {
         "funcao": f_6,
-        "x_lb": -1,
-        "x_ub": 3,
-        "hillclimbing_config": {
-            "max": False,
+        "max": False,
+        "x_bound": {
+            "lb": -1.0,
+            "ub": 3.0,
+        },
+        "y_bound": {
+            "lb": -1.0,
+            "ub": 3.0,
+        },
+        "hiper_p_hillclimbing": {
             "max_viz": 300,
             "max_it": 100,
             "e": 0.1,
         },
+        "hiper_p_lrs": {
+            "max_it": 100,
+            "sigma": 0.01,
+        },
+        "hiper_p_tempera": {
+            "max_it": 100,
+            "sigma": 0.01,
+            "t": 1000,
+        },
     },
+    # Função 7 do TC3
     {
         "funcao": f_7,
-        "x_lb": 0,
-        "x_ub": np.pi,
-        "hillclimbing_config": {
-            "max": False,
+        "max": False,
+        "x_bound": {
+            "lb": 0,
+            "ub": np.pi,
+        },
+        "y_bound": {
+            "lb": 0,
+            "ub": np.pi,
+        },
+        "hiper_p_hillclimbing": {
             "max_viz": 300,
             "max_it": 100,
             "e": 0.1,
         },
+        "hiper_p_lrs": {
+            "max_it": 100,
+            "sigma": 0.01,
+        },
+        "hiper_p_tempera": {
+            "max_it": 100,
+            "sigma": 0.01,
+            "t": 1000,
+        },
     },
+    # Função 8 do TC3
     {
         "funcao": f_8,
-        "x_lb": -200,
-        "x_ub": 20,
-        "hillclimbing_config": {
-            "max": False,
+        "max": False,
+        "x_bound": {
+            "lb": -200.0,
+            "ub": 20.0,
+        },
+        "y_bound": {
+            "lb": -200.0,
+            "ub": 20.0,
+        },
+        "hiper_p_hillclimbing": {
             "max_viz": 300,
             "max_it": 100,
             "e": 0.1,
+        },
+        "hiper_p_lrs": {
+            "max_it": 100,
+            "sigma": 0.01,
+        },
+        "hiper_p_tempera": {
+            "max_it": 100,
+            "sigma": 0.01,
+            "t": 1000,
         },
     },
 ]

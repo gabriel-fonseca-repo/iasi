@@ -17,16 +17,41 @@ def plotar_funcao(
 def plotar_trilha(ax: plt.Axes, list_prog_x_opt: List[Tuple[np.ndarray, np.int32]]):
     for x_opt, f_opt in list_prog_x_opt:
         ax.scatter(x_opt[0, 0], x_opt[1, 0], f_opt, s=40, color="k")
-        plt.pause(0.001)
-    ax.scatter(x_opt[0, 0], x_opt[1, 0], f_opt, s=40, color="r", marker="X")
-    plt.show()
+    ax.scatter(
+        x_opt[0, 0],
+        x_opt[1, 0],
+        f_opt,
+        s=200,
+        color="r",
+        marker="X",
+        zorder=10000,
+        edgecolors="k",
+    )
+
+
+def extrair_resultados(
+    xx: np.ndarray,
+    yy: np.ndarray,
+    f: callable,
+    list_prog_x_opt: List[Tuple[np.ndarray, np.int32]],
+    algorithm: str,
+    i: int,
+):
+    f_out_name = f"out/tc3/FUNCAO_{i}_VISUALIZACAO.png"
+    algo_out_name = f"out/tc3/FUNCAO_{i}_CAMINHO_PERCORRIDO_{algorithm}.png"
+    ax = plotar_funcao(xx, yy, f)
+    plt.savefig(f_out_name, dpi=300)
+    plotar_trilha(ax, list_prog_x_opt)
+    plt.savefig(algo_out_name, dpi=300)
+    plt.close()
+    plt.clf()
 
 
 def hillclimbing(
     f: callable,  # Função a ser otimizada
-    x_lb: float,  # X lower body
-    x_ub: float,  # X upper body
-    max=True,  # Se é máximo ou mínimo
+    max: bool,  # Se é máximo ou mínimo
+    x_bound: float,  # X lower body
+    y_bound: float,  # X upper body
     max_it=100,  # Número máximo de iterações
     e=0.1,  # Tamanho da vizinhança
     max_viz=10,  # Para cada vez que há um ótimo verifica max_viz vizinhos
@@ -40,19 +65,19 @@ def hillclimbing(
 
     # X ótimo, que pode ser inicializado aleatoriamente.
     # Aqui foi inicializado como o limite inferior das funções.
-    x_opt = np.array([[x_lb], [x_lb]])
+    x_opt = np.array([[x_bound["lb"]], [x_bound["lb"]]])
     f_opt = f(x_opt[0, 0], x_opt[1, 0])
 
     while i < max_it and melhoria:
         melhoria = False
         i += 1
         for _ in range(max_viz):
-            x_vizinho = perturb(x_opt, e)
-            f_vizinho = f(x_vizinho[0, 0], x_vizinho[1, 0])
-            max_or_min = f_vizinho > f_opt if max else f_vizinho < f_opt
+            x_candidato = perturb(x_opt, e)
+            f_candidato = f(x_candidato[0, 0], x_candidato[1, 0])
+            max_or_min = f_candidato > f_opt if max else f_candidato < f_opt
             if max_or_min:
-                x_opt = x_vizinho
-                f_opt = f_vizinho
+                x_opt = x_candidato
+                f_opt = f_candidato
                 list_prog_x_opt.append((x_opt, f_opt))
                 melhoria = True
                 break
@@ -64,46 +89,57 @@ def hillclimbing(
 
 def tempera(
     f: callable,  # Função a ser otimizada
-    x_lb: float,  # X lower body
-    x_ub: float,  # X upper body
-    max=True,  # Se é máximo ou mínimo
+    max: bool,  # Se é máximo ou mínimo
+    x_bound: float,  # X lower body
+    y_bound: float,  # X upper body
     max_it=100,  # Número máximo de iterações
     sigma=0.01,  # Valor da variância
-):
+    t=1000,  # Temperatura inicial
+) -> List[np.ndarray]:
     npru = np.random.uniform(0, 1)
+    list_prog_x_opt: List[Tuple[np.ndarray, np.int32]] = []
+
+    x_opt = np.array([[x_bound["lb"]], [x_bound["lb"]]])
+    f_opt = f(x_opt[0, 0], x_opt[1, 0])
 
     for _ in range(max_it):
         n = np.random.normal(0, sigma)
         x_candidato = x_opt + n  # Perturbação do x ótimo
 
-        if x_candidato > x_ub:
-            x_candidato = x_ub
-        if x_candidato < x_lb:
-            x_candidato = x_lb
+        if x_candidato[0, 0] < x_bound["lb"]:
+            x_candidato[0, 0] = x_bound["lb"]
+        if x_candidato[1, 0] < y_bound["lb"]:
+            x_candidato[1, 0] = y_bound["lb"]
 
-        f_candidato = f(x_candidato)
-        P_ij = np.exp(-((f_candidato - f_opt) / T))
+        if x_candidato[0, 0] > x_bound["ub"]:
+            x_candidato[0, 0] = x_bound["ub"]
+        if x_candidato[1, 0] > y_bound["ub"]:
+            x_candidato[1, 0] = y_bound["ub"]
+
+        f_candidato = f(x_candidato[0, 0], x_candidato[1, 0])
+        P_ij = np.exp(-((f_candidato - f_opt) / t))
 
         max_or_min_f = f_candidato > f_opt if max else f_candidato < f_opt
 
         if max_or_min_f or P_ij >= npru:
             x_opt = x_candidato
             f_opt = f_candidato
+            list_prog_x_opt.append((x_opt, f_opt))
 
-        T = T * 0.99
+        t = t * 0.99
+    return list_prog_x_opt
 
 
 def lrs(
     f: callable,  # Função a ser otimizada
-    max=True,  # Se é máximo ou mínimo
+    max: bool,  # Se é máximo ou mínimo
+    x_bound: float,  # X lower body
+    y_bound: float,  # X upper body
     max_it=100,  # Número máximo de iterações
     sigma=0.01,  # Valor da variância
-):
-    x_lb = -1  # X lower body
-    x_ub = 2  # X upper body
-
-    x_opt = np.random.uniform(low=x_lb, high=x_ub)  # x ótimo
-    f_opt = f(x_opt)
+) -> List[np.ndarray]:
+    x_opt = np.array([[x_bound["lb"]], [x_bound["lb"]]])
+    f_opt = f(x_opt[0, 0], x_opt[1, 0])
 
     list_prog_x_opt: List[Tuple[np.ndarray, np.int32]] = []
 
@@ -111,12 +147,17 @@ def lrs(
         n = np.random.normal(0, sigma)
         x_candidato = x_opt + n  # Perturbação do x ótimo
 
-        if x_candidato > x_ub:
-            x_candidato = x_ub
-        if x_candidato < x_lb:
-            x_candidato = x_lb
+        if x_candidato[0, 0] < x_bound["lb"]:
+            x_candidato[0, 0] = x_bound["lb"]
+        if x_candidato[1, 0] < y_bound["lb"]:
+            x_candidato[1, 0] = y_bound["lb"]
 
-        f_candidato = f(x_candidato)
+        if x_candidato[0, 0] > x_bound["ub"]:
+            x_candidato[0, 0] = x_bound["ub"]
+        if x_candidato[1, 0] > y_bound["ub"]:
+            x_candidato[1, 0] = y_bound["ub"]
+
+        f_candidato = f(x_candidato[0, 0], x_candidato[1, 0])
 
         max_or_min = f_candidato > f_opt if max else f_candidato < f_opt
 
