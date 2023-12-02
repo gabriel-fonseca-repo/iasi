@@ -48,8 +48,8 @@ class individuo:
             cromosomo.append(gerar_gene())
         return cromosomo
 
-    def get_range(self, posicaoInicial, posicaoFinal):
-        return self.cromossomo[posicaoInicial:posicaoFinal]
+    def get_range(self, posicao_inicial, posicao_final):
+        return self.cromossomo[posicao_inicial:posicao_final]
 
     def tentar_mutacao(self):
         if calc_probabilidade_mutacao():
