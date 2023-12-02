@@ -37,8 +37,8 @@ def extrair_resultados(
     algorithm: str,
     i: int,
 ):
-    f_out_name = f"out/tc3/FUNCAO_{i}_VISUALIZACAO.png"
-    algo_out_name = f"out/tc3/FUNCAO_{i}_CAMINHO_PERCORRIDO_{algorithm}.png"
+    f_out_name = f"out/tc3/f_{i}/VISUALIZACAO.png"
+    algo_out_name = f"out/tc3/f_{i}/CAMINHO_PERCORRIDO_{algorithm}.png"
     ax = plotar_funcao(xx, yy, f)
     plt.savefig(f_out_name, dpi=300)
     plotar_trilha(ax, list_prog_x_opt)
@@ -57,7 +57,7 @@ def hillclimbing(
     max_viz=10,  # Para cada vez que há um ótimo verifica max_viz vizinhos
 ) -> List[np.ndarray]:
     i = 0
-    melhoria = (True,)  # Em quanto tem melhoria repete, caso contrário para
+    melhoria = True  # Em quanto tem melhoria repete, caso contrário para
 
     perturb = lambda x, e: np.random.uniform(low=x + e, high=x - e)
 
@@ -81,7 +81,8 @@ def hillclimbing(
                 list_prog_x_opt.append((x_opt, f_opt))
                 melhoria = True
                 break
-    if not melhoria:
+
+    if len(list_prog_x_opt) == 0:
         list_prog_x_opt.append((x_opt, f_opt))
 
     return list_prog_x_opt
@@ -127,6 +128,10 @@ def tempera(
             list_prog_x_opt.append((x_opt, f_opt))
 
         t = t * 0.99
+
+    if len(list_prog_x_opt) == 0:
+        list_prog_x_opt.append((x_opt, f_opt))
+
     return list_prog_x_opt
 
 
@@ -165,4 +170,8 @@ def lrs(
             x_opt = x_candidato
             f_opt = f_candidato
             list_prog_x_opt.append((x_opt, f_opt))
+
+    if len(list_prog_x_opt) == 0:
+        list_prog_x_opt.append((x_opt, f_opt))
+
     return list_prog_x_opt

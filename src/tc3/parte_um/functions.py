@@ -87,6 +87,7 @@ LISTA_FUNCOES = [
     },
     # Função 2 do TC3
     {
+        "current": True,
         "funcao": f_2,
         "max": True,
         "x_bound": {
@@ -104,97 +105,12 @@ LISTA_FUNCOES = [
         },
         "hiper_p_lrs": {
             "max_it": 100,
-            "sigma": 0.01,
+            "sigma": 0.8,
         },
         "hiper_p_tempera": {
-            "max_it": 100,
-            "sigma": 0.01,
-            "t": 1000,
-        },
-    },
-    # Função 3 do TC3
-    {
-        "funcao": f_3,
-        "max": False,
-        "x_bound": {
-            "lb": -8.0,
-            "ub": 8.0,
-        },
-        "y_bound": {
-            "lb": -8.0,
-            "ub": 8.0,
-        },
-        "hiper_p_hillclimbing": {
-            "max_viz": 300,
-            "max_it": 100,
-            "e": 2.0,
-        },
-        "hiper_p_lrs": {
-            "max_it": 100,
-            "sigma": 0.01,
-        },
-        "hiper_p_tempera": {
-            "max_it": 100,
-            "sigma": 0.01,
-            "t": 1000,
-        },
-    },
-]
-
-
-LISTA_FUNCOES_D = [
-    # Função 1 do TC3
-    {
-        "funcao": f_1,
-        "max": False,
-        "x_bound": {
-            "lb": -100.0,
-            "ub": 100.0,
-        },
-        "y_bound": {
-            "lb": -100.0,
-            "ub": 100.0,
-        },
-        "hiper_p_hillclimbing": {
-            "max_viz": 200,
-            "max_it": 100,
-            "e": 5,
-        },
-        "hiper_p_lrs": {
-            "max_it": 100,
-            "sigma": 0.01,
-        },
-        "hiper_p_tempera": {
-            "max_it": 100,
-            "sigma": 0.01,
-            "t": 1000,
-        },
-    },
-    # Função 2 do TC3
-    {
-        "funcao": f_2,
-        "max": True,
-        "x_bound": {
-            "lb": -2.0,
-            "ub": 4.0,
-        },
-        "y_bound": {
-            "lb": -2.0,
-            "ub": 5.0,
-        },
-        "hiper_p_hillclimbing": {
-            "max_viz": 500,
-            "max_it": 100,
-            "e": 1.2,
-        },
-        "hiper_p_lrs": {
-            "max_it": 100,
-            "sigma": 0.01,
-        },
-        "hiper_p_tempera": {
-            "max_it": 100,
-            "sigma": 0.01,
-            "t": 1000,
+            "max_it": 1000,
+            "sigma": 0.4,
+            "t": 100,
         },
     },
     # Função 3 do TC3

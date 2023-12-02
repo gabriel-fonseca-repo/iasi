@@ -13,13 +13,15 @@ for i, f_dict in enumerate(LISTA_FUNCOES):
     max = f_dict["max"]
     x_bound = f_dict["x_bound"]
     y_bound = f_dict["y_bound"]
+    current = f_dict.get("current", False)
     indice_func = i + 1
 
     hiper_p_hillclimbing = f_dict["hiper_p_hillclimbing"]
     hiper_p_tempera = f_dict["hiper_p_tempera"]
     hiper_p_lrs = f_dict["hiper_p_lrs"]
+    # hiper_p_grs = f_dict["hiper_p_grs"]
 
-    if f is None:
+    if f is None or not current:
         continue
 
     x_axis = np.linspace(x_bound["lb"], x_bound["ub"], 1000)
@@ -34,4 +36,7 @@ for i, f_dict in enumerate(LISTA_FUNCOES):
 
     list_prog_x_lrs = lrs(f, max, x_bound, y_bound, **hiper_p_lrs)
     extrair_resultados(xx, yy, f, list_prog_x_lrs, "LRS", indice_func)
+
+    # list_prog_x_grs = grs(f, max, x_bound, y_bound, **hiper_p_grs)
+    # extrair_resultados(xx, yy, f, list_prog_x_grs, "GRS", indice_func)
     # fmt: on
