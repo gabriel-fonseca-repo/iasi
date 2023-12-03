@@ -10,7 +10,7 @@ from algorithms import (
 from functions import LISTA_FUNCOES
 
 
-executar_todas_funcoes = True
+executar_todas_funcoes = False
 
 
 for i, f_dict in enumerate(LISTA_FUNCOES):
@@ -26,7 +26,7 @@ for i, f_dict in enumerate(LISTA_FUNCOES):
     hiper_p_lrs = f_dict["hiper_p_lrs"]
     hiper_p_grs = f_dict["hiper_p_grs"]
 
-    if f is None or not current:
+    if not current:
         continue
 
     x_axis = np.linspace(x_bound["lb"], x_bound["ub"], 2000)

@@ -48,7 +48,6 @@ def f_8(x, y):
 LISTA_FUNCOES = [
     # Função 1 do TC3
     {
-        "current": True,
         "funcao": f_1,
         "max": False,
         "x_bound": {
@@ -69,7 +68,7 @@ LISTA_FUNCOES = [
             "sigma": 5.0,
         },
         "hiper_p_grs": {
-            "max_it": 100,
+            "max_it": 1000,
         },
         "hiper_p_tempera": {
             "max_it": 1000,
@@ -79,6 +78,7 @@ LISTA_FUNCOES = [
     },
     # Função 2 do TC3
     {
+        "current": True,
         "funcao": f_2,
         "max": True,
         "x_bound": {
@@ -99,7 +99,7 @@ LISTA_FUNCOES = [
             "sigma": 0.8,
         },
         "hiper_p_grs": {
-            "max_it": 100,
+            "max_it": 1000,
         },
         "hiper_p_tempera": {
             "max_it": 100,
@@ -129,7 +129,7 @@ LISTA_FUNCOES = [
             "sigma": 0.01,
         },
         "hiper_p_grs": {
-            "max_it": 100,
+            "max_it": 1000,
         },
         "hiper_p_tempera": {
             "max_it": 100,
@@ -159,7 +159,7 @@ LISTA_FUNCOES = [
             "sigma": 0.01,
         },
         "hiper_p_grs": {
-            "max_it": 100,
+            "max_it": 1000,
         },
         "hiper_p_tempera": {
             "max_it": 100,
@@ -189,7 +189,7 @@ LISTA_FUNCOES = [
             "sigma": 0.01,
         },
         "hiper_p_grs": {
-            "max_it": 100,
+            "max_it": 1000,
         },
         "hiper_p_tempera": {
             "max_it": 100,
@@ -219,7 +219,7 @@ LISTA_FUNCOES = [
             "sigma": 0.01,
         },
         "hiper_p_grs": {
-            "max_it": 100,
+            "max_it": 1000,
         },
         "hiper_p_tempera": {
             "max_it": 100,
@@ -249,7 +249,7 @@ LISTA_FUNCOES = [
             "sigma": 0.01,
         },
         "hiper_p_grs": {
-            "max_it": 100,
+            "max_it": 1000,
         },
         "hiper_p_tempera": {
             "max_it": 100,
@@ -279,7 +279,7 @@ LISTA_FUNCOES = [
             "sigma": 0.01,
         },
         "hiper_p_grs": {
-            "max_it": 100,
+            "max_it": 1000,
         },
         "hiper_p_tempera": {
             "max_it": 100,
