@@ -41,7 +41,7 @@ def plotar_trilha(ax: plt.Axes, list_prog_x_opt: List[Tuple[np.ndarray, np.int32
         x_opt[0, 0],
         x_opt[1, 0],
         f_opt,
-        s=200,
+        s=1300,
         color="r",
         marker="X",
         zorder=10000,
@@ -61,6 +61,7 @@ def extrair_resultados(
     algo_out_name = f"out/tc3/f_{i}/CAMINHO_PERCORRIDO_{algorithm}.png"
     ax = plotar_funcao(xx, yy, f)
     plotar_trilha(ax, list_prog_x_opt)
+    # plt.show()
     plt.savefig(algo_out_name, dpi=300)
     plt.close()
     plt.clf()
@@ -92,8 +93,20 @@ def hillclimbing(
         i += 1
         for _ in range(max_viz):
             x_candidato = perturb(x_opt, e)
+
+            if x_candidato[0, 0] < x_bound["lb"]:
+                x_candidato[0, 0] = x_bound["lb"]
+            if x_candidato[1, 0] < y_bound["lb"]:
+                x_candidato[1, 0] = y_bound["lb"]
+
+            if x_candidato[0, 0] > x_bound["ub"]:
+                x_candidato[0, 0] = x_bound["ub"]
+            if x_candidato[1, 0] > y_bound["ub"]:
+                x_candidato[1, 0] = y_bound["ub"]
+
             f_candidato = f(x_candidato[0, 0], x_candidato[1, 0])
             max_or_min = f_candidato > f_opt if max else f_candidato < f_opt
+
             if max_or_min:
                 x_opt = x_candidato
                 f_opt = f_candidato
@@ -162,7 +175,9 @@ def lrs(
     max_it=100,  # Número máximo de iterações
     sigma=0.01,  # Valor da variância
 ) -> List[np.ndarray]:
-    x_opt = np.array([[x_bound["lb"]], [x_bound["lb"]]])
+    perturb = lambda bound: np.random.uniform(low=bound["lb"], high=bound["ub"])
+
+    x_opt = np.array([[perturb(x_bound)], [perturb(y_bound)]])
     f_opt = f(x_opt[0, 0], x_opt[1, 0])
 
     list_prog_x_opt: List[Tuple[np.ndarray, np.int32]] = []

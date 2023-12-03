@@ -7,7 +7,251 @@ from algorithms import (
     extrair_resultados,
     plotar_e_salvar_funcao,
 )
-from functions import LISTA_FUNCOES
+from functions import f_1, f_2, f_3, f_4, f_5, f_6, f_7, f_8
+
+LISTA_FUNCOES = [
+    # Função 1 do TC3
+    {
+        "funcao": f_1,
+        "max": False,
+        "x_bound": {
+            "lb": -100.0,
+            "ub": 100.0,
+        },
+        "y_bound": {
+            "lb": -100.0,
+            "ub": 100.0,
+        },
+        "hiper_p_hillclimbing": {
+            "max_viz": 200,
+            "max_it": 100,
+            "e": 5,
+        },
+        "hiper_p_lrs": {
+            "max_it": 1000,
+            "sigma": 0.8,
+        },
+        "hiper_p_grs": {
+            "max_it": 1000,
+        },
+        "hiper_p_tempera": {
+            "max_it": 1000,
+            "sigma": 0.9,
+            "t": 1000,
+        },
+    },
+    # Função 2 do TC3
+    {
+        "funcao": f_2,
+        "max": True,
+        "x_bound": {
+            "lb": -2.0,
+            "ub": 4.0,
+        },
+        "y_bound": {
+            "lb": -2.0,
+            "ub": 5.0,
+        },
+        "hiper_p_hillclimbing": {
+            "max_viz": 500,
+            "max_it": 100,
+            "e": 1.2,
+        },
+        "hiper_p_lrs": {
+            "max_it": 100,
+            "sigma": 0.8,
+        },
+        "hiper_p_grs": {
+            "max_it": 1000,
+        },
+        "hiper_p_tempera": {
+            "max_it": 1000,
+            "sigma": 1.8,
+            "t": 10,
+        },
+    },
+    # Função 3 do TC3
+    {
+        "funcao": f_3,
+        "max": False,
+        "x_bound": {
+            "lb": -8.0,
+            "ub": 8.0,
+        },
+        "y_bound": {
+            "lb": -8.0,
+            "ub": 8.0,
+        },
+        "hiper_p_hillclimbing": {
+            "max_viz": 300,
+            "max_it": 100,
+            "e": 2.0,
+        },
+        "hiper_p_lrs": {
+            "max_it": 100,
+            "sigma": 0.8,
+        },
+        "hiper_p_grs": {
+            "max_it": 1000,
+        },
+        "hiper_p_tempera": {
+            "max_it": 100,
+            "sigma": 0.01,
+            "t": 1000,
+        },
+    },
+    # Função 4 do TC3
+    {
+        "funcao": f_4,
+        "max": False,
+        "x_bound": {
+            "lb": -5.12,
+            "ub": 5.12,
+        },
+        "y_bound": {
+            "lb": -5.12,
+            "ub": 5.12,
+        },
+        "hiper_p_hillclimbing": {
+            "max_viz": 300,
+            "max_it": 100,
+            "e": 2.0,
+        },
+        "hiper_p_lrs": {
+            "max_it": 100,
+            "sigma": 0.7,
+        },
+        "hiper_p_grs": {
+            "max_it": 1000,
+        },
+        "hiper_p_tempera": {
+            "max_it": 100,
+            "sigma": 0.01,
+            "t": 1000,
+        },
+    },
+    # Função 5 do TC3
+    {
+        "funcao": f_5,
+        "max": False,
+        "x_bound": {
+            "lb": -2.0,
+            "ub": 2.0,
+        },
+        "y_bound": {
+            "lb": -1.0,
+            "ub": 3.0,
+        },
+        "hiper_p_hillclimbing": {
+            "max_viz": 300,
+            "max_it": 100,
+            "e": 0.1,
+        },
+        "hiper_p_lrs": {
+            "max_it": 1000,
+            "sigma": 0.7,
+        },
+        "hiper_p_grs": {
+            "max_it": 10000,
+        },
+        "hiper_p_tempera": {
+            "max_it": 100,
+            "sigma": 0.01,
+            "t": 1000,
+        },
+    },
+    # Função 6 do TC3
+    {
+        "funcao": f_6,
+        "max": True,
+        "x_bound": {
+            "lb": -1.0,
+            "ub": 3.0,
+        },
+        "y_bound": {
+            "lb": -1.0,
+            "ub": 3.0,
+        },
+        "hiper_p_hillclimbing": {
+            "max_viz": 400,
+            "max_it": 1000,
+            "e": 5.0,
+        },
+        "hiper_p_lrs": {
+            "max_it": 1000,
+            "sigma": 0.8,
+        },
+        "hiper_p_grs": {
+            "max_it": 10000,
+        },
+        "hiper_p_tempera": {
+            "max_it": 100,
+            "sigma": 0.01,
+            "t": 1000,
+        },
+    },
+    # Função 7 do TC3
+    {
+        "funcao": f_7,
+        "max": False,
+        "x_bound": {
+            "lb": 0,
+            "ub": np.pi,
+        },
+        "y_bound": {
+            "lb": 0,
+            "ub": np.pi,
+        },
+        "hiper_p_hillclimbing": {
+            "max_viz": 400,
+            "max_it": 100,
+            "e": 2.0,
+        },
+        "hiper_p_lrs": {
+            "max_it": 1000,
+            "sigma": 0.9,
+        },
+        "hiper_p_grs": {
+            "max_it": 1000,
+        },
+        "hiper_p_tempera": {
+            "max_it": 100,
+            "sigma": 0.01,
+            "t": 1000,
+        },
+    },
+    # Função 8 do TC3
+    {
+        "current": True,
+        "funcao": f_8,
+        "max": False,
+        "x_bound": {
+            "lb": -200.0,
+            "ub": 20.0,
+        },
+        "y_bound": {
+            "lb": -200.0,
+            "ub": 20.0,
+        },
+        "hiper_p_hillclimbing": {
+            "max_viz": 500,
+            "max_it": 1000,
+            "e": 70,
+        },
+        "hiper_p_lrs": {
+            "max_it": 100,
+            "sigma": 0.2,
+        },
+        "hiper_p_grs": {
+            "max_it": 1000,
+        },
+        "hiper_p_tempera": {
+            "max_it": 100,
+            "sigma": 0.01,
+            "t": 1000,
+        },
+    },
+]
 
 
 executar_todas_funcoes = False
@@ -45,6 +289,6 @@ for i, f_dict in enumerate(LISTA_FUNCOES):
     list_prog_x_lrs = lrs(f, max, x_bound, y_bound, **hiper_p_lrs)
     extrair_resultados(xx, yy, f, ax, list_prog_x_lrs, "LRS", indice_func)
 
-    list_prog_x_grs = grs(f, max, x_bound, y_bound, **hiper_p_grs)
-    extrair_resultados(xx, yy, f, ax, list_prog_x_grs, "GRS", indice_func)
+    # list_prog_x_grs = grs(f, max, x_bound, y_bound, **hiper_p_grs)
+    # extrair_resultados(xx, yy, f, ax, list_prog_x_grs, "GRS", indice_func)
     # fmt: on
