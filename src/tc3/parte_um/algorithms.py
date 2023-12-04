@@ -29,6 +29,7 @@ def plotar_e_salvar_funcao(
     i: int,
 ) -> plt.Axes:
     f_out_name = f"out/tc3/f_{i}/VISUALIZACAO.png"
+    plt.title(f"Domínio - Função {i}")
     ax = plotar_funcao(xx, yy, f)
     plt.savefig(f_out_name, dpi=300)
     return ax
@@ -41,7 +42,7 @@ def plotar_trilha(ax: plt.Axes, list_prog_x_opt: List[Tuple[np.ndarray, np.int32
         x_opt[0, 0],
         x_opt[1, 0],
         f_opt,
-        s=1300,
+        s=1000,
         color="r",
         marker="X",
         zorder=10000,
@@ -61,7 +62,7 @@ def extrair_resultados(
     algo_out_name = f"out/tc3/f_{i}/CAMINHO_PERCORRIDO_{algorithm}.png"
     ax = plotar_funcao(xx, yy, f)
     plotar_trilha(ax, list_prog_x_opt)
-    # plt.show()
+    plt.title(f"Solução ótima encontrada ({algorithm}) - Função {i}")
     plt.savefig(algo_out_name, dpi=300)
     plt.close()
     plt.clf()

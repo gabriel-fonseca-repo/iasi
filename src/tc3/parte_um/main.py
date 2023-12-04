@@ -254,41 +254,136 @@ LISTA_FUNCOES = [
 ]
 
 
-executar_todas_funcoes = False
+executar_todas_funcoes = True
+printar_graficos = True
+medir_moda = False
+
+if printar_graficos:
+    for i, f_dict in enumerate(LISTA_FUNCOES):
+        f = f_dict["funcao"]
+        max = f_dict["max"]
+        x_bound = f_dict["x_bound"]
+        y_bound = f_dict["y_bound"]
+        current = f_dict.get("current", executar_todas_funcoes)
+        indice_func = i + 1
+
+        hiper_p_hillclimbing = f_dict["hiper_p_hillclimbing"]
+        hiper_p_tempera = f_dict["hiper_p_tempera"]
+        hiper_p_lrs = f_dict["hiper_p_lrs"]
+        hiper_p_grs = f_dict["hiper_p_grs"]
+
+        if not current:
+            continue
+
+        x_axis = np.linspace(x_bound["lb"], x_bound["ub"], 2000)
+        y_axis = np.linspace(y_bound["lb"], y_bound["ub"], 2000)
+        xx, yy = np.meshgrid(x_axis, y_axis)
+
+        ax = plotar_e_salvar_funcao(xx, yy, f, indice_func)
+
+        # fmt: off
+        list_prog_x_hillclimbing = hillclimbing(f, max, x_bound, y_bound, **hiper_p_hillclimbing)
+        extrair_resultados(xx, yy, f, ax, list_prog_x_hillclimbing, "HILLCLIMBING", indice_func)
+
+        list_prog_x_tempera = tempera(f, max, x_bound, y_bound, **hiper_p_tempera)
+        extrair_resultados(xx, yy, f, ax, list_prog_x_tempera, "TEMPERA", indice_func)
+
+        list_prog_x_lrs = lrs(f, max, x_bound, y_bound, **hiper_p_lrs)
+        extrair_resultados(xx, yy, f, ax, list_prog_x_lrs, "LRS", indice_func)
+
+        list_prog_x_grs = grs(f, max, x_bound, y_bound, **hiper_p_grs)
+        extrair_resultados(xx, yy, f, ax, list_prog_x_grs, "GRS", indice_func)
+        # fmt: on
 
 
-for i, f_dict in enumerate(LISTA_FUNCOES):
-    f = f_dict["funcao"]
-    max = f_dict["max"]
-    x_bound = f_dict["x_bound"]
-    y_bound = f_dict["y_bound"]
-    current = f_dict.get("current", executar_todas_funcoes)
-    indice_func = i + 1
+MODA_RST_OPT = {
+    "1": {
+        "HILLCLIMBING": [],
+        "TEMPERA": [],
+        "LRS": [],
+        "GRS": [],
+    },
+    "2": {
+        "HILLCLIMBING": [],
+        "TEMPERA": [],
+        "LRS": [],
+        "GRS": [],
+    },
+    "3": {
+        "HILLCLIMBING": [],
+        "TEMPERA": [],
+        "LRS": [],
+        "GRS": [],
+    },
+    "4": {
+        "HILLCLIMBING": [],
+        "TEMPERA": [],
+        "LRS": [],
+        "GRS": [],
+    },
+    "5": {
+        "HILLCLIMBING": [],
+        "TEMPERA": [],
+        "LRS": [],
+        "GRS": [],
+    },
+    "6": {
+        "HILLCLIMBING": [],
+        "TEMPERA": [],
+        "LRS": [],
+        "GRS": [],
+    },
+    "7": {
+        "HILLCLIMBING": [],
+        "TEMPERA": [],
+        "LRS": [],
+        "GRS": [],
+    },
+    "8": {
+        "HILLCLIMBING": [],
+        "TEMPERA": [],
+        "LRS": [],
+        "GRS": [],
+    },
+}
 
-    hiper_p_hillclimbing = f_dict["hiper_p_hillclimbing"]
-    hiper_p_tempera = f_dict["hiper_p_tempera"]
-    hiper_p_lrs = f_dict["hiper_p_lrs"]
-    hiper_p_grs = f_dict["hiper_p_grs"]
+if medir_moda:
+    for i in range(100):
+        for i, f_dict in enumerate(LISTA_FUNCOES):
+            f = f_dict["funcao"]
+            max = f_dict["max"]
+            x_bound = f_dict["x_bound"]
+            y_bound = f_dict["y_bound"]
+            current = f_dict.get("current", executar_todas_funcoes)
+            indice_func = i + 1
 
-    if not current:
-        continue
+            hiper_p_hillclimbing = f_dict["hiper_p_hillclimbing"]
+            hiper_p_tempera = f_dict["hiper_p_tempera"]
+            hiper_p_lrs = f_dict["hiper_p_lrs"]
+            hiper_p_grs = f_dict["hiper_p_grs"]
 
-    x_axis = np.linspace(x_bound["lb"], x_bound["ub"], 2000)
-    y_axis = np.linspace(y_bound["lb"], y_bound["ub"], 2000)
-    xx, yy = np.meshgrid(x_axis, y_axis)
+            if not current:
+                continue
 
-    ax = plotar_e_salvar_funcao(xx, yy, f, indice_func)
+            x_axis = np.linspace(x_bound["lb"], x_bound["ub"], 2000)
+            y_axis = np.linspace(y_bound["lb"], y_bound["ub"], 2000)
+            xx, yy = np.meshgrid(x_axis, y_axis)
 
-    # fmt: off
-    list_prog_x_hillclimbing = hillclimbing(f, max, x_bound, y_bound, **hiper_p_hillclimbing)
-    extrair_resultados(xx, yy, f, ax, list_prog_x_hillclimbing, "HILLCLIMBING", indice_func)
+            # fmt: off
+            list_prog_x_hillclimbing = hillclimbing(f, max, x_bound, y_bound, **hiper_p_hillclimbing)
+            list_prog_x_tempera = tempera(f, max, x_bound, y_bound, **hiper_p_tempera)
+            list_prog_x_lrs = lrs(f, max, x_bound, y_bound, **hiper_p_lrs)
+            list_prog_x_grs = grs(f, max, x_bound, y_bound, **hiper_p_grs)
 
-    list_prog_x_tempera = tempera(f, max, x_bound, y_bound, **hiper_p_tempera)
-    extrair_resultados(xx, yy, f, ax, list_prog_x_tempera, "TEMPERA", indice_func)
+            x_opt_hillclimbing = list_prog_x_hillclimbing[-1]
+            x_opt_tempera = list_prog_x_tempera[-1]
+            x_opt_lrs = list_prog_x_lrs[-1]
+            x_opt_grs = list_prog_x_grs[-1]
 
-    list_prog_x_lrs = lrs(f, max, x_bound, y_bound, **hiper_p_lrs)
-    extrair_resultados(xx, yy, f, ax, list_prog_x_lrs, "LRS", indice_func)
+            MODA_RST_OPT[str(indice_func)]["HILLCLIMBING"].append(x_opt_hillclimbing)
+            MODA_RST_OPT[str(indice_func)]["TEMPERA"].append(x_opt_tempera)
+            MODA_RST_OPT[str(indice_func)]["LRS"].append(x_opt_lrs)
+            MODA_RST_OPT[str(indice_func)]["GRS"].append(x_opt_grs)
+            # fmt: on
 
-    # list_prog_x_grs = grs(f, max, x_bound, y_bound, **hiper_p_grs)
-    # extrair_resultados(xx, yy, f, ax, list_prog_x_grs, "GRS", indice_func)
-    # fmt: on
+        pass
