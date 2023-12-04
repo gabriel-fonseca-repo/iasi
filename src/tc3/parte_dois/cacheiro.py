@@ -2,6 +2,7 @@ import random
 import time
 from math import sqrt
 from statistics import mode
+import numpy as np
 
 # 1. Fa¸ca a defini¸c˜ao de quantos pontos devem ser gerados por regi˜ao. Escolha um valor 30 < Npontos < 60.
 n_pontos = 35  # Quantidade de pontos 30 < Npontos < 60
@@ -24,17 +25,42 @@ rangelimit = 10
 tempo = time.time()
 
 
-def gerar_ponto():
-    x = random.randint(0, rangelimit)
-    y = random.randint(0, rangelimit)
-    z = random.randint(0, rangelimit)
-    return [x, y, z]
+# minha geração ANTES DE VER O ARQUIVO Q O PROFESSOR COLOCOU
+# def gerar_ponto():
+#     x = random.randint(0, rangelimit)
+#     y = random.randint(0, rangelimit)
+#     z = random.randint(0, rangelimit)
+#     return [x, y, z]
 
 
-for i in range(n_pontos):
-    pontos[i] = gerar_ponto()
+# for i in range(n_pontos):
+#     pontos[i] = gerar_ponto()
 
 
+def generate_points(N): 
+    x_partition = np.random.uniform(-10, 10, size=(N,3))
+    y_partition = np.random.uniform(0, 20, size=(N,3))
+    z_partition = np.random.uniform(-20, 0, size=(N,3))
+    w_partition = np.random.uniform(0, 20, size=(N,3))
+
+    x1 = np.array([[20,-20,-20]])
+    x1 = np.tile(x1,(N,1))
+    x_partition = x_partition+x1
+
+    x1 = np.array([[-20,20,20]])
+    x1 = np.tile(x1,(N,1))
+    y_partition = y_partition+x1
+
+    x1 = np.array([[-20,20,-20]])
+    x1 = np.tile(x1,(N,1))
+    z_partition = z_partition+x1
+
+    x1 = np.array([[20,20,-20]])
+    x1 = np.tile(x1,(N,1))
+    w_partition = w_partition+x1   
+    return np.concatenate((x_partition,y_partition,z_partition,w_partition), axis=0)
+
+pontos = generate_points(n_pontos)
 
 
 
@@ -251,7 +277,7 @@ def rodada(debug, elitismo = False, qntd_elitismo = 0):
 # 7. Faça uma análise se de qual é a moda de gerações para obter uma solução aceitável. Além disso, analise se é necessário incluir um operador de elitismo em um grupo Ne de indivíduos.
 # analise:
 #apos rodar muitas vezes, percebi que com elitismo de 1 individuo, o algoritmo encontra a solução otima em menos gerações
-qntd_rodadas = 1000
+qntd_rodadas = 10
 resultados_normais = [None] * qntd_rodadas
 resultados_elitista = [None] * qntd_rodadas
 for i in range(qntd_rodadas):
