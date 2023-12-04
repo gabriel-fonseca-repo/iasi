@@ -133,7 +133,9 @@ def tempera(
     npru = np.random.uniform(0, 1)
     list_prog_x_opt: List[Tuple[np.ndarray, np.int32]] = []
 
-    x_opt = np.array([[x_bound["lb"]], [x_bound["lb"]]])
+    perturb = lambda bound: np.random.uniform(low=bound["lb"], high=bound["ub"])
+
+    x_opt = np.array([[perturb(x_bound)], [perturb(y_bound)]])
     f_opt = f(x_opt[0, 0], x_opt[1, 0])
 
     for _ in range(max_it):

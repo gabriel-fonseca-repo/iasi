@@ -1,12 +1,18 @@
-# Trabalho computacional 3 (AV3)
-
-## Parte 1 - Problemas de tipo contínuo com espaço de estados infinito.
-- Algoritmos a serem implementados:
-    1. Hill Climbing
-    2. Local Random Search (LRS)
-    3. Global Random Search (GRS)
-    4. Simulated Annealing
-
-## Parte 2 - Problemas discretos (Combinatória).
-- Utilização de um projeto de algoritmo genético.
----
+1. ~~Título.~~
+2. ~~Resumo.~~
+3. Introdução.
+    - Parte 1
+    - Parte 2
+4. Fundamentação Teórica (Revisão Bibliográfica).
+    - Parte 1
+    - Parte 2
+5. Metodologia.
+    - Parte 1
+    - Parte 2
+6. Resultados.
+    - Parte 1
+    - Parte 2
+7. Conclusões.
+    - Parte 1
+    - Parte 2
+8. Referências

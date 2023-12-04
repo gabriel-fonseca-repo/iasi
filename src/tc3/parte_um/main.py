@@ -66,9 +66,9 @@ LISTA_FUNCOES = [
             "max_it": 1000,
         },
         "hiper_p_tempera": {
-            "max_it": 1000,
-            "sigma": 1.8,
-            "t": 10,
+            "max_it": 200,
+            "sigma": 0.5,
+            "t": 1,
         },
     },
     # Função 3 do TC3
@@ -96,9 +96,9 @@ LISTA_FUNCOES = [
             "max_it": 1000,
         },
         "hiper_p_tempera": {
-            "max_it": 100,
-            "sigma": 0.01,
-            "t": 1000,
+            "max_it": 300,
+            "sigma": 0.8,
+            "t": 5,
         },
     },
     # Função 4 do TC3
@@ -126,9 +126,9 @@ LISTA_FUNCOES = [
             "max_it": 1000,
         },
         "hiper_p_tempera": {
-            "max_it": 100,
-            "sigma": 0.01,
-            "t": 1000,
+            "max_it": 200,
+            "sigma": 0.5,
+            "t": 10,
         },
     },
     # Função 5 do TC3
@@ -156,9 +156,9 @@ LISTA_FUNCOES = [
             "max_it": 10000,
         },
         "hiper_p_tempera": {
-            "max_it": 100,
-            "sigma": 0.01,
-            "t": 1000,
+            "max_it": 200,
+            "sigma": 0.4,
+            "t": 10,
         },
     },
     # Função 6 do TC3
@@ -186,9 +186,9 @@ LISTA_FUNCOES = [
             "max_it": 10000,
         },
         "hiper_p_tempera": {
-            "max_it": 100,
-            "sigma": 0.01,
-            "t": 1000,
+            "max_it": 200,
+            "sigma": 0.6,
+            "t": 10,
         },
     },
     # Função 7 do TC3
@@ -216,9 +216,9 @@ LISTA_FUNCOES = [
             "max_it": 1000,
         },
         "hiper_p_tempera": {
-            "max_it": 100,
-            "sigma": 0.01,
-            "t": 1000,
+            "max_it": 300,
+            "sigma": 0.5,
+            "t": 50,
         },
     },
     # Função 8 do TC3
@@ -247,17 +247,17 @@ LISTA_FUNCOES = [
             "max_it": 1000,
         },
         "hiper_p_tempera": {
-            "max_it": 100,
-            "sigma": 0.01,
-            "t": 1000,
+            "max_it": 300,
+            "sigma": 0.5,
+            "t": 100,
         },
     },
 ]
 
 
-executar_todas_funcoes = True
-printar_graficos = False
-medir_moda = True
+executar_todas_funcoes = False
+printar_graficos = True
+medir_moda = False
 
 if printar_graficos:
     for i, f_dict in enumerate(LISTA_FUNCOES):
@@ -283,17 +283,17 @@ if printar_graficos:
         ax = plotar_e_salvar_funcao(xx, yy, f, indice_func)
 
         # fmt: off
-        list_prog_x_hillclimbing = hillclimbing(f, max, x_bound, y_bound, **hiper_p_hillclimbing)
-        extrair_resultados(xx, yy, f, ax, list_prog_x_hillclimbing, "HILLCLIMBING", indice_func)
+        # list_prog_x_hillclimbing = hillclimbing(f, max, x_bound, y_bound, **hiper_p_hillclimbing)
+        # extrair_resultados(xx, yy, f, ax, list_prog_x_hillclimbing, "HILLCLIMBING", indice_func)
 
-        list_prog_x_tempera = tempera(f, max, x_bound, y_bound, **hiper_p_tempera)
-        extrair_resultados(xx, yy, f, ax, list_prog_x_tempera, "TEMPERA", indice_func)
+        # list_prog_x_tempera = tempera(f, max, x_bound, y_bound, **hiper_p_tempera)
+        # extrair_resultados(xx, yy, f, ax, list_prog_x_tempera, "TEMPERA", indice_func)
 
-        list_prog_x_lrs = lrs(f, max, x_bound, y_bound, **hiper_p_lrs)
-        extrair_resultados(xx, yy, f, ax, list_prog_x_lrs, "LRS", indice_func)
+        # list_prog_x_lrs = lrs(f, max, x_bound, y_bound, **hiper_p_lrs)
+        # extrair_resultados(xx, yy, f, ax, list_prog_x_lrs, "LRS", indice_func)
 
-        list_prog_x_grs = grs(f, max, x_bound, y_bound, **hiper_p_grs)
-        extrair_resultados(xx, yy, f, ax, list_prog_x_grs, "GRS", indice_func)
+        # list_prog_x_grs = grs(f, max, x_bound, y_bound, **hiper_p_grs)
+        # extrair_resultados(xx, yy, f, ax, list_prog_x_grs, "GRS", indice_func)
         # fmt: on
 
 
