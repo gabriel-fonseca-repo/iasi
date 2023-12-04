@@ -22,19 +22,6 @@ def plotar_funcao(
     return ax
 
 
-def plotar_e_salvar_funcao(
-    xx: np.ndarray,
-    yy: np.ndarray,
-    f: callable,
-    i: int,
-) -> plt.Axes:
-    f_out_name = f"out/tc3/f_{i}/VISUALIZACAO.png"
-    plt.title(f"Domínio - Função {i}")
-    ax = plotar_funcao(xx, yy, f)
-    plt.savefig(f_out_name, dpi=300)
-    return ax
-
-
 def plotar_trilha(ax: plt.Axes, list_prog_x_opt: List[Tuple[np.ndarray, np.int32]]):
     for x_opt, f_opt in list_prog_x_opt:
         ax.scatter(x_opt[0, 0], x_opt[1, 0], f_opt, s=40, color="k")
@@ -50,6 +37,19 @@ def plotar_trilha(ax: plt.Axes, list_prog_x_opt: List[Tuple[np.ndarray, np.int32
     )
 
 
+def plotar_e_salvar_funcao(
+    xx: np.ndarray,
+    yy: np.ndarray,
+    f: callable,
+    i: int,
+) -> plt.Axes:
+    f_out_name = f"out/tc3/f_{i}/VISUALIZACAO.png"
+    ax = plotar_funcao(xx, yy, f)
+    ax.title.set_text(f"Domínio - Função {i}")
+    plt.savefig(f_out_name, dpi=300, bbox_inches="tight")
+    return ax
+
+
 def extrair_resultados(
     xx: np.ndarray,
     yy: np.ndarray,
@@ -62,8 +62,8 @@ def extrair_resultados(
     algo_out_name = f"out/tc3/f_{i}/CAMINHO_PERCORRIDO_{algorithm}.png"
     ax = plotar_funcao(xx, yy, f)
     plotar_trilha(ax, list_prog_x_opt)
-    plt.title(f"Solução ótima encontrada ({algorithm}) - Função {i}")
-    plt.savefig(algo_out_name, dpi=300)
+    ax.title.set_text(f"Solução ótima encontrada - Função {i} \n{algorithm}")
+    plt.savefig(algo_out_name, dpi=300, bbox_inches="tight")
     plt.close()
     plt.clf()
 

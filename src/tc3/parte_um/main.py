@@ -8,6 +8,7 @@ from algorithms import (
     plotar_e_salvar_funcao,
 )
 from functions import f_1, f_2, f_3, f_4, f_5, f_6, f_7, f_8
+from scipy.stats import mode
 
 LISTA_FUNCOES = [
     # Função 1 do TC3
@@ -255,8 +256,8 @@ LISTA_FUNCOES = [
 
 
 executar_todas_funcoes = True
-printar_graficos = True
-medir_moda = False
+printar_graficos = False
+medir_moda = True
 
 if printar_graficos:
     for i, f_dict in enumerate(LISTA_FUNCOES):
@@ -380,10 +381,28 @@ if medir_moda:
             x_opt_lrs = list_prog_x_lrs[-1]
             x_opt_grs = list_prog_x_grs[-1]
 
-            MODA_RST_OPT[str(indice_func)]["HILLCLIMBING"].append(x_opt_hillclimbing)
-            MODA_RST_OPT[str(indice_func)]["TEMPERA"].append(x_opt_tempera)
-            MODA_RST_OPT[str(indice_func)]["LRS"].append(x_opt_lrs)
-            MODA_RST_OPT[str(indice_func)]["GRS"].append(x_opt_grs)
+            MODA_RST_OPT[str(indice_func)]["HILLCLIMBING"].append(x_opt_hillclimbing[0])
+            MODA_RST_OPT[str(indice_func)]["TEMPERA"].append(x_opt_tempera[0])
+            MODA_RST_OPT[str(indice_func)]["LRS"].append(x_opt_lrs[0])
+            MODA_RST_OPT[str(indice_func)]["GRS"].append(x_opt_grs[0])
             # fmt: on
 
-        pass
+    for i, f_dict in enumerate(LISTA_FUNCOES):
+        indice_func = i + 1
+
+        lista_x_opt_hillclimbing = MODA_RST_OPT[str(indice_func)]["HILLCLIMBING"]
+        lista_x_opt_tempera = MODA_RST_OPT[str(indice_func)]["TEMPERA"]
+        lista_x_opt_lrs = MODA_RST_OPT[str(indice_func)]["LRS"]
+        lista_x_opt_grs = MODA_RST_OPT[str(indice_func)]["GRS"]
+
+        moda_x_opt_hillclimbing, count_hc = mode(lista_x_opt_hillclimbing, axis=0)
+        moda_x_opt_tempera, count_t = mode(lista_x_opt_tempera, axis=0)
+        moda_x_opt_lrs, count_l = mode(lista_x_opt_lrs, axis=0)
+        moda_x_opt_grs, count_g = mode(lista_x_opt_grs, axis=0)
+
+        print(f"Função {i + 1}: Pontos mais repetido:")
+        print(f"Hillclimbing: {moda_x_opt_hillclimbing[0]} | {count_hc[0]}")
+        print(f"Tempera: {moda_x_opt_tempera[0]} | {count_t[0]}")
+        print(f"LRS: {moda_x_opt_lrs[0]} | {count_l[0]}")
+        print(f"GRS: {moda_x_opt_grs[0]} | {count_g[0]}")
+        print()
