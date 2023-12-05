@@ -297,18 +297,6 @@ if printar_graficos:
         # extrair_resultados(xx, yy, f, ax, list_prog_x_grs, "GRS", indice_func)
         # fmt: on
 
-FUNCOES_LABEL = [
-    "Função 1",
-    "Função 2",
-    "Função 3",
-    "Função 4",
-    "Função 5",
-    "Função 6",
-    "Função 7",
-    "Função 8",
-]
-
-
 MODA_RST_OPT = {
     "1": {
         "HILLCLIMBING": [],
@@ -360,15 +348,6 @@ MODA_RST_OPT = {
     },
 }
 
-
-def printar_moda(modelo, moda, count):
-    moda = moda.tolist()
-    count = count.tolist()[0][0]
-    print(f"Modelo: {modelo} | ", end="")
-    print(f"Moda: [{str(moda[0][0])}, {str(moda[1][0])}] | ", end="")
-    print(f"Contagem: {count}")
-
-
 if medir_moda:
     for i in range(100):
         for i, f_dict in enumerate(LISTA_FUNCOES):
@@ -414,6 +393,10 @@ if medir_moda:
     contagens = []
     f_opts = []
 
+    moda_tostr = lambda moda: f"[{str(moda[0][0])}, {str(moda[1][0])}]"
+    count_tostr = lambda count: f"{count.tolist()[0][0]}"
+    f_tostr = lambda f, moda: "{:.3f}".format(f(moda[0][0], moda[1][0]))
+
     for i, f_dict in enumerate(LISTA_FUNCOES):
         current = f_dict.get("current", executar_todas_funcoes)
         f = f_dict["funcao"]
@@ -432,10 +415,6 @@ if medir_moda:
         moda_f_opt_tempera, count_t = mode(lista_x_opt_tempera, axis=0)
         moda_f_opt_lrs, count_l = mode(lista_x_opt_lrs, axis=0)
         moda_f_opt_grs, count_g = mode(lista_x_opt_grs, axis=0)
-
-        moda_tostr = lambda moda: f"[{str(moda[0][0])}, {str(moda[1][0])}]"
-        count_tostr = lambda count: f"{count.tolist()[0][0]}"
-        f_tostr = lambda f, moda: "{:.3f}".format(f(moda[0][0], moda[1][0]))
 
         funcoes.append(indice_func)
         funcoes.append(indice_func)
