@@ -1,5 +1,6 @@
 import numpy as np
 from algorithms import (
+    exportar_estatisticas,
     hillclimbing,
     lrs,
     grs,
@@ -359,6 +360,15 @@ MODA_RST_OPT = {
     },
 }
 
+
+def printar_moda(modelo, moda, count):
+    moda = moda.tolist()
+    count = count.tolist()[0][0]
+    print(f"Modelo: {modelo} | ", end="")
+    print(f"Moda: [{str(moda[0][0])}, {str(moda[1][0])}] | ", end="")
+    print(f"Contagem: {count}")
+
+
 if medir_moda:
     for i in range(100):
         for i, f_dict in enumerate(LISTA_FUNCOES):
@@ -387,33 +397,69 @@ if medir_moda:
             list_prog_x_lrs = lrs(f, max, x_bound, y_bound, **hiper_p_lrs)
             list_prog_x_grs = grs(f, max, x_bound, y_bound, **hiper_p_grs)
 
-            f_opt_hillclimbing = list_prog_x_hillclimbing[-1][1]
-            f_opt_tempera = list_prog_x_tempera[-1][1]
-            f_opt_lrs = list_prog_x_lrs[-1][1]
-            f_opt_grs = list_prog_x_grs[-1][1]
+            x_opt_hillclimbing = list_prog_x_hillclimbing[-1][0]
+            x_opt_tempera = list_prog_x_tempera[-1][0]
+            x_opt_lrs = list_prog_x_lrs[-1][0]
+            x_opt_grs = list_prog_x_grs[-1][0]
 
-            MODA_RST_OPT[str(indice_func)]["HILLCLIMBING"].append(f_opt_hillclimbing)
-            MODA_RST_OPT[str(indice_func)]["TEMPERA"].append(f_opt_tempera)
-            MODA_RST_OPT[str(indice_func)]["LRS"].append(f_opt_lrs)
-            MODA_RST_OPT[str(indice_func)]["GRS"].append(f_opt_grs)
+            MODA_RST_OPT[str(indice_func)]["HILLCLIMBING"].append(np.floor(x_opt_hillclimbing).astype(int))
+            MODA_RST_OPT[str(indice_func)]["TEMPERA"].append(np.floor(x_opt_tempera).astype(int))
+            MODA_RST_OPT[str(indice_func)]["LRS"].append(np.floor(x_opt_lrs).astype(int))
+            MODA_RST_OPT[str(indice_func)]["GRS"].append(np.floor(x_opt_grs).astype(int))
             # fmt: on
 
+    funcoes = []
+    algoritmos = []
+    modas = []
+    contagens = []
+    f_opts = []
+
     for i, f_dict in enumerate(LISTA_FUNCOES):
-        indice_func = i + 1
+        current = f_dict.get("current", executar_todas_funcoes)
+        f = f_dict["funcao"]
 
-        lista_f_opt_hillclimbing = MODA_RST_OPT[str(indice_func)]["HILLCLIMBING"]
-        lista_f_opt_tempera = MODA_RST_OPT[str(indice_func)]["TEMPERA"]
-        lista_f_opt_lrs = MODA_RST_OPT[str(indice_func)]["LRS"]
-        lista_f_opt_grs = MODA_RST_OPT[str(indice_func)]["GRS"]
+        if not current:
+            continue
 
-        moda_f_opt_hillclimbing, count_hc = mode(lista_f_opt_hillclimbing)
-        moda_f_opt_tempera, count_t = mode(lista_f_opt_tempera)
-        moda_f_opt_lrs, count_l = mode(lista_f_opt_lrs)
-        moda_f_opt_grs, count_g = mode(lista_f_opt_grs)
+        indice_func = str(i + 1)
 
-        print(f"Função {i + 1}: Pontos mais repetido:")
-        print(f"Hillclimbing: {moda_f_opt_hillclimbing} | {count_hc}")
-        print(f"Tempera: {moda_f_opt_tempera} | {count_t}")
-        print(f"LRS: {moda_f_opt_lrs} | {count_l}")
-        print(f"GRS: {moda_f_opt_grs} | {count_g}")
-        print()
+        lista_x_opt_hillclimbing = MODA_RST_OPT[indice_func]["HILLCLIMBING"]
+        lista_x_opt_tempera = MODA_RST_OPT[indice_func]["TEMPERA"]
+        lista_x_opt_lrs = MODA_RST_OPT[indice_func]["LRS"]
+        lista_x_opt_grs = MODA_RST_OPT[indice_func]["GRS"]
+
+        moda_f_opt_hillclimbing, count_hc = mode(lista_x_opt_hillclimbing, axis=0)
+        moda_f_opt_tempera, count_t = mode(lista_x_opt_tempera, axis=0)
+        moda_f_opt_lrs, count_l = mode(lista_x_opt_lrs, axis=0)
+        moda_f_opt_grs, count_g = mode(lista_x_opt_grs, axis=0)
+
+        moda_tostr = lambda moda: f"[{str(moda[0][0])}, {str(moda[1][0])}]"
+        count_tostr = lambda count: f"{count.tolist()[0][0]}"
+        f_tostr = lambda f, moda: "{:.3f}".format(f(moda[0][0], moda[1][0]))
+
+        funcoes.append(indice_func)
+        funcoes.append(indice_func)
+        funcoes.append(indice_func)
+        funcoes.append(indice_func)
+
+        algoritmos.append("Hillclimbing")
+        modas.append(moda_tostr(moda_f_opt_hillclimbing.tolist()))
+        contagens.append(count_tostr(count_hc))
+        f_opts.append(f_tostr(f, moda_f_opt_hillclimbing))
+
+        algoritmos.append("Tempera")
+        modas.append(moda_tostr(moda_f_opt_tempera.tolist()))
+        contagens.append(count_tostr(count_t))
+        f_opts.append(f_tostr(f, moda_f_opt_tempera))
+
+        algoritmos.append("LRS")
+        modas.append(moda_tostr(moda_f_opt_lrs.tolist()))
+        contagens.append(count_tostr(count_l))
+        f_opts.append(f_tostr(f, moda_f_opt_lrs))
+
+        algoritmos.append("GRS")
+        modas.append(moda_tostr(moda_f_opt_grs.tolist()))
+        contagens.append(count_tostr(count_g))
+        f_opts.append(f_tostr(f, moda_f_opt_grs))
+
+    exportar_estatisticas(funcoes, algoritmos, modas, contagens, f_opts)
