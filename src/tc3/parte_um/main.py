@@ -416,10 +416,7 @@ if medir_moda:
         moda_f_opt_lrs, count_l = mode(lista_x_opt_lrs, axis=0)
         moda_f_opt_grs, count_g = mode(lista_x_opt_grs, axis=0)
 
-        funcoes.append(indice_func)
-        funcoes.append(indice_func)
-        funcoes.append(indice_func)
-        funcoes.append(indice_func)
+        funcoes.extend([indice_func * 4])
 
         algoritmos.append("Hillclimbing")
         modas.append(moda_tostr(moda_f_opt_hillclimbing.tolist()))
