@@ -255,9 +255,9 @@ LISTA_FUNCOES = [
 ]
 
 
-executar_todas_funcoes = False
-printar_graficos = True
-medir_moda = False
+executar_todas_funcoes = True
+printar_graficos = False
+medir_moda = True
 
 if printar_graficos:
     for i, f_dict in enumerate(LISTA_FUNCOES):
@@ -295,6 +295,17 @@ if printar_graficos:
         # list_prog_x_grs = grs(f, max, x_bound, y_bound, **hiper_p_grs)
         # extrair_resultados(xx, yy, f, ax, list_prog_x_grs, "GRS", indice_func)
         # fmt: on
+
+FUNCOES_LABEL = [
+    "Função 1",
+    "Função 2",
+    "Função 3",
+    "Função 4",
+    "Função 5",
+    "Função 6",
+    "Função 7",
+    "Função 8",
+]
 
 
 MODA_RST_OPT = {
@@ -376,33 +387,33 @@ if medir_moda:
             list_prog_x_lrs = lrs(f, max, x_bound, y_bound, **hiper_p_lrs)
             list_prog_x_grs = grs(f, max, x_bound, y_bound, **hiper_p_grs)
 
-            x_opt_hillclimbing = list_prog_x_hillclimbing[-1]
-            x_opt_tempera = list_prog_x_tempera[-1]
-            x_opt_lrs = list_prog_x_lrs[-1]
-            x_opt_grs = list_prog_x_grs[-1]
+            f_opt_hillclimbing = list_prog_x_hillclimbing[-1][1]
+            f_opt_tempera = list_prog_x_tempera[-1][1]
+            f_opt_lrs = list_prog_x_lrs[-1][1]
+            f_opt_grs = list_prog_x_grs[-1][1]
 
-            MODA_RST_OPT[str(indice_func)]["HILLCLIMBING"].append(x_opt_hillclimbing[0])
-            MODA_RST_OPT[str(indice_func)]["TEMPERA"].append(x_opt_tempera[0])
-            MODA_RST_OPT[str(indice_func)]["LRS"].append(x_opt_lrs[0])
-            MODA_RST_OPT[str(indice_func)]["GRS"].append(x_opt_grs[0])
+            MODA_RST_OPT[str(indice_func)]["HILLCLIMBING"].append(f_opt_hillclimbing)
+            MODA_RST_OPT[str(indice_func)]["TEMPERA"].append(f_opt_tempera)
+            MODA_RST_OPT[str(indice_func)]["LRS"].append(f_opt_lrs)
+            MODA_RST_OPT[str(indice_func)]["GRS"].append(f_opt_grs)
             # fmt: on
 
     for i, f_dict in enumerate(LISTA_FUNCOES):
         indice_func = i + 1
 
-        lista_x_opt_hillclimbing = MODA_RST_OPT[str(indice_func)]["HILLCLIMBING"]
-        lista_x_opt_tempera = MODA_RST_OPT[str(indice_func)]["TEMPERA"]
-        lista_x_opt_lrs = MODA_RST_OPT[str(indice_func)]["LRS"]
-        lista_x_opt_grs = MODA_RST_OPT[str(indice_func)]["GRS"]
+        lista_f_opt_hillclimbing = MODA_RST_OPT[str(indice_func)]["HILLCLIMBING"]
+        lista_f_opt_tempera = MODA_RST_OPT[str(indice_func)]["TEMPERA"]
+        lista_f_opt_lrs = MODA_RST_OPT[str(indice_func)]["LRS"]
+        lista_f_opt_grs = MODA_RST_OPT[str(indice_func)]["GRS"]
 
-        moda_x_opt_hillclimbing, count_hc = mode(lista_x_opt_hillclimbing, axis=0)
-        moda_x_opt_tempera, count_t = mode(lista_x_opt_tempera, axis=0)
-        moda_x_opt_lrs, count_l = mode(lista_x_opt_lrs, axis=0)
-        moda_x_opt_grs, count_g = mode(lista_x_opt_grs, axis=0)
+        moda_f_opt_hillclimbing, count_hc = mode(lista_f_opt_hillclimbing)
+        moda_f_opt_tempera, count_t = mode(lista_f_opt_tempera)
+        moda_f_opt_lrs, count_l = mode(lista_f_opt_lrs)
+        moda_f_opt_grs, count_g = mode(lista_f_opt_grs)
 
         print(f"Função {i + 1}: Pontos mais repetido:")
-        print(f"Hillclimbing: {moda_x_opt_hillclimbing[0]} | {count_hc[0]}")
-        print(f"Tempera: {moda_x_opt_tempera[0]} | {count_t[0]}")
-        print(f"LRS: {moda_x_opt_lrs[0]} | {count_l[0]}")
-        print(f"GRS: {moda_x_opt_grs[0]} | {count_g[0]}")
+        print(f"Hillclimbing: {moda_f_opt_hillclimbing} | {count_hc}")
+        print(f"Tempera: {moda_f_opt_tempera} | {count_t}")
+        print(f"LRS: {moda_f_opt_lrs} | {count_l}")
+        print(f"GRS: {moda_f_opt_grs} | {count_g}")
         print()

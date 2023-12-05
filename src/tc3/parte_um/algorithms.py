@@ -1,6 +1,27 @@
 from typing import Any, List, Tuple
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
+
+
+def exportar_estatisticas(f_opts: dict, modelo: str = ""):
+    stats = {
+        "Estatísticas": ["Função", "Moda (F Ótimo)"],
+        "Média": [],
+        "Desvio Padrão": [],
+        "Máximo": [],
+        "Mínimo": [],
+    }
+
+    for function, algorithm_results in f_opts.items():
+        moda = np.argmax(np.bincount(algorithm_results))
+        stats["Média"].append(np.mean(algorithm_results))
+        stats["Desvio Padrão"].append(np.std(algorithm_results))
+        stats["Máximo"].append(np.max(algorithm_results))
+        stats["Mínimo"].append(np.min(algorithm_results))
+
+    df = pd.DataFrame(stats)
+    df.to_csv(f"out/tc3/MODA_RESULTADOS.csv", sep=";")
 
 
 def plotar_funcao(
