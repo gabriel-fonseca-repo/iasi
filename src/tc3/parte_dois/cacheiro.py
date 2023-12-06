@@ -37,7 +37,6 @@ tempo = time.time()
 #     pontos[i] = gerar_ponto()
 
 
-<<<<<<< HEAD
 def generate_points(N): 
     x_partition = np.random.uniform(-10, 10, size=(N,3))
     y_partition = np.random.uniform(0, 20, size=(N,3))
@@ -64,10 +63,6 @@ def generate_points(N):
 pontos = generate_points(n_pontos)
 
 
-
-
-=======
->>>>>>> b80ea9c3aef45a9ad3baa02a6004acfc19cd0220
 class individuo:
     def __init__(self, cromossomo):
         if cromossomo == None:
@@ -174,20 +169,6 @@ def ajustar_recombinacao(cromossomo):
     return cromossomo
 
 
-def recombinacao_um_ponto(pai1, pai2):
-    if not calc_probabilidade_recombinacao():
-        return False
-
-    ponto = random.randint(0, n_pontos)
-    filho1 = ajustar_recombinacao(
-        pai1.get_range(0, ponto) + pai2.get_range(ponto, n_pontos)
-    )
-    filho2 = ajustar_recombinacao(
-        pai2.get_range(0, ponto) + pai1.get_range(ponto, n_pontos)
-    )
-
-    return [filho1, filho2]
-
 
 def recombinacao_dois_pontos(pai1, pai2):
     if not calc_probabilidade_recombinacao():
@@ -202,20 +183,45 @@ def recombinacao_dois_pontos(pai1, pai2):
         aux = ponto1
         ponto1 = ponto2
         ponto2 = aux
+    
+    #aux2 = direita do ponto2 do pai2 + esquerda do ponto1 do pai2 + meio do pai 2
+    aux2 = pai2[ponto2:n_pontos] + pai2[0:ponto1] + pai2[ponto1:ponto2]
+    
+    #aux1 = direita do ponto2 do pai1 + esquerda do ponto1 do pai1 + meio do pai 1
+    aux1 = pai1[ponto2:n_pontos] + pai1[0:ponto1] + pai1[ponto1:ponto2]
+    
+    filho1 = [None] * n_pontos
+    filho2 = [None] * n_pontos
+    
+    # coloca os meios
+    for i in range(ponto1, ponto2):
+        filho1[i] = pai2[i]
+        filho2[i] = pai1[i]
+ 
+    
+    posAux1 = 0
+    posAux2 = 0
+    # coloca o final
+    for i in range(ponto2, n_pontos):
+        while aux1[posAux1] in filho1:
+            posAux1 += 1
+        filho1[i] = aux1[posAux1]
+        while aux2[posAux2] in filho2:
+            posAux2 += 1
+        filho2[i] = aux2[posAux2]
+        
+    # coloca o inicio
+    for i in range(0, ponto1):
+        while aux1[posAux1] in filho1:
+            posAux1 += 1
+        filho1[i] = aux1[posAux1]
+        while aux2[posAux2] in filho2:
+            posAux2 += 1
+        filho2[i] = aux2[posAux2]
 
-    filho1 = ajustar_recombinacao(
-        pai1.get_range(0, ponto1)
-        + pai2.get_range(ponto1, ponto2)
-        + pai1.get_range(ponto2, n_pontos)
-    )
-    filho2 = ajustar_recombinacao(
-        pai2.get_range(0, ponto1)
-        + pai1.get_range(ponto1, ponto2)
-        + pai2.get_range(ponto2, n_pontos)
-    )
 
+    #retorna cromossomo
     return [filho1, filho2]
-
 
 for i in range(qntd_individuos):
     individuos[i] = individuo(None)
@@ -254,15 +260,13 @@ def rodada(debug, elitismo=False, qntd_elitismo=0):
 
         # 4. Na etapa de recombinação, como este trata-se de um problema de combinatória, não pode haver pontos repetidos na sequência cromossômica. Desta maneira, pede-se que desenvolva uma variação do operador de recombinação de dois pontos. Assim, cada seção selecionada de modo aleatório deve ser propagada nos filhos e em seguida, a sequência genética do filho deve ser completada com os demais pontos sem repetição.
         # recombinou = recombinacaoUmPonto(pais[0], pais[1]);
-        recombinou = recombinacao_dois_pontos(pais[0], pais[1])
+        recombinou = recombinacao_dois_pontos(pais[0].cromossomo, pais[1].cromossomo)
 
         if recombinou:
             individuos[posicoes[0]] = individuo(recombinou[0])
             individuos[posicoes[1]] = individuo(recombinou[1])
 
         # 5. Na prole gerada, deve-se aplicar a mutação com probabilidade de 1%. Para o problema do caixeiro viajante, deve-se aplicar uma mutação que faz a troca de um gene por outro de uma mesma sequência cromossômica.
-        # PROFESSOR "Na prole" seriam todos os individuos, ou apenas os que foram recombinados?
-
         for i in range(qntd_individuos):
             if not elitismo:
                 individuos[i].tentar_mutacao()
@@ -284,34 +288,31 @@ def rodada(debug, elitismo=False, qntd_elitismo=0):
 
     return geracao_do_melhor
 
+print(rodada(True, True, 1))
+
 
 # rodada simples
 # rodada(True);
 
 # 7. Faça uma análise se de qual é a moda de gerações para obter uma solução aceitável. Além disso, analise se é necessário incluir um operador de elitismo em um grupo Ne de indivíduos.
 # analise:
-<<<<<<< HEAD
-#apos rodar muitas vezes, percebi que com elitismo de 1 individuo, o algoritmo encontra a solução otima em menos gerações
-qntd_rodadas = 10
-=======
 # apos rodar muitas vezes, percebi que com elitismo de 1 individuo, o algoritmo encontra a solução otima em menos gerações
-qntd_rodadas = 1000
->>>>>>> b80ea9c3aef45a9ad3baa02a6004acfc19cd0220
-resultados_normais = [None] * qntd_rodadas
-resultados_elitista = [None] * qntd_rodadas
-for i in range(qntd_rodadas):
-    individuos_desse_teste = [None] * qntd_individuos
-    for j in range(qntd_individuos):
-        individuos_desse_teste[j] = individuo(None)
-        individuos[j] = individuos_desse_teste[j].clone()
-    resultados_normais[i] = rodada(False, False, 0)
-    for j in range(qntd_individuos):
-        individuos[j] = individuos_desse_teste[j].clone()
-    resultados_elitista[i] = rodada(False, True, 2)
-    if i % 100 == 0:
-        print("Rodada: ", i, " de ", qntd_rodadas)
+# qntd_rodadas = 1000
+# resultados_normais = [None] * qntd_rodadas
+# resultados_elitista = [None] * qntd_rodadas
+# for i in range(qntd_rodadas):
+#     individuos_desse_teste = [None] * qntd_individuos
+#     for j in range(qntd_individuos):
+#         individuos_desse_teste[j] = individuo(None)
+#         individuos[j] = individuos_desse_teste[j].clone()
+#     resultados_normais[i] = rodada(False, False, 0)
+#     for j in range(qntd_individuos):
+#         individuos[j] = individuos_desse_teste[j].clone()
+#     resultados_elitista[i] = rodada(False, True, 2)
+#     if i % 100 == 0:
+#         print("Rodada: ", i, " de ", qntd_rodadas)
 
 # print("resultados normais: ", resultados_normais)
-print("media normal: ", sum(resultados_normais) / len(resultados_normais))
+# print("media normal: ", sum(resultados_normais) / len(resultados_normais))
 # print("resultados elitista: ", resultados_elitista)
-print("media elitista: ", sum(resultados_elitista) / len(resultados_elitista))
+# print("media elitista: ", sum(resultados_elitista) / len(resultados_elitista))
