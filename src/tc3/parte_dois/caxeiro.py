@@ -3,9 +3,11 @@ import time
 from math import sqrt
 from statistics import mode
 import numpy as np
+import matplotlib.pyplot as plt
 
 # 1. Fa¸ca a defini¸c˜ao de quantos pontos devem ser gerados por regi˜ao. Escolha um valor 30 < Npontos < 60.
-n_pontos = 35  # Quantidade de pontos 30 < Npontos < 60
+ponto_quadrante = 8  # Quantidade de pontos por quadrante
+n_pontos = 4 * ponto_quadrante  # Quantidade de pontos 30 < Npontos < 60
 
 pontos = [None] * n_pontos  # Array de pontos
 
@@ -60,7 +62,7 @@ def generate_points(N):
     w_partition = w_partition+x1   
     return np.concatenate((x_partition,y_partition,z_partition,w_partition), axis=0)
 
-pontos = generate_points(n_pontos)
+pontos = generate_points(ponto_quadrante)
 
 
 class individuo:
@@ -87,6 +89,11 @@ class individuo:
         for i in range(n_pontos):
             cromosomo.append(i)
         random.shuffle(cromosomo)
+
+        # garantir que o primeiro é sempre 0
+        cromosomo.remove(0)
+        cromosomo.insert(0, 0)
+
         return cromosomo
 
     def get_range(self, posicao_inicial, posicao_final):
@@ -94,10 +101,10 @@ class individuo:
 
     def tentar_mutacao(self):
         if calc_probabilidade_mutacao():
-            posicao = random.randint(0, n_pontos - 1)
-            posicao2 = random.randint(0, n_pontos - 1)
+            posicao = random.randint(1, n_pontos - 1)
+            posicao2 = random.randint(1, n_pontos - 1)
             while posicao == posicao2:
-                posicao2 = random.randint(0, n_pontos - 1)
+                posicao2 = random.randint(1, n_pontos - 1)
 
             aux = self.cromossomo[posicao]
             self.cromossomo[posicao] = self.cromossomo[posicao2]
@@ -151,31 +158,15 @@ def roleta(aptidao, individuos, qntd_elitismo=0):
 def calc_probabilidade_mutacao():
     return random.random() <= probabilidade_mutacao
 
-
 def calc_probabilidade_recombinacao():
     return random.random() <= probabilidade_recombinacao
-
-
-def ajustar_recombinacao(cromossomo):
-    faltantes = []
-    for i in range(n_pontos):
-        if not i in cromossomo:
-            faltantes.append(i)
-
-    for i in range(n_pontos):
-        if cromossomo.count(cromossomo[i]) > 1:
-            cromossomo[i] = faltantes.pop()
-
-    return cromossomo
-
-
 
 def recombinacao_dois_pontos(pai1, pai2):
     if not calc_probabilidade_recombinacao():
         return False
 
-    ponto1 = random.randint(0, n_pontos)
-    ponto2 = random.randint(0, n_pontos)
+    ponto1 = random.randint(1, n_pontos)
+    ponto2 = random.randint(1, n_pontos)
     while ponto1 == ponto2:
         ponto2 = random.randint(0, n_pontos)
 
@@ -219,6 +210,11 @@ def recombinacao_dois_pontos(pai1, pai2):
             posAux2 += 1
         filho2[i] = aux2[posAux2]
 
+    # garante que o primeiro é sempre 0
+    filho1.remove(0)
+    filho1.insert(0, 0)
+    filho2.remove(0)
+    filho2.insert(0, 0)
 
     #retorna cromossomo
     return [filho1, filho2]
@@ -247,7 +243,7 @@ def rodada(debug, elitismo=False, qntd_elitismo=0):
         for i in range(qntd_individuos):
             aptidao[i] = individuos[i].aptidao
             if individuos[i].aptidao < melhor_individuo.aptidao:
-                melhor_individuo = individuos[i]
+                melhor_individuo = individuo(individuos[i].cromossomo)
                 geracao_do_melhor = geracao_atual
 
         individuos.sort(key=lambda x: x.aptidao)
@@ -276,7 +272,7 @@ def rodada(debug, elitismo=False, qntd_elitismo=0):
 
         # 6. O algoritmo deve parar quando atingir o máximo número de gerações ou quando a função custo atingir seu valor ótimo aceitável (de acordo com a regra descrita no slide 31/61).
         # PROFESSOR nao entendi a função custo, decidi que quando passar 1000 gerações sem melhora, o algoritmo para
-        if geracao_atual - geracao_do_melhor > 1000:
+        if geracao_atual - geracao_do_melhor > 100000:
             if debug:
                 logar(geracao_atual, melhor_individuo, geracao_do_melhor)
             break
@@ -286,6 +282,21 @@ def rodada(debug, elitismo=False, qntd_elitismo=0):
                 logar(geracao_atual, melhor_individuo, geracao_do_melhor)
         geracao_atual += 1
 
+    if debug:
+        
+        fig = plt.figure()
+        ax = fig.add_subplot(projection='3d')
+        ax.scatter(pontos[:,0], pontos[:,1], pontos[:,2], c='#248DD2', marker='o')
+
+        # para cada ponto, desenha uma linha até o próximo
+        for i in range(n_pontos - 1):
+            p1 = pontos[melhor_individuo.cromossomo[i]]
+            p2 = pontos[melhor_individuo.cromossomo[i + 1]]
+            line, = ax.plot([p1[0],p2[0]],[p1[1],p2[1]],[p1[2],p2[2]],color='k')
+
+
+        plt.tight_layout()
+        plt.show()
     return geracao_do_melhor
 
 print(rodada(True, True, 1))
