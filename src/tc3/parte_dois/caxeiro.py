@@ -12,8 +12,8 @@ n_pontos = 4 * ponto_quadrante  # Quantidade de pontos 30 < Npontos < 60
 pontos = [None] * n_pontos  # Array de pontos
 
 # 2. Faça a definição da quantidade N de indivíduos em uma população e quantidade m´axima de gera¸c˜oes.
-qntd_individuos = 50  # Quantidade de indivíduos
-max_geracoes = 100000  # Quantidade máxima de gerações
+qntd_individuos = 5  # Quantidade de indivíduos
+max_geracoes = 100000000  # Quantidade máxima de gerações
 probabilidade_recombinacao = 0.95  # Probabilidade de recombina¸c˜ao (85% a 95%)
 probabilidade_mutacao = 0.01  # Probabilidade de muta¸c˜ao (1%)
 
@@ -109,6 +109,7 @@ class individuo:
             aux = self.cromossomo[posicao]
             self.cromossomo[posicao] = self.cromossomo[posicao2]
             self.cromossomo[posicao2] = aux
+            self.aptidao = self.calcular_aptidao()
 
     def clone(self):
         return individuo(self.cromossomo)
@@ -240,13 +241,14 @@ def rodada(debug, elitismo=False, qntd_elitismo=0):
     while geracao_atual < max_geracoes:
         aptidao = [None] * qntd_individuos
 
+        individuos.sort(key=lambda x: x.aptidao)
+        
         for i in range(qntd_individuos):
             aptidao[i] = individuos[i].aptidao
             if individuos[i].aptidao < melhor_individuo.aptidao:
                 melhor_individuo = individuo(individuos[i].cromossomo)
                 geracao_do_melhor = geracao_atual
 
-        individuos.sort(key=lambda x: x.aptidao)
 
         pais = [None] * 2
         posicoes = [None] * 2
@@ -271,8 +273,7 @@ def rodada(debug, elitismo=False, qntd_elitismo=0):
                     individuos[i].tentar_mutacao()
 
         # 6. O algoritmo deve parar quando atingir o máximo número de gerações ou quando a função custo atingir seu valor ótimo aceitável (de acordo com a regra descrita no slide 31/61).
-        # PROFESSOR nao entendi a função custo, decidi que quando passar 1000 gerações sem melhora, o algoritmo para
-        if geracao_atual - geracao_do_melhor > 100000:
+        if geracao_atual - geracao_do_melhor > 5000000:
             if debug:
                 logar(geracao_atual, melhor_individuo, geracao_do_melhor)
             break
@@ -294,6 +295,10 @@ def rodada(debug, elitismo=False, qntd_elitismo=0):
             p2 = pontos[melhor_individuo.cromossomo[i + 1]]
             line, = ax.plot([p1[0],p2[0]],[p1[1],p2[1]],[p1[2],p2[2]],color='k')
 
+        # desenha uma linha do ultimo ponto até o primeiro
+        p1 = pontos[melhor_individuo.cromossomo[n_pontos - 1]]
+        p2 = pontos[melhor_individuo.cromossomo[0]]
+        line, = ax.plot([p1[0],p2[0]],[p1[1],p2[1]],[p1[2],p2[2]],color='k')
 
         plt.tight_layout()
         plt.show()
