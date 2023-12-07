@@ -1,6 +1,8 @@
 import random
 import time
 from math import ceil
+import numpy as np
+import numpy as np
 import matplotlib.pyplot as plt
 
 # 1. Faça a definição da quantidade N de indivíduos em uma população e quantidade máxima de geraçõoes.
@@ -167,11 +169,18 @@ while geracao_atual < max_geracoes:
                     if solucoes_encontradas == 0:
                         individuos[i].print()
                         # scaterplot 8x8 como tabuleiro de xadrez
+                        chessboard = np.zeros((8, 8))
+                        for i in range(8):
+                            for j in range(8):
+                                if (i + j) % 2 == 0:
+                                    chessboard[i, j] = 1
+                        plt.imshow(chessboard, cmap="binary")
                         plt.scatter(
                             individuos[i].cromossomo,
                             range(8),
                             color="black",
                             s=1000,
+                            marker="s",
                         )
                         plt.show()
 
