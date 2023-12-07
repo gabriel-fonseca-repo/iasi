@@ -175,7 +175,6 @@ while geracao_atual < max_geracoes:
                         )
                         plt.show()
 
-
                     solucoes_encontradas += 1
                     todas_solucoes[solucoes_encontradas - 1] = individuos[i].toString()
                     if solucoes_encontradas == total_solucoes:
@@ -197,7 +196,6 @@ while geracao_atual < max_geracoes:
     recombinou = recombinacao_dois_pontos(pais[0], pais[1])
 
     if recombinou:
-
         for i in range(N):
             if individuos[i] == pais[0]:
                 individuos[i] = recombinou[0]
@@ -207,8 +205,7 @@ while geracao_atual < max_geracoes:
     # 4. Na prole gerada, deve-se aplicar a mutação com probabilidade de 1% (neste caso, é interessante avaliar os diferentes procedimentos exibidos).
     for i in range(N):
         individuos[i].tentar_mutacao()
-    
-    
+
     geracao_atual += 1
     if geracao_atual % 100000 == 0:
         print("---------------------------------------------------")

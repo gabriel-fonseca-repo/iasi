@@ -257,8 +257,8 @@ LISTA_FUNCOES = [
 
 
 executar_todas_funcoes = True
-printar_graficos = False
-medir_moda = True
+printar_graficos = True
+medir_moda = False
 
 if printar_graficos:
     for i, f_dict in enumerate(LISTA_FUNCOES):

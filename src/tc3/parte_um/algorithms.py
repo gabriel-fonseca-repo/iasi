@@ -57,10 +57,10 @@ def plotar_e_salvar_funcao(
     f: callable,
     i: int,
 ) -> plt.Axes:
-    f_out_name = f"out/tc3/f_{i}/VISUALIZACAO.png"
+    f_out_name = f"out/tc3/f_{i}/VISUALIZACAO_YS.png"
     ax = plotar_funcao(xx, yy, f)
-    ax.title.set_text(f"Domínio - Função {i}")
-    plt.savefig(f_out_name, dpi=300, bbox_inches="tight")
+    ax.title.set_text(f"Espaço de dados da Função {i}")
+    plt.savefig(f_out_name, dpi=300)
     return ax
 
 
