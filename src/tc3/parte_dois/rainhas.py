@@ -176,7 +176,7 @@ while geracao_atual < max_geracoes:
                                     chessboard[i, j] = 1
 
                         chess_labels = list(
-                            string.ascii_lowercase[:8]
+                            string.ascii_uppercase[:8]
                         )  # ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 
                         plt.title("Solução encontrada")
@@ -188,7 +188,7 @@ while geracao_atual < max_geracoes:
                             s=800,
                         )
                         plt.xticks(range(8), chess_labels)
-                        plt.yticks(range(8), [1, 2, 3, 4, 5, 6, 7, 8])
+                        plt.yticks(range(8), [8, 7, 6, 5, 4, 3, 2, 1])
                         plt.show()
 
                     solucoes_encontradas += 1
