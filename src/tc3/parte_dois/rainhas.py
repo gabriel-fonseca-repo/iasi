@@ -174,10 +174,14 @@ while geracao_atual < max_geracoes:
                             for j in range(8):
                                 if (i + j) % 2 == 0:
                                     chessboard[i, j] = 1
+
+                        plt.title("Solução ótima encontrada")
                         plt.imshow(chessboard, cmap="binary")
+                        plt.xticks(range(1, 9))
+                        plt.yticks(range(1, 9))
                         plt.scatter(
                             individuos[i].cromossomo,
-                            range(8),
+                            range(1, 9),
                             color="red",
                             s=1000,
                             marker="s",
