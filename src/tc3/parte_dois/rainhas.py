@@ -150,6 +150,18 @@ def gerar_gene():
 for i in range(N):
     individuos[i] = individuo(None)
 
+def jaAchou(solucao):
+    for i in range(total_solucoes):
+        if todas_solucoes[i] != None:
+            flag = True
+            for j in range(8):
+                if solucao[j] != todas_solucoes[i][j]:
+                    flag = False
+                    break
+            if flag:
+                return True
+    return False
+
 geracao_atual = 0
 while geracao_atual < max_geracoes:
     aptidao = [None] * N
@@ -164,51 +176,42 @@ while geracao_atual < max_geracoes:
                 individuos[i].print()
                 terminou = True
             else:
-                if individuos[i].toString() not in todas_solucoes:
+                atual2 = individuos[i].cromossomo.copy()
+                if not jaAchou(individuos[i].cromossomo):
                     # se for o primeiro, mostra graficamente o tabuleiro
-                    if solucoes_encontradas == 0:
-                        individuos[i].print()
-                        atual = individuos[i].cromossomo
+                    atualOriginal = individuos[i].cromossomo
+                    # if solucoes_encontradas == 0:
+                    #     individuos[i].print()
+                    #     atual = individuos[i].cromossomo
                         
-                        for i in range(8):
-                            atual[i] = 7 - atual[i]
+                    #     for i in range(8):
+                    #         atual[i] = 7 - atual[i]
 
-                        # Scatter novo:
-                        chessboard = np.zeros((8, 8))
-                        for i in range(8):
-                            for j in range(8):
-                                if (i + j) % 2 == 0:
-                                    chessboard[i, j] = 1
+                    #     # Scatter novo:
+                    #     chessboard = np.zeros((8, 8))
+                    #     for i in range(8):
+                    #         for j in range(8):
+                    #             if (i + j) % 2 == 0:
+                    #                 chessboard[i, j] = 1
 
-                        chess_labels = list(
-                            string.ascii_uppercase[:8]
-                        )  # ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+                    #     chess_labels = list(
+                    #         string.ascii_uppercase[:8]
+                    #     )  # ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 
-                        plt.title("Solução encontrada")
-                        plt.imshow(chessboard, cmap="binary")
-                        plt.scatter(
-                            range(8),
-                            atual,
-                            color="red",
-                            s=800,
-                        )
-                        plt.xticks(range(8), chess_labels)
-                        plt.yticks(range(8), [8, 7, 6, 5, 4, 3, 2, 1])
-                        plt.show()
-
-                        # Scatter antigo:
-                        """
-                        scaterplot 8x8 como tabuleiro de xadrez
-                        plt.scatter(
-                            individuos[i].cromossomo,
-                            range(8),
-                            color="black",
-                            s=1000,
-                        )
-                        plt.show()
-                        """
+                    #     plt.title("Solução encontrada")
+                    #     plt.imshow(chessboard, cmap="binary")
+                    #     plt.scatter(
+                    #         range(8),
+                    #         atual,
+                    #         color="red",
+                    #         s=800,
+                    #     )
+                    #     plt.xticks(range(8), chess_labels)
+                    #     plt.yticks(range(8), [8, 7, 6, 5, 4, 3, 2, 1])
+                    #     plt.show()
                     solucoes_encontradas += 1
-                    todas_solucoes[solucoes_encontradas - 1] = individuos[i].toString()
+                    print("GUARDANDO SOLUÇÃO " + str(atualOriginal))
+                    todas_solucoes[solucoes_encontradas - 1] = atual2
                     if solucoes_encontradas == total_solucoes:
                         print("Todas as Soluções encontradas!")
                         print("Geracao: ", geracao_atual)
@@ -262,5 +265,7 @@ tempo_segundos = ceil(tempo_normal)
 print(
     "Tempo de execução: ", tempo_horas, "h ", tempo_minutos, "m ", tempo_segundos, "s"
 )
+
+print(todas_solucoes)
 
 # De posse do primeiro resultado, aplique o seu projeto de algoritmo genético para executar enquanto as 92 soluções diferentes não forem encontradas. Avalie o custo computacional desta etapa.
