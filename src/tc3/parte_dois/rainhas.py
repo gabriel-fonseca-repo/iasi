@@ -178,7 +178,7 @@ while geracao_atual < max_geracoes:
                         plt.scatter(
                             individuos[i].cromossomo,
                             range(8),
-                            color="black",
+                            color="red",
                             s=1000,
                             marker="s",
                         )
