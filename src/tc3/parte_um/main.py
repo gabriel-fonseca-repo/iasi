@@ -258,7 +258,7 @@ LISTA_FUNCOES = [
 
 executar_todas_funcoes = True
 printar_graficos = True
-medir_moda = False
+medir_moda = True
 
 if printar_graficos:
     for i, f_dict in enumerate(LISTA_FUNCOES):
@@ -284,17 +284,17 @@ if printar_graficos:
         ax = plotar_e_salvar_funcao(xx, yy, f, indice_func)
 
         # fmt: off
-        # list_prog_x_hillclimbing = hillclimbing(f, max, x_bound, y_bound, **hiper_p_hillclimbing)
-        # extrair_resultados(xx, yy, f, ax, list_prog_x_hillclimbing, "HILLCLIMBING", indice_func)
+        list_prog_x_hillclimbing = hillclimbing(f, max, x_bound, y_bound, **hiper_p_hillclimbing)
+        extrair_resultados(xx, yy, f, ax, list_prog_x_hillclimbing, "HILLCLIMBING", indice_func)
 
-        # list_prog_x_tempera = tempera(f, max, x_bound, y_bound, **hiper_p_tempera)
-        # extrair_resultados(xx, yy, f, ax, list_prog_x_tempera, "TEMPERA", indice_func)
+        list_prog_x_tempera = tempera(f, max, x_bound, y_bound, **hiper_p_tempera)
+        extrair_resultados(xx, yy, f, ax, list_prog_x_tempera, "TEMPERA", indice_func)
 
-        # list_prog_x_lrs = lrs(f, max, x_bound, y_bound, **hiper_p_lrs)
-        # extrair_resultados(xx, yy, f, ax, list_prog_x_lrs, "LRS", indice_func)
+        list_prog_x_lrs = lrs(f, max, x_bound, y_bound, **hiper_p_lrs)
+        extrair_resultados(xx, yy, f, ax, list_prog_x_lrs, "LRS", indice_func)
 
-        # list_prog_x_grs = grs(f, max, x_bound, y_bound, **hiper_p_grs)
-        # extrair_resultados(xx, yy, f, ax, list_prog_x_grs, "GRS", indice_func)
+        list_prog_x_grs = grs(f, max, x_bound, y_bound, **hiper_p_grs)
+        extrair_resultados(xx, yy, f, ax, list_prog_x_grs, "GRS", indice_func)
         # fmt: on
 
 MODA_RST_OPT = {
@@ -416,7 +416,7 @@ if medir_moda:
         moda_f_opt_lrs, count_l = mode(lista_x_opt_lrs, axis=0)
         moda_f_opt_grs, count_g = mode(lista_x_opt_grs, axis=0)
 
-        funcoes.extend([indice_func * 4])
+        funcoes.extend([indice_func] * 4)
 
         algoritmos.append("Hillclimbing")
         modas.append(moda_tostr(moda_f_opt_hillclimbing.tolist()))

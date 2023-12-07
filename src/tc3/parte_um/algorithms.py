@@ -93,7 +93,7 @@ def hillclimbing(
 ) -> List[np.ndarray]:
     i = 0
     melhoria = True  # Em quanto tem melhoria repete, caso contrário para
-    perturb = lambda x, e: np.random.uniform(low=x + e, high=x - e)
+    perturb = lambda x, e: np.random.uniform(low=x - e, high=x + e)
     list_prog_x_opt: List[Tuple[np.ndarray, np.int32]] = []
     # X ótimo, que pode ser inicializado aleatoriamente.
     # Aqui foi inicializado como o limite inferior das funções.
