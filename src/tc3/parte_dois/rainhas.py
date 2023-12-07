@@ -168,6 +168,10 @@ while geracao_atual < max_geracoes:
                     # se for o primeiro, mostra graficamente o tabuleiro
                     if solucoes_encontradas == 0:
                         individuos[i].print()
+                        atual = individuos[i].cromossomo
+                        
+                        for i in range(8):
+                            atual[i] = 7 - atual[i]
 
                         # Scatter novo:
                         chessboard = np.zeros((8, 8))
@@ -183,8 +187,8 @@ while geracao_atual < max_geracoes:
                         plt.title("Solução encontrada")
                         plt.imshow(chessboard, cmap="binary")
                         plt.scatter(
-                            individuos[i].cromossomo,
                             range(8),
+                            atual,
                             color="red",
                             s=800,
                         )
