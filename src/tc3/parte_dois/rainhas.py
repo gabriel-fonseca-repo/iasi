@@ -5,21 +5,6 @@ from math import ceil
 import matplotlib.pyplot as plt
 import numpy as np
 
-# 1. Faça a definição da quantidade N de indivíduos em uma população e quantidade máxima de geraçõoes.
-N = 100  # Quantidade de indivíduos
-max_geracoes = 100000000  # Quantidade máxima de gerações
-
-probabilidade_recombinacao = 0.95  # Probabilidade de recombinação (85% a 95%)
-probabilidade_mutacao = 0.01  # Probabilidade de mutação (1%)
-
-encontrar_todas_solucoes = True
-total_solucoes = 92
-solucoes_encontradas = 0
-todas_solucoes = [None] * total_solucoes
-
-individuos = [None] * N  # Array de indivíduos
-
-
 # contador de tempo
 tempo = time.time()
 
@@ -67,25 +52,75 @@ class individuo:
         print("Cromossomo: ", self.cromossomo)
         print("Aptidao: ", self.aptidao)
 
+class populacao:
+    def __init__(self, individuos):
+        self.individuos = individuos
 
-def roleta(aptidao, individuos):
-    total_aptidao = sum(aptidao)
-    aptidao_normalizada = [None] * N
+    def inicializar(self, tamanho):
+        for i in range(tamanho):
+            self.add_individuo(individuo(None))
 
-    for j in range(N):
-        aptidao_normalizada[j] = aptidao[j] / total_aptidao
+    def add_individuo(self, individuo):
+        self.individuos.append(individuo)
 
-    pais = [None] * 2
+    def get_individuo(self, posicao):
+        return self.individuos[posicao]
+    
+    def length(self):
+        if self.individuos == None:
+            return 0
+        return len(self.individuos)
+    
+    def total_aptidao(self):
+        total = 0
+        for i in range(len(self.individuos)):
+            total += self.individuos[i].aptidao
+        return total
 
-    for j in range(2):
+    def roleta(self):
+        if self.length() == 0:
+            return None
+        
+        if self.length() == 1:
+            return self.individuos[0]
+        
+        aptidao = [None] * self.length()
+        for i in range(self.length()):
+            aptidao[i] = self.individuos[i].aptidao
+
+        # seleciona um individuo aleatorio pelo metodo da roleta
         r = random.random()
-        for k in range(N):
-            r -= aptidao_normalizada[k]
+        total_aptidao = sum(aptidao)
+        aptidao_normalizada = [aptidao[i] / total_aptidao for i in range(self.length())]
+        for i in range(self.length()):
+            r -= aptidao_normalizada[i]
             if r <= 0:
-                pais[j] = individuos[k]
-                break
-
-    return pais
+                # remove o individuo selecionado
+                temp = self.individuos[i]
+                self.individuos.pop(i)
+                return temp
+            
+    def has(self, individuo):
+        for i in range(len(self.individuos)):
+            cromossomoAtual = self.individuos[i].cromossomo
+            flag = True
+            for j in range(8):
+                if individuo[j] != cromossomoAtual[j]:
+                    flag = False
+                    break
+            if flag:
+                return True
+        return False
+            
+    def tentar_mutacao(self):
+        for i in range(len(self.individuos)):
+            self.individuos[i].tentar_mutacao()
+    
+    def checar_resultado(self):
+        for i in range(len(self.individuos)):
+            if self.individuos[i].aptidao == 28:
+                return self.individuos[i].cromossomo
+        return None
 
 
 def recombinacao_um_ponto(pai, pai2):
@@ -103,7 +138,7 @@ def recombinacao_um_ponto(pai, pai2):
 
 def recombinacao_dois_pontos(pai, pai2):
     if not calc_probabilidade_recombinacao():
-        return False
+        return [pai, pai2]
     posicao1 = random.randint(1, 7)
     posicao2 = random.randint(1, 7)
 
@@ -146,112 +181,100 @@ def calc_probabilidade_mutacao():
 def gerar_gene():
     return random.randint(0, 7)
 
+# 1. Faça a definição da quantidade N de indivíduos em uma população e quantidade máxima de geraçõoes.
+N = 100  # Quantidade de indivíduos (apenas pares pelo amor de deus)
+max_geracoes = 10000  # Quantidade máxima de gerações
 
-for i in range(N):
-    individuos[i] = individuo(None)
+probabilidade_recombinacao = 0.95  # Probabilidade de recombinação (85% a 95%)
+probabilidade_mutacao = 0.01  # Probabilidade de mutação (1%)
 
-def jaAchou(solucao):
-    for i in range(total_solucoes):
-        if todas_solucoes[i] != None:
-            flag = True
-            for j in range(8):
-                if solucao[j] != todas_solucoes[i][j]:
-                    flag = False
-                    break
-            if flag:
-                return True
-    return False
+total_solucoes = 92
 
-geracao_atual = 0
-while geracao_atual < max_geracoes:
-    aptidao = [None] * N
+def rodar_ate_encontrar(individuos):
+    geracao_atual = 0
+    while geracao_atual < max_geracoes:
+        novos_individuos = populacao([])
 
-    terminou = False
+        for _i in range(N // 2):
+            cnt = 0
+            for i in range(individuos.length()):
+                if individuos.get_individuo(i) == None:
+                    cnt += 1
+            # 3. Na etapa de recombinação, escolha um entre os seguintes operadores: Recombinação de um ponto ou Recombinação de dois pontos. A probabilidade de recombinação nesta etapa deve ser entre 85 < pc < 95%.
+            # fiz as duas opções para testar
+            # print("selecionando dois pais")
+            # print("tamanho da população: ", individuos.length())
+            pai1 = individuos.roleta()
+            pai2 = individuos.roleta()
+            recombinou = recombinacao_dois_pontos(pai1, pai2)
+            
+            novos_individuos.add_individuo(recombinou[0])
+            novos_individuos.add_individuo(recombinou[1])
+        
+        # 4. Na prole gerada, deve-se aplicar a mutação com probabilidade de 1% (neste caso, é interessante avaliar os diferentes procedimentos exibidos).
+        novos_individuos.tentar_mutacao()
 
-    for i in range(N):
-        aptidao[i] = individuos[i].aptidao
-        if aptidao[i] == 28:
-            if not encontrar_todas_solucoes:
-                print("Solução encontrada!")
-                individuos[i].print()
-                terminou = True
-            else:
-                atual2 = individuos[i].cromossomo.copy()
-                if not jaAchou(individuos[i].cromossomo):
-                    # se for o primeiro, mostra graficamente o tabuleiro
-                    atualOriginal = individuos[i].cromossomo
-                    # if solucoes_encontradas == 0:
-                    #     individuos[i].print()
-                    #     atual = individuos[i].cromossomo
-                        
-                    #     for i in range(8):
-                    #         atual[i] = 7 - atual[i]
+        individuos = novos_individuos
 
-                    #     # Scatter novo:
-                    #     chessboard = np.zeros((8, 8))
-                    #     for i in range(8):
-                    #         for j in range(8):
-                    #             if (i + j) % 2 == 0:
-                    #                 chessboard[i, j] = 1
+        resultado = individuos.checar_resultado()
+        if(resultado != None):
+            print("geração: ", geracao_atual)
+            return resultado
+        geracao_atual += 1
+        
 
-                    #     chess_labels = list(
-                    #         string.ascii_uppercase[:8]
-                    #     )  # ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+    print("não encontrou solução e chegou no limite de gerações")
+    return None
 
-                    #     plt.title("Solução encontrada")
-                    #     plt.imshow(chessboard, cmap="binary")
-                    #     plt.scatter(
-                    #         range(8),
-                    #         atual,
-                    #         color="red",
-                    #         s=800,
-                    #     )
-                    #     plt.xticks(range(8), chess_labels)
-                    #     plt.yticks(range(8), [8, 7, 6, 5, 4, 3, 2, 1])
-                    #     plt.show()
-                    solucoes_encontradas += 1
-                    print("GUARDANDO SOLUÇÃO " + str(atualOriginal))
-                    todas_solucoes[solucoes_encontradas - 1] = atual2
-                    if solucoes_encontradas == total_solucoes:
-                        print("Todas as Soluções encontradas!")
-                        print("Geracao: ", geracao_atual)
-                        terminou = True
-                        break
+def mostrar_grafico(cromossomo):
+    for i in range(8):
+        cromossomo[i] = 7 - cromossomo[i]
 
-    # 5. O algoritmo deve parar quando atingir o máximo número de gerações ou quando a função custo atingir seu valor ótimo.
-    if terminou:
-        break
+    # Scatter novo:
+    chessboard = np.zeros((8, 8))
+    for i in range(8):
+        for j in range(8):
+            if (i + j) % 2 == 0:
+                chessboard[i, j] = 1
 
-    # 2. Projete o operador de seleção, baseado no método da roleta.
-    pais = roleta(aptidao, individuos)
+    chess_labels = list(
+        string.ascii_uppercase[:8]
+    )  # ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 
-    # 3. Na etapa de recombinação, escolha um entre os seguintes operadores: Recombinação de um ponto ou Recombinação de dois pontos. A probabilidade de recombinação nesta etapa deve ser entre 85 < pc < 95%.
-    # fiz as duas opções para testar
-    # recombinou = recombinacao_um_ponto(pais[0], pais[1])
-    recombinou = recombinacao_dois_pontos(pais[0], pais[1])
+    plt.imshow(chessboard, cmap="binary")
+    plt.scatter(
+        range(8),
+        cromossomo,
+        color="red",
+        s=800,
+    )
+    plt.xticks(range(8), chess_labels)
+    plt.yticks(range(8), [8, 7, 6, 5, 4, 3, 2, 1])
+    plt.show()
 
-    if recombinou:
-        for i in range(N):
-            if individuos[i] == pais[0]:
-                individuos[i] = recombinou[0]
-            elif individuos[i] == pais[1]:
-                individuos[i] = recombinou[1]
 
-    # 4. Na prole gerada, deve-se aplicar a mutação com probabilidade de 1% (neste caso, é interessante avaliar os diferentes procedimentos exibidos).
-    for i in range(N):
-        individuos[i].tentar_mutacao()
+resultadosOtimos = populacao([])
+universos = 0
+while(resultadosOtimos.length() < total_solucoes):
+    print("[", resultadosOtimos.length(),"/", total_solucoes ,"]" ,"---iniciando Universo Nº", universos + 1, "---")
 
-    geracao_atual += 1
-    if geracao_atual % 100000 == 0:
-        print("---------------------------------------------------")
-        print("Geracao: ", geracao_atual)
-        print("aptidao maxima: ", max(aptidao))
-        if encontrar_todas_solucoes:
-            print("Soluções encontradas: ", solucoes_encontradas)
-            if geracao_atual == max_geracoes:
-                if solucoes_encontradas == 0:
-                    print("Nenhuma solução encontrada")
-        print("---------------------------------------------------")
+    individuos = populacao([])
+    individuos.inicializar(N)
+
+    resultado = rodar_ate_encontrar(individuos)
+
+    if(resultado != None):
+        if(resultadosOtimos.has(resultado)):
+            print("Solução já encontrada")
+        else:
+            resultadosOtimos.add_individuo(individuo(resultado))
+            print("Solução nova encontrada " + individuo(resultado).toString())
+            if(resultadosOtimos.length() == 0):
+                mostrar_grafico(resultado)
+    
+
+    universos += 1
+        
 
 
 # tempo em horas, minutos e segundos
@@ -266,6 +289,10 @@ print(
     "Tempo de execução: ", tempo_horas, "h ", tempo_minutos, "m ", tempo_segundos, "s"
 )
 
-print(todas_solucoes)
+print("Quantidade de universos: ", universos)
+print("Resultados ótimos encontrados: ", resultadosOtimos.length())
+print("Resultados ótimos: ")
+for i in range(resultadosOtimos.length()):
+    print(resultadosOtimos.get_individuo(i).toString())
 
 # De posse do primeiro resultado, aplique o seu projeto de algoritmo genético para executar enquanto as 92 soluções diferentes não forem encontradas. Avalie o custo computacional desta etapa.
