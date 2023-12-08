@@ -1,42 +1,13 @@
 import random
 import time
-from math import sqrt
+from math import sqrt, ceil
 from statistics import mode
 import numpy as np
 import matplotlib.pyplot as plt
 
-# 1. Fa¸ca a defini¸c˜ao de quantos pontos devem ser gerados por regi˜ao. Escolha um valor 30 < Npontos < 60.
-ponto_quadrante = 8  # Quantidade de pontos por quadrante
-n_pontos = 4 * ponto_quadrante  # Quantidade de pontos 30 < Npontos < 60
-
-pontos = [None] * n_pontos  # Array de pontos
-
-# 2. Faça a definição da quantidade N de indivíduos em uma população e quantidade m´axima de gera¸c˜oes.
-qntd_individuos = 5  # Quantidade de indivíduos
-max_geracoes = 100000000  # Quantidade máxima de gerações
-probabilidade_recombinacao = 0.95  # Probabilidade de recombina¸c˜ao (85% a 95%)
-probabilidade_mutacao = 0.01  # Probabilidade de muta¸c˜ao (1%)
-
-
-individuos = [None] * qntd_individuos  # Array de indivíduos
-
-# quão espaçados os pontos gerados podem ser
-rangelimit = 10
 
 # contador de tempo
 tempo = time.time()
-
-
-# minha geração ANTES DE VER O ARQUIVO Q O PROFESSOR COLOCOU
-# def gerar_ponto():
-#     x = random.randint(0, rangelimit)
-#     y = random.randint(0, rangelimit)
-#     z = random.randint(0, rangelimit)
-#     return [x, y, z]
-
-
-# for i in range(n_pontos):
-#     pontos[i] = gerar_ponto()
 
 
 def generate_points(N): 
@@ -62,8 +33,6 @@ def generate_points(N):
     w_partition = w_partition+x1   
     return np.concatenate((x_partition,y_partition,z_partition,w_partition), axis=0)
 
-pontos = generate_points(ponto_quadrante)
-
 
 class individuo:
     def __init__(self, cromossomo):
@@ -78,7 +47,7 @@ class individuo:
         ponto_atual = self.cromossomo[0]
         for i in range(n_pontos):
             aptidao += distancia_entre_pontos(
-                pontos[ponto_atual], pontos[self.cromossomo[i]]
+                ponto_atual, self.cromossomo[i]
             )
             ponto_atual = self.cromossomo[i]
         self.aptidao = aptidao
@@ -90,10 +59,6 @@ class individuo:
             cromosomo.append(i)
         random.shuffle(cromosomo)
 
-        # garantir que o primeiro é sempre 0
-        cromosomo.remove(0)
-        cromosomo.insert(0, 0)
-
         return cromosomo
 
     def get_range(self, posicao_inicial, posicao_final):
@@ -101,10 +66,10 @@ class individuo:
 
     def tentar_mutacao(self):
         if calc_probabilidade_mutacao():
-            posicao = random.randint(1, n_pontos - 1)
-            posicao2 = random.randint(1, n_pontos - 1)
+            posicao = random.randint(0, n_pontos - 1)
+            posicao2 = random.randint(0, n_pontos - 1)
             while posicao == posicao2:
-                posicao2 = random.randint(1, n_pontos - 1)
+                posicao2 = random.randint(0, n_pontos - 1)
 
             aux = self.cromossomo[posicao]
             self.cromossomo[posicao] = self.cromossomo[posicao2]
@@ -116,45 +81,82 @@ class individuo:
 
     def toString(self):
         return str(self.cromossomo) + " - " + str(self.aptidao)
+    
+class populacao:
+    def __init__(self, individuos):
+        self.individuos = individuos
+
+    def inicializar(self, tamanho):
+        for i in range(tamanho):
+            self.add_individuo(individuo(None))
+
+
+    def inicializar(self, tamanho):
+        for i in range(tamanho):
+            self.add_individuo(individuo(None))
+
+    def add_individuo(self, individuo):
+        self.individuos.append(individuo)
+
+    def get_individuo(self, posicao):
+        return self.individuos[posicao]
+
+    def retirar_pior(self):
+        if(self.length() == 0):
+            return None
+        
+        if(self.length() == 1):
+            return self.individuos[0]
+
+        pior = self.individuos[0]
+        for i in range(1, self.length()):
+            if self.individuos[i].aptidao > pior.aptidao:
+                pior = self.individuos[i]
+        self.individuos.remove(pior)
+        return pior
+
+    def get_melhor(self):
+        if(self.length() == 0):
+            return None
+        
+        if(self.length() == 1):
+            return self.individuos[0]
+
+        melhor = self.individuos[0]
+        for i in range(1, self.length()):
+            if self.individuos[i].aptidao < melhor.aptidao:
+                melhor = self.individuos[i]
+        return melhor
+    
+    def tentar_mutacao(self):
+        for i in range(self.length()):
+            self.individuos[i].tentar_mutacao()
+
+
+    def torneio(self):
+        aleatorio1 = random.randint(0, self.length() - 1)
+        aleatorio2 = random.randint(0, self.length() - 1)
+
+        while aleatorio1 == aleatorio2:
+            aleatorio2 = random.randint(0, self.length() - 1)
+        
+        if self.individuos[aleatorio1].aptidao < self.individuos[aleatorio2].aptidao:
+            return self.individuos[aleatorio1]
+        else:
+            return self.individuos[aleatorio2]
+        
+    def length(self):
+        return len(self.individuos)
 
 
 def distancia_entre_pontos(ponto1, ponto2):
-    if len(ponto1) != len(ponto2):
-        return False
-    if len(ponto1) == 2:
-        return sqrt((ponto1[0] - ponto2[0]) ** 2 + (ponto1[1] - ponto2[1]) ** 2)
+    ponto1 = pontos[ponto1]
+    ponto2 = pontos[ponto2]
     return sqrt(
         (ponto1[0] - ponto2[0]) ** 2
         + (ponto1[1] - ponto2[1]) ** 2
         + (ponto1[2] - ponto2[2]) ** 2
     )
-
-
-def roleta(aptidao, individuos, qntd_elitismo=0):
-    if qntd_elitismo > 0:
-        for i in range(qntd_elitismo):
-            aptidao.remove(min(aptidao))
-
-    soma = 0
-    for i in range(len(aptidao)):
-        aptidao[i] = aptidao[i] * -1
-        soma += aptidao[i]
-
-    for i in range(len(aptidao)):
-        aptidao[i] = aptidao[i] / soma
-
-    pais = [None] * 2
-    posicoes = [None] * 2
-    for i in range(2):
-        valor = random.random()
-        for j in range(len(aptidao)):
-            valor -= aptidao[j]
-            if valor <= 0:
-                pais[i] = individuos[j]
-                posicoes[i] = j
-                break
-    return [pais, posicoes]
-
 
 def calc_probabilidade_mutacao():
     return random.random() <= probabilidade_mutacao
@@ -164,7 +166,7 @@ def calc_probabilidade_recombinacao():
 
 def recombinacao_dois_pontos(pai1, pai2):
     if not calc_probabilidade_recombinacao():
-        return False
+        return [pai1, pai2]
 
     ponto1 = random.randint(1, n_pontos)
     ponto2 = random.randint(1, n_pontos)
@@ -210,125 +212,129 @@ def recombinacao_dois_pontos(pai1, pai2):
         while aux2[posAux2] in filho2:
             posAux2 += 1
         filho2[i] = aux2[posAux2]
-
-    # garante que o primeiro é sempre 0
-    filho1.remove(0)
-    filho1.insert(0, 0)
-    filho2.remove(0)
-    filho2.insert(0, 0)
-
     #retorna cromossomo
     return [filho1, filho2]
 
-for i in range(qntd_individuos):
-    individuos[i] = individuo(None)
+
+def mostrar_grafico(melhor_individuo):
+    fig = plt.figure()
+    ax = fig.add_subplot(projection='3d')
+    ax.scatter(pontos[:,0], pontos[:,1], pontos[:,2], c='#248DD2', marker='o')
+
+    # para cada ponto, desenha uma linha até o próximo
+    for i in range(n_pontos - 1):
+        p1 = pontos[melhor_individuo.cromossomo[i]]
+        p2 = pontos[melhor_individuo.cromossomo[i + 1]]
+        line, = ax.plot([p1[0],p2[0]],[p1[1],p2[1]],[p1[2],p2[2]],color='k')
+
+    # desenha uma linha do ultimo ponto até o primeiro
+    p1 = pontos[melhor_individuo.cromossomo[n_pontos - 1]]
+    p2 = pontos[melhor_individuo.cromossomo[0]]
+    line, = ax.plot([p1[0],p2[0]],[p1[1],p2[1]],[p1[2],p2[2]],color='k')
+
+    plt.tight_layout()
+    plt.show()
 
 
-def logar(geracao_atual, melhor_individuo, geracao_do_melhor):
-    print("---------------------------------------------------")
-    print("Geração: ", geracao_atual)
-    print("Melhor indivíduo: ", melhor_individuo.toString())
-    print("Geração do melhor indivíduo: ", geracao_do_melhor)
-    print("---------------------------------------------------")
+
+
+# 1. Fa¸ca a defini¸c˜ao de quantos pontos devem ser gerados por regi˜ao. Escolha um valor 30 < Npontos < 60.
+ponto_quadrante = 15  # Quantidade de pontos por quadrante
+n_pontos = 4 * ponto_quadrante  # Quantidade de pontos 30 < Npontos < 60
+
+pontos = [None] * n_pontos  # Array de pontos
+
+# 2. Faça a definição da quantidade N de indivíduos em uma população e quantidade m´axima de gera¸c˜oes.
+qntd_individuos = 100  # Quantidade de indivíduos em uma população (somente números pares pelo amor de deus)
+max_geracoes = 1000000  # Quantidade máxima de gerações
+probabilidade_recombinacao = 0.95  # Probabilidade de recombina¸c˜ao (85% a 95%)
+probabilidade_mutacao = 0.01  # Probabilidade de muta¸c˜ao (1%)
+
+pontos = generate_points(ponto_quadrante)
 
 
 # retorna a geracao do melhor individuo
-def rodada(debug, elitismo=False, qntd_elitismo=0):
-    melhor_individuo = individuos[0]
+def rodada(qntd_elitismo=0):
+    individuos = populacao([])
+    individuos.inicializar(qntd_individuos)
+
+    melhor_individuo = individuos.get_melhor()
     geracao_do_melhor = 0
 
     geracao_atual = 0
     while geracao_atual < max_geracoes:
-        aptidao = [None] * qntd_individuos
 
-        individuos.sort(key=lambda x: x.aptidao)
         
-        for i in range(qntd_individuos):
-            aptidao[i] = individuos[i].aptidao
-            if individuos[i].aptidao < melhor_individuo.aptidao:
-                melhor_individuo = individuo(individuos[i].cromossomo)
-                geracao_do_melhor = geracao_atual
+        melhor_atual = individuos.get_melhor()
+        novos_individuos = populacao([])
+        
+        if melhor_atual.aptidao < melhor_individuo.aptidao:
+            print("melhor: ", melhor_atual.aptidao, " - ", melhor_atual.cromossomo, " - geracao: ", geracao_atual)
+            melhor_individuo = melhor_atual
+            geracao_do_melhor = geracao_atual
+        
+        if qntd_elitismo > 0:
+            for i in range(qntd_elitismo):
+                novos_individuos.add_individuo(individuos.get_melhor().clone())
 
+        qnt_pares = individuos.length() // 2
+        for _i in range(qnt_pares):
+            # 3. Projete o operador de seleção, baseado no método do torneio.
+            pai1 = individuos.torneio()
+            pai2 = individuos.torneio()
 
-        pais = [None] * 2
-        posicoes = [None] * 2
+            # 4. Na etapa de recombinação, como este trata-se de um problema de combinatória, não pode haver pontos repetidos na sequência cromossômica. Desta maneira, pede-se que desenvolva uma variação do operador de recombinação de dois pontos. Assim, cada seção selecionada de modo aleatório deve ser propagada nos filhos e em seguida, a sequência genética do filho deve ser completada com os demais pontos sem repetição.
+            # recombinou = recombinacaoUmPonto(pais[0], pais[1]);
+            recombinou = recombinacao_dois_pontos(pai1.cromossomo, pai2.cromossomo)
 
-        # 3. Projete o operador de seleção, baseado no método do torneio.
-        [pais, posicoes] = roleta(aptidao, individuos, qntd_elitismo)
-
-        # 4. Na etapa de recombinação, como este trata-se de um problema de combinatória, não pode haver pontos repetidos na sequência cromossômica. Desta maneira, pede-se que desenvolva uma variação do operador de recombinação de dois pontos. Assim, cada seção selecionada de modo aleatório deve ser propagada nos filhos e em seguida, a sequência genética do filho deve ser completada com os demais pontos sem repetição.
-        # recombinou = recombinacaoUmPonto(pais[0], pais[1]);
-        recombinou = recombinacao_dois_pontos(pais[0].cromossomo, pais[1].cromossomo)
-
-        if recombinou:
-            individuos[posicoes[0]] = individuo(recombinou[0])
-            individuos[posicoes[1]] = individuo(recombinou[1])
-
+            if recombinou:
+                novos_individuos.add_individuo(individuo(recombinou[0]))
+                novos_individuos.add_individuo(individuo(recombinou[1]))
+        
+        if(qntd_elitismo > 0):
+            for i in range(qntd_elitismo):
+                novos_individuos.retirar_pior()
+        
         # 5. Na prole gerada, deve-se aplicar a mutação com probabilidade de 1%. Para o problema do caixeiro viajante, deve-se aplicar uma mutação que faz a troca de um gene por outro de uma mesma sequência cromossômica.
-        for i in range(qntd_individuos):
-            if not elitismo:
-                individuos[i].tentar_mutacao()
-            else:
-                if i >= qntd_elitismo:
-                    individuos[i].tentar_mutacao()
+        individuos = novos_individuos
+        novos_individuos.tentar_mutacao()
+
 
         # 6. O algoritmo deve parar quando atingir o máximo número de gerações ou quando a função custo atingir seu valor ótimo aceitável (de acordo com a regra descrita no slide 31/61).
-        if geracao_atual - geracao_do_melhor > 5000000:
-            if debug:
-                logar(geracao_atual, melhor_individuo, geracao_do_melhor)
+        if geracao_atual - geracao_do_melhor > 3000:
             break
 
-        if geracao_atual % 10000 == 0:
-            if debug:
-                logar(geracao_atual, melhor_individuo, geracao_do_melhor)
+        # if geracao_atual % 1000 == 0:
+        #     print("geração: ", geracao_atual, " - melhor: ", melhor_individuo.aptidao, " - melhor: ", melhor_individuo.cromossomo)
         geracao_atual += 1
 
-    if debug:
-        
-        fig = plt.figure()
-        ax = fig.add_subplot(projection='3d')
-        ax.scatter(pontos[:,0], pontos[:,1], pontos[:,2], c='#248DD2', marker='o')
-
-        # para cada ponto, desenha uma linha até o próximo
-        for i in range(n_pontos - 1):
-            p1 = pontos[melhor_individuo.cromossomo[i]]
-            p2 = pontos[melhor_individuo.cromossomo[i + 1]]
-            line, = ax.plot([p1[0],p2[0]],[p1[1],p2[1]],[p1[2],p2[2]],color='k')
-
-        # desenha uma linha do ultimo ponto até o primeiro
-        p1 = pontos[melhor_individuo.cromossomo[n_pontos - 1]]
-        p2 = pontos[melhor_individuo.cromossomo[0]]
-        line, = ax.plot([p1[0],p2[0]],[p1[1],p2[1]],[p1[2],p2[2]],color='k')
-
-        plt.tight_layout()
-        plt.show()
+    mostrar_grafico(melhor_individuo)
     return geracao_do_melhor
 
-print(rodada(True, True, 1))
+resultado = rodada(1)
+print(resultado)
+
+
+
+# tempo em horas, minutos e segundos
+tempo_normal = time.time() - tempo
+tempo_horas = ceil(tempo_normal // 3600)
+tempo_normal %= 3600
+tempo_minutos = ceil(tempo_normal // 60)
+tempo_normal %= 60
+tempo_segundos = ceil(tempo_normal)
+
+print(
+    "Tempo de execução: ", tempo_horas, "h ", tempo_minutos, "m ", tempo_segundos, "s"
+)
+
+
+                    
+
 
 
 # rodada simples
 # rodada(True);
 
 # 7. Faça uma análise se de qual é a moda de gerações para obter uma solução aceitável. Além disso, analise se é necessário incluir um operador de elitismo em um grupo Ne de indivíduos.
-# analise:
-# apos rodar muitas vezes, percebi que com elitismo de 1 individuo, o algoritmo encontra a solução otima em menos gerações
-# qntd_rodadas = 1000
-# resultados_normais = [None] * qntd_rodadas
-# resultados_elitista = [None] * qntd_rodadas
-# for i in range(qntd_rodadas):
-#     individuos_desse_teste = [None] * qntd_individuos
-#     for j in range(qntd_individuos):
-#         individuos_desse_teste[j] = individuo(None)
-#         individuos[j] = individuos_desse_teste[j].clone()
-#     resultados_normais[i] = rodada(False, False, 0)
-#     for j in range(qntd_individuos):
-#         individuos[j] = individuos_desse_teste[j].clone()
-#     resultados_elitista[i] = rodada(False, True, 2)
-#     if i % 100 == 0:
-#         print("Rodada: ", i, " de ", qntd_rodadas)
-
-# print("resultados normais: ", resultados_normais)
-# print("media normal: ", sum(resultados_normais) / len(resultados_normais))
-# print("resultados elitista: ", resultados_elitista)
-# print("media elitista: ", sum(resultados_elitista) / len(resultados_elitista))
+# analise

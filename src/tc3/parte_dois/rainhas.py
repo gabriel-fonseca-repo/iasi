@@ -9,39 +9,6 @@ import numpy as np
 tempo = time.time()
 
 
-def plotar_solucao_encontrada(atual, index_solucao):
-    for i in range(8):
-        atual[i] = 7 - atual[i]
-
-    # Scatter novo:
-    chessboard = np.zeros((8, 8))
-    for i in range(8):
-        for j in range(8):
-            if (i + j) % 2 == 0:
-                chessboard[i, j] = 1
-
-    chess_labels = list(
-        string.ascii_uppercase[:8]
-    )  # ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
-
-    plt.title("Solução ótima encontrada:\n" + str(atual))
-    plt.imshow(chessboard, cmap="binary")
-    plt.scatter(
-        range(8),
-        atual,
-        color="red",
-        s=800,
-    )
-    plt.xticks(range(8), chess_labels)
-    plt.yticks(range(8), [8, 7, 6, 5, 4, 3, 2, 1])
-    plt.savefig(
-        f"out/tc3/solucoes_oito_rainhas/Solucao_{index_solucao}.png",
-        bbox_inches="tight",
-        dpi=300,
-    )
-    plt.clf()
-
-
 class individuo:
     def __init__(self, cromossomo):
         if cromossomo == None:
@@ -73,10 +40,10 @@ class individuo:
         return self.cromossomo[posicao_inicial:posicao_final]
 
     def tentar_mutacao(self):
-        if calc_probabilidade_mutacao():
-            posicao = random.randint(0, 7)
-            self.cromossomo[posicao] = gerar_gene()
-            self.aptidao = self.calcular_aptidao()
+        for i in range(8):
+            if calc_probabilidade_mutacao():
+                self.cromossomo[i] = gerar_gene()
+                self.aptidao = self.calcular_aptidao()
 
     def toString(self):
         return str(self.cromossomo)
@@ -159,7 +126,7 @@ class populacao:
 def recombinacao_um_ponto(pai, pai2):
     if not calc_probabilidade_recombinacao():
         return False
-    posicao = random.randint(1, 7)
+    posicao = random.randint(0, 7)
 
     filhos = [None] * 2
 
@@ -172,8 +139,8 @@ def recombinacao_um_ponto(pai, pai2):
 def recombinacao_dois_pontos(pai, pai2):
     if not calc_probabilidade_recombinacao():
         return [pai, pai2]
-    posicao1 = random.randint(1, 7)
-    posicao2 = random.randint(1, 7)
+    posicao1 = random.randint(0, 7)
+    posicao2 = random.randint(0, 7)
 
     if posicao1 > posicao2:
         posicao1, posicao2 = posicao2, posicao1
@@ -214,100 +181,33 @@ def calc_probabilidade_mutacao():
 def gerar_gene():
     return random.randint(0, 7)
 
+# 1. Faça a definição da quantidade N de indivíduos em uma população e quantidade máxima de geraçõoes.
+N = 100  # Quantidade de indivíduos (apenas pares pelo amor de deus)
+max_geracoes = 10000  # Quantidade máxima de gerações
 
-for i in range(N):
-    individuos[i] = individuo(None)
+probabilidade_recombinacao = 0.95  # Probabilidade de recombinação (85% a 95%)
+probabilidade_mutacao = 0.01  # Probabilidade de mutação (1%)
 
-def jaAchou(solucao):
-    for i in range(total_solucoes):
-        if todas_solucoes[i] != None:
-            flag = True
-            for j in range(8):
-                if solucao[j] != todas_solucoes[i][j]:
-                    flag = False
-                    break
-            if flag:
-                return True
-    return False
+total_solucoes = 92
 
-geracao_atual = 0
-while geracao_atual < max_geracoes:
-    aptidao = [None] * N
+def rodar_ate_encontrar(individuos):
+    geracao_atual = 0
+    while geracao_atual < max_geracoes:
+        novos_individuos = populacao([])
 
-    terminou = False
+        for _i in range(N // 2):
+            # 3. Na etapa de recombinação, escolha um entre os seguintes operadores: Recombinação de um ponto ou Recombinação de dois pontos. A probabilidade de recombinação nesta etapa deve ser entre 85 < pc < 95%.
+            pai1 = individuos.roleta()
+            pai2 = individuos.roleta()
+            recombinou = recombinacao_dois_pontos(pai1, pai2)
+            
+            novos_individuos.add_individuo(recombinou[0])
+            novos_individuos.add_individuo(recombinou[1])
+        
+        # 4. Na prole gerada, deve-se aplicar a mutação com probabilidade de 1% (neste caso, é interessante avaliar os diferentes procedimentos exibidos).
+        novos_individuos.tentar_mutacao()
 
-    for i in range(N):
-        aptidao[i] = individuos[i].aptidao
-        if aptidao[i] == 28:
-            if not encontrar_todas_solucoes:
-                print("Solução encontrada!")
-                individuos[i].print()
-                terminou = True
-            else:
-                atual2 = individuos[i].cromossomo.copy()
-                if not jaAchou(individuos[i].cromossomo):
-                    # se for o primeiro, mostra graficamente o tabuleiro
-                    atualOriginal = individuos[i].cromossomo
-                    # if solucoes_encontradas == 0:
-                    #     individuos[i].print()
-                    #     atual = individuos[i].cromossomo
-                        
-                    #     for i in range(8):
-                    #         atual[i] = 7 - atual[i]
-
-                    #     # Scatter novo:
-                    #     chessboard = np.zeros((8, 8))
-                    #     for i in range(8):
-                    #         for j in range(8):
-                    #             if (i + j) % 2 == 0:
-                    #                 chessboard[i, j] = 1
-
-                    #     chess_labels = list(
-                    #         string.ascii_uppercase[:8]
-                    #     )  # ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
-
-                    #     plt.title("Solução encontrada")
-                    #     plt.imshow(chessboard, cmap="binary")
-                    #     plt.scatter(
-                    #         range(8),
-                    #         atual,
-                    #         color="red",
-                    #         s=800,
-                    #     )
-                    #     plt.xticks(range(8), chess_labels)
-                    #     plt.yticks(range(8), [8, 7, 6, 5, 4, 3, 2, 1])
-                    #     plt.show()
-                    solucoes_encontradas += 1
-                    print("GUARDANDO SOLUÇÃO " + str(atualOriginal))
-                    todas_solucoes[solucoes_encontradas - 1] = atual2
-                    if solucoes_encontradas == total_solucoes:
-                        print("Todas as Soluções encontradas!")
-                        print("Geracao: ", geracao_atual)
-                        terminou = True
-                        break
-
-    # 5. O algoritmo deve parar quando atingir o máximo número de gerações ou quando a função custo atingir seu valor ótimo.
-    if terminou:
-        break
-
-    # 2. Projete o operador de seleção, baseado no método da roleta.
-    pais = roleta(aptidao, individuos)
-
-    # 3. Na etapa de recombinação, escolha um entre os seguintes operadores: Recombinação de um ponto ou Recombinação de dois pontos. A probabilidade de recombinação nesta etapa deve ser entre 85 < pc < 95%.
-    # fiz as duas opções para testar
-    # recombinou = recombinacao_um_ponto(pais[0], pais[1])
-    recombinou = recombinacao_dois_pontos(pais[0], pais[1])
-
-    if recombinou:
-        for i in range(N):
-            if individuos[i] == pais[0]:
-                individuos[i] = recombinou[0]
-            elif individuos[i] == pais[1]:
-                individuos[i] = recombinou[1]
-
-    # 4. Na prole gerada, deve-se aplicar a mutação com probabilidade de 1% (neste caso, é interessante avaliar os diferentes procedimentos exibidos).
-    for i in range(N):
-        individuos[i].tentar_mutacao()
+        individuos = novos_individuos
 
         resultado = individuos.checar_resultado()
         if(resultado != None):
@@ -362,7 +262,7 @@ while(resultadosOtimos.length() < total_solucoes):
         else:
             resultadosOtimos.add_individuo(individuo(resultado))
             print("Solução nova encontrada " + individuo(resultado).toString())
-            if(resultadosOtimos.length() == 0):
+            if(resultadosOtimos.length() == 1):
                 mostrar_grafico(resultado)
     
 
