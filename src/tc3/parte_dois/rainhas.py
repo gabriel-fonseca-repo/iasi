@@ -24,6 +24,39 @@ individuos = [None] * N  # Array de indivíduos
 tempo = time.time()
 
 
+def plotar_solucao_encontrada(atual, index_solucao):
+    for i in range(8):
+        atual[i] = 7 - atual[i]
+
+    # Scatter novo:
+    chessboard = np.zeros((8, 8))
+    for i in range(8):
+        for j in range(8):
+            if (i + j) % 2 == 0:
+                chessboard[i, j] = 1
+
+    chess_labels = list(
+        string.ascii_uppercase[:8]
+    )  # ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+
+    plt.title("Solução ótima encontrada:\n" + str(atual))
+    plt.imshow(chessboard, cmap="binary")
+    plt.scatter(
+        range(8),
+        atual,
+        color="red",
+        s=800,
+    )
+    plt.xticks(range(8), chess_labels)
+    plt.yticks(range(8), [8, 7, 6, 5, 4, 3, 2, 1])
+    plt.savefig(
+        f"out/tc3/solucoes_oito_rainhas/Solucao_{index_solucao}.png",
+        bbox_inches="tight",
+        dpi=300,
+    )
+    plt.clf()
+
+
 class individuo:
     def __init__(self, cromossomo):
         if cromossomo == None:
@@ -150,6 +183,7 @@ def gerar_gene():
 for i in range(N):
     individuos[i] = individuo(None)
 
+
 def jaAchou(solucao):
     for i in range(total_solucoes):
         if todas_solucoes[i] != None:
@@ -161,6 +195,7 @@ def jaAchou(solucao):
             if flag:
                 return True
     return False
+
 
 geracao_atual = 0
 while geracao_atual < max_geracoes:
@@ -176,42 +211,17 @@ while geracao_atual < max_geracoes:
                 individuos[i].print()
                 terminou = True
             else:
-                atual2 = individuos[i].cromossomo.copy()
+                atual_2 = individuos[i].cromossomo.copy()
                 if not jaAchou(individuos[i].cromossomo):
                     # se for o primeiro, mostra graficamente o tabuleiro
-                    atualOriginal = individuos[i].cromossomo
-                    # if solucoes_encontradas == 0:
-                    #     individuos[i].print()
-                    #     atual = individuos[i].cromossomo
-                        
-                    #     for i in range(8):
-                    #         atual[i] = 7 - atual[i]
-
-                    #     # Scatter novo:
-                    #     chessboard = np.zeros((8, 8))
-                    #     for i in range(8):
-                    #         for j in range(8):
-                    #             if (i + j) % 2 == 0:
-                    #                 chessboard[i, j] = 1
-
-                    #     chess_labels = list(
-                    #         string.ascii_uppercase[:8]
-                    #     )  # ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
-
-                    #     plt.title("Solução encontrada")
-                    #     plt.imshow(chessboard, cmap="binary")
-                    #     plt.scatter(
-                    #         range(8),
-                    #         atual,
-                    #         color="red",
-                    #         s=800,
-                    #     )
-                    #     plt.xticks(range(8), chess_labels)
-                    #     plt.yticks(range(8), [8, 7, 6, 5, 4, 3, 2, 1])
-                    #     plt.show()
+                    atual_original = individuos[i].cromossomo
+                    if solucoes_encontradas == 0:
+                        individuos[i].print()
+                        atual = individuos[i].cromossomo
+                    plotar_solucao_encontrada(atual, solucoes_encontradas + 1)
                     solucoes_encontradas += 1
-                    print("GUARDANDO SOLUÇÃO " + str(atualOriginal))
-                    todas_solucoes[solucoes_encontradas - 1] = atual2
+                    print("GUARDANDO SOLUÇÃO " + str(atual_original))
+                    todas_solucoes[solucoes_encontradas - 1] = atual_2
                     if solucoes_encontradas == total_solucoes:
                         print("Todas as Soluções encontradas!")
                         print("Geracao: ", geracao_atual)
