@@ -301,7 +301,7 @@ def rodada(qntd_elitismo=0):
 
 
         # 6. O algoritmo deve parar quando atingir o máximo número de gerações ou quando a função custo atingir seu valor ótimo aceitável (de acordo com a regra descrita no slide 31/61).
-        if geracao_atual - geracao_do_melhor > 3000:
+        if geracao_atual - geracao_do_melhor > 5000:
             break
 
         # if geracao_atual % 1000 == 0:
