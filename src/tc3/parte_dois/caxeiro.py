@@ -273,9 +273,12 @@ def rodada(qntd_elitismo=0):
             melhor_individuo = melhor_atual
             geracao_do_melhor = geracao_atual
         
+        elite = populacao([])
+
+
         if qntd_elitismo > 0:
             for i in range(qntd_elitismo):
-                novos_individuos.add_individuo(individuos.get_melhor().clone())
+                elite.add_individuo(individuos.get_melhor().clone())
 
         qnt_pares = individuos.length() // 2
         for _i in range(qnt_pares):
@@ -298,6 +301,9 @@ def rodada(qntd_elitismo=0):
         # 5. Na prole gerada, deve-se aplicar a mutação com probabilidade de 1%. Para o problema do caixeiro viajante, deve-se aplicar uma mutação que faz a troca de um gene por outro de uma mesma sequência cromossômica.
         individuos = novos_individuos
         novos_individuos.tentar_mutacao()
+
+        for i in range(qntd_elitismo):
+            individuos.add_individuo(elite.get_individuo(i))
 
 
         # 6. O algoritmo deve parar quando atingir o máximo número de gerações ou quando a função custo atingir seu valor ótimo aceitável (de acordo com a regra descrita no slide 31/61).
